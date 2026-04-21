@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retrieval Augmented Generation (RAG) Explained</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+/* ── PAGE-SPECIFIC AURORA POSITIONS & COLOURS ── */
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#1A52C8,transparent 70%);top:-80px;left:-100px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#0A7A6A,transparent 70%);top:38%;right:-140px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#6B3FD4,transparent 70%);bottom:-80px;left:40%}
+
+/* Badge */
+.mm-badge{background:linear-gradient(135deg,var(--bl-bg),#EEF3FE);border-color:var(--bl-b);color:var(--bl)}
+.mm-dot{background:var(--bl)}.mm-dot::after{border-color:var(--bl)}
+
+/* H1 gradient */
+.mm-header h1{background-image:linear-gradient(135deg,var(--bl) 0%,var(--te) 30%,var(--vi) 60%,var(--sk) 100%)}
+
+/* KPI accents */
+.mm-kpi:nth-child(1){--kpi-accent:var(--ro)}
+.mm-kpi:nth-child(2){--kpi-accent:var(--bl)}
+.mm-kpi:nth-child(3){--kpi-accent:var(--te)}
+.mm-kpi:nth-child(4){--kpi-accent:var(--vi)}
+
+/* Mindset chip accents */
+.mc-1{--chip-bg:var(--ro-bg);--chip-border:var(--ro-b);--chip-color:var(--ro)}
+.mc-2{--chip-bg:var(--te-bg);--chip-border:var(--te-b);--chip-color:var(--te)}
+.mc-3{--chip-bg:var(--vi-bg);--chip-border:var(--vi-b);--chip-color:var(--vi)}
+.mc-1:hover{box-shadow:0 10px 26px rgba(184,24,54,.18);border-color:var(--ro)!important}
+.mc-2:hover{box-shadow:0 10px 26px rgba(10,122,106,.18);border-color:var(--te)!important}
+.mc-3:hover{box-shadow:0 10px 26px rgba(107,63,212,.18);border-color:var(--vi)!important}
+.mc-1 .chip-label{color:var(--ro)}.mc-2 .chip-label{color:var(--te)}.mc-3 .chip-label{color:var(--vi)}
+
+/* Card accent maps */
+.c-ro{--c-accent:var(--ro);--c-bg:var(--ro-bg);--c-border:var(--ro-b);--c-shadow:rgba(184,24,54,.18)}
+.c-or{--c-accent:var(--or);--c-bg:var(--or-bg);--c-border:var(--or-b);--c-shadow:rgba(232,98,10,.18)}
+.c-te{--c-accent:var(--te);--c-bg:var(--te-bg);--c-border:var(--te-b);--c-shadow:rgba(10,122,106,.18)}
+.c-bl{--c-accent:var(--bl);--c-bg:var(--bl-bg);--c-border:var(--bl-b);--c-shadow:rgba(26,82,200,.18)}
+.c-vi{--c-accent:var(--vi);--c-bg:var(--vi-bg);--c-border:var(--vi-b);--c-shadow:rgba(107,63,212,.18)}
+.c-am{--c-accent:var(--am);--c-bg:var(--am-bg);--c-border:var(--am-b);--c-shadow:rgba(192,123,0,.18)}
+.c-gr{--c-accent:var(--gr);--c-bg:var(--gr-bg);--c-border:var(--gr-b);--c-shadow:rgba(24,122,58,.18)}
+.c-sk{--c-accent:var(--sk);--c-bg:var(--sk-bg);--c-border:var(--sk-b);--c-shadow:rgba(10,110,170,.18)}
+
+/* Flow — blue theme */
+.mm-flow-bl{--flow-color:var(--bl);--flow-color2:var(--te);--flow-border:var(--bl-b);--flow-shadow:rgba(26,82,200,.15);--flow-num-bg:var(--bl-bg);--flow-num-border:var(--bl-b)}
+.mm-flow-bl .mm-dash{stroke:var(--bl)}.mm-flow-bl .mm-arrowhead{fill:var(--bl)}.mm-flow-bl .mm-traveldot{fill:var(--bl)}.mm-flow-bl .mm-step-num{color:var(--bl)}
+
+/* RAG pipeline 4-step flow — use teal */
+.mm-flow-te{--flow-color:var(--te);--flow-color2:var(--vi);--flow-border:var(--te-b);--flow-shadow:rgba(10,122,106,.15);--flow-num-bg:var(--te-bg);--flow-num-border:var(--te-b)}
+.mm-flow-te .mm-dash{stroke:var(--te)}.mm-flow-te .mm-arrowhead{fill:var(--te)}.mm-flow-te .mm-traveldot{fill:var(--te)}.mm-flow-te .mm-step-num{color:var(--te)}
+
+/* Step detail grid inside a card */
+.step-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:12px}
+@media(max-width:500px){.step-detail-grid{grid-template-columns:1fr}}
+
+.sdetail{border-radius:12px;padding:14px;transition:transform .3s,box-shadow .3s;position:relative;overflow:hidden}
+.sdetail::after{content:'';position:absolute;top:-100%;left:-50%;width:30%;height:300%;
+  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.2) 50%,transparent 60%);
+  transition:all .5s}
+.sdetail:hover::after{top:100%;left:120%}
+
+.sd-1{background:var(--te-bg);border:1.5px solid var(--te-b)}.sd-1:hover{transform:translateY(-3px);box-shadow:0 7px 20px rgba(10,122,106,.18)}
+.sd-2{background:var(--am-bg);border:1.5px solid var(--am-b)}.sd-2:hover{transform:translateY(-3px);box-shadow:0 7px 20px rgba(192,123,0,.18)}
+.sd-3{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.sd-3:hover{transform:translateY(-3px);box-shadow:0 7px 20px rgba(107,63,212,.18)}
+.sd-4{background:var(--sk-bg);border:1.5px solid var(--sk-b)}.sd-4:hover{transform:translateY(-3px);box-shadow:0 7px 20px rgba(10,110,170,.18)}
+
+.sdetail-num{font-size:9px;font-weight:800;font-family:var(--fm);letter-spacing:.5px;margin-bottom:6px;display:block}
+.sd-1 .sdetail-num{color:var(--te)}.sd-2 .sdetail-num{color:var(--am)}.sd-3 .sdetail-num{color:var(--vi)}.sd-4 .sdetail-num{color:var(--sk)}
+.sdetail-title{font-size:12px;font-weight:800;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.sd-1 .sdetail-title{color:var(--te)}.sd-2 .sdetail-title{color:var(--am)}.sd-3 .sdetail-title{color:var(--vi)}.sd-4 .sdetail-title{color:var(--sk)}
+.sdetail-item{display:flex;gap:7px;font-size:11px;margin-bottom:5px;line-height:1.5;align-items:flex-start;transition:transform .2s}
+.sdetail-item:hover{transform:translateX(3px)}
+.sdetail-dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0;margin-top:4px}
+.sd-1 .sdetail-dot{background:var(--te)}.sd-2 .sdetail-dot{background:var(--am)}.sd-3 .sdetail-dot{background:var(--vi)}.sd-4 .sdetail-dot{background:var(--sk)}
+.sdetail-item span{color:var(--muted)}
+
+/* Comparison: RAG vs Fine-Tuning */
+.compare-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+@media(max-width:500px){.compare-row{grid-template-columns:1fr}}
+.cmp-card{border-radius:13px;padding:14px;transition:transform .3s,box-shadow .3s}
+.cmp-bad{background:var(--ro-bg);border:2px solid var(--ro-b)}.cmp-bad:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(184,24,54,.2)}
+.cmp-good{background:var(--gr-bg);border:2px solid var(--gr-b)}.cmp-good:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(24,122,58,.2)}
+.cmp-title{font-size:12px;font-weight:800;margin-bottom:9px;display:flex;align-items:center;gap:7px}
+.cmp-bad .cmp-title{color:var(--ro)}.cmp-good .cmp-title{color:var(--gr)}
+.cmp-item{display:flex;gap:7px;font-size:11px;margin-bottom:5px;line-height:1.5;align-items:flex-start}
+.cdot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0;margin-top:4px}
+.cmp-bad .cdot{background:var(--ro)}.cmp-good .cdot{background:var(--gr)}
+.cmp-item span{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div class="aurora">
+  <div class="aurora-blob"></div>
+  <div class="aurora-blob"></div>
+  <div class="aurora-blob"></div>
+</div>
+<div class="noise"></div>
+<canvas id="mm-canvas"></canvas>
+
+<div class="mm-page">
+
+  <!-- HEADER -->
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>RAG · LLM Enhancement · AI Architecture</div>
+    <h1>Retrieval Augmented<br>Generation (RAG)</h1>
+    <p>Ground LLMs in real-world data · Inject context, not retraining · Private docs + real-time accuracy</p>
+  </div>
+
+  <!-- KPIs -->
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="2">0</div><div class="mm-kpi-label">Core LLM problems<br>RAG solves</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="4">0</div><div class="mm-kpi-label">RAG pipeline<br>steps: I→R→A→G</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="0">0</div><div class="mm-kpi-label">Model retraining<br>steps required</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">ctx</div><div class="mm-kpi-label">Key RAG mechanism:<br>context injection</div></div>
+  </div>
+
+  <!-- MINDSET CHIPS -->
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">🚫</span><div class="chip-label">Hallucination Problem</div><div class="chip-desc">LLMs generate confidently wrong answers. RAG grounds responses in actual retrieved documents.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">📥</span><div class="chip-label">Retrieve, Don't Retrain</div><div class="chip-desc">Instead of retraining on new data, fetch relevant context at query time. Cheaper, faster, flexible.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">🔗</span><div class="chip-label">Context Is the Key</div><div class="chip-desc">The magic is in the augmented prompt — user question + retrieved chunks = accurate generation.</div></div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="mm-grid">
+
+    <!-- LLM Limitations -->
+    <div class="mm-card c-ro">
+      <div class="mm-card-head"><div class="mm-card-ico">⚠️</div><div><div class="mm-card-title">LLM Limitations Without RAG</div><div class="mm-card-subtitle">Why standard LLMs fall short for real-world use</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">✕</div><span><b>No private data access</b> — LLMs can't read your internal docs, databases, or proprietary knowledge</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✕</div><span><b>No real-time information</b> — training data has a fixed cutoff; the model is blind to anything newer</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✕</div><span><b>Hallucination</b> — model generates plausible-sounding but factually incorrect information with confidence</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✕</div><span><b>Knowledge cutoff</b> — once trained, the model's world-knowledge is frozen at a point in time</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-ro">🧠 Hallucination</span>
+        <span class="mm-tag mm-tag-ro">🔒 No Private Data</span>
+        <span class="mm-tag mm-tag-or">📅 Stale Knowledge</span>
+      </div>
+    </div>
+
+    <!-- Why Not Fine-Tuning -->
+    <div class="mm-card c-or">
+      <div class="mm-card-head"><div class="mm-card-ico">💸</div><div><div class="mm-card-title">Why Not Fine-Tuning?</div><div class="mm-card-subtitle">An alternative that comes with serious trade-offs</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>High computational cost</b> — retraining large models requires expensive GPU clusters and long run times</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Technical complexity</b> — data preparation, hyperparameter tuning, and evaluation pipelines demand ML expertise</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Slow iteration</b> — updating knowledge means re-running the entire training cycle; no quick updates</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Static result</b> — once fine-tuned, the model still doesn't know about new documents added after training</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-or">💰 Expensive</span>
+        <span class="mm-tag mm-tag-or">🔧 Complex</span>
+        <span class="mm-tag mm-tag-am">🐢 Slow Updates</span>
+      </div>
+    </div>
+
+    <!-- What is RAG -->
+    <div class="mm-card c-te">
+      <div class="mm-card-head"><div class="mm-card-ico">🧩</div><div><div class="mm-card-title">What is RAG?</div><div class="mm-card-subtitle">Retrieval Augmented Generation — the efficient alternative</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">★</div><span><b>External context injection</b> — retrieve relevant docs and inject them directly into the LLM prompt</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>No model retraining</b> — the base LLM stays unchanged; only the prompt changes with each query</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Cost-effective</b> — dramatically cheaper than fine-tuning; retrieval is compute-light by comparison</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Domain-specific accuracy</b> — responses are grounded in your private documents and up-to-date sources</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Real-time capable</b> — add new documents to the index anytime; the system immediately benefits</span></div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">💡</div>
+        <div><div class="mm-rule-title">⭐ THE CORE IDEA</div><div class="mm-rule-body">RAG = <strong>Retrieve</strong> relevant context → <strong>Augment</strong> the prompt → <strong>Generate</strong> a grounded answer. The LLM becomes a reasoning engine over your own data.</div></div>
+      </div>
+    </div>
+
+    <!-- RAG vs Fine-Tuning Comparison -->
+    <div class="mm-card c-gr">
+      <div class="mm-card-head"><div class="mm-card-ico">⚖️</div><div><div class="mm-card-title">RAG vs Fine-Tuning</div><div class="mm-card-subtitle">Choosing the right approach for your use case</div></div></div>
+      <div class="compare-row">
+        <div class="cmp-card cmp-bad">
+          <div class="cmp-title">❌ Fine-Tuning</div>
+          <div class="cmp-item"><div class="cdot"></div><span>Weeks of GPU training time and cost</span></div>
+          <div class="cmp-item"><div class="cdot"></div><span>Requires ML engineering expertise</span></div>
+          <div class="cmp-item"><div class="cdot"></div><span>Knowledge frozen after training run</span></div>
+          <div class="cmp-item"><div class="cdot"></div><span>Re-train every time data changes</span></div>
+        </div>
+        <div class="cmp-card cmp-good">
+          <div class="cmp-title">✅ RAG</div>
+          <div class="cmp-item"><div class="cdot"></div><span>No training needed — runs at query time</span></div>
+          <div class="cmp-item"><div class="cdot"></div><span>Standard engineering skills sufficient</span></div>
+          <div class="cmp-item"><div class="cdot"></div><span>Update knowledge by adding documents</span></div>
+          <div class="cmp-item"><div class="cdot"></div><span>New data indexed instantly, no retraining</span></div>
+        </div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-gr">🚀 Faster Iteration</span>
+        <span class="mm-tag mm-tag-gr">💚 Lower Cost</span>
+        <span class="mm-tag mm-tag-te">🔄 Live Updates</span>
+      </div>
+    </div>
+
+    <!-- RAG Pipeline 4-Step FLOW — Full Width -->
+    <div class="mm-card c-bl mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">The RAG Pipeline — 4 Core Steps</div><div class="mm-card-subtitle">From raw documents to accurate, grounded LLM answers</div></div></div>
+      <div class="mm-flow mm-flow-te">
+        <div class="mm-step">
+          <div class="mm-step-num">01</div>
+          <div class="mm-step-ico">📂</div>
+          <div class="mm-step-lbl">Indexing</div>
+          <div class="mm-step-sub">Load & chunk docs</div>
+        </div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#rag1"/></animateMotion></circle><path id="rag1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step">
+          <div class="mm-step-num">02</div>
+          <div class="mm-step-ico">🔍</div>
+          <div class="mm-step-lbl">Retrieval</div>
+          <div class="mm-step-sub">Find relevant chunks</div>
+        </div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.25s"><mpath href="#rag2"/></animateMotion></circle><path id="rag2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step">
+          <div class="mm-step-num">03</div>
+          <div class="mm-step-ico">🔗</div>
+          <div class="mm-step-lbl">Augmentation</div>
+          <div class="mm-step-sub">Build enriched prompt</div>
+        </div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.5s"><mpath href="#rag3"/></animateMotion></circle><path id="rag3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step">
+          <div class="mm-step-num">04</div>
+          <div class="mm-step-ico">✨</div>
+          <div class="mm-step-lbl">Generation</div>
+          <div class="mm-step-sub">LLM outputs answer</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step Deep Dives — Full Width -->
+    <div class="mm-card c-vi mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔬</div><div><div class="mm-card-title">Step-by-Step Deep Dive</div><div class="mm-card-subtitle">What happens inside each of the 4 RAG pipeline stages</div></div></div>
+      <div class="step-detail-grid">
+
+        <div class="sdetail sd-1">
+          <span class="sdetail-num">STEP 01 — INDEXING</span>
+          <div class="sdetail-title">📂 Prepare the Knowledge Base</div>
+          <div class="sdetail-item"><div class="sdetail-dot"></div><span>Gather all external documents, PDFs, transcripts, wikis, and data sources</span></div>
+          <div class="sdetail-item"><div class="sdetail-dot"></div><span>Load and parse raw content into a processable format</span></div>
+          <div class="sdetail-item"><div class="sdetail-dot"></div><span>Divide documents into smaller, meaningful <b style="color:#085041">chunks</b> that fit model context windows</span></div>
+          <div class="sdetail-item"><div class="sdetail-dot"></div><span>Store chunks with metadata for efficient later retrieval</span></div>
+        </div>
+
+        <div class="sdetail sd-2">
+          <span class="sdetail-num">STEP 02 — RETRIEVAL</span>
+          <div class="sdetail-title">🔍 Find What Matters</div>
+          <div class="sdetail-item"><div class="sdetail-dot"></div><span>User submits a natural language query to the system</span></div>
+          <div class="sdetail-item"><div class="sdetail-dot"></div><span>System searches the stored chunks for segments relevant to the query</span></div>
+          <div class="sdetail-item"><div class="sdetail-dot"></div><span>Semantic search matches meaning, not just keywords</span></div>
+          <div class="sdetail-item"><div class="sdetail-dot"></div><span>Top-k most relevant document segments are selected</span></div>
+        </div>
+
+        <div class="sdetail sd-3">
+          <span class="sdetail-num">STEP 03 — AUGMENTATION</span>
+          <div class="sdetail-title">🔗 Build the Enriched Prompt</div>
+          <div class="sdetail-item"><div class="sdetail-dot"></div><span>Combine user's original question with the retrieved document chunks</span></div>
+          <div class="sdetail-item"><div class="sdetail-dot"></div><span>Structure the combined content as a well-formatted LLM prompt</span></div>
+          <div class="sdetail-item"><div class="sdetail-dot"></div><span>Context injection: LLM now "sees" relevant facts alongside the question</span></div>
+          <div class="sdetail-item"><div class="sdetail-dot"></div><span>Prompt engineering here determines answer quality significantly</span></div>
+        </div>
+
+        <div class="sdetail sd-4">
+          <span class="sdetail-num">STEP 04 — GENERATION</span>
+          <div class="sdetail-title">✨ LLM Generates the Answer</div>
+          <div class="sdetail-item"><div class="sdetail-dot"></div><span>The augmented prompt is passed to the LLM for processing</span></div>
+          <div class="sdetail-item"><div class="sdetail-dot"></div><span>LLM reasons over the question <b style="color:#0A6EAA">and</b> the provided context together</span></div>
+          <div class="sdetail-item"><div class="sdetail-dot"></div><span>Output is grounded in the retrieved evidence — not just training memory</span></div>
+          <div class="sdetail-item"><div class="sdetail-dot"></div><span>Response is accurate, domain-specific, and up-to-date</span></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- When to Use RAG -->
+    <div class="mm-card c-am">
+      <div class="mm-card-head"><div class="mm-card-ico">🎯</div><div><div class="mm-card-title">When RAG Is the Right Choice</div><div class="mm-card-subtitle">Ideal use cases and conditions</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Private document Q&amp;A</b> — internal knowledge bases, legal docs, product manuals</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Real-time data needs</b> — news, market data, any source updated more often than training cycles</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Domain-specific accuracy</b> — medical, legal, financial contexts where hallucination is unacceptable</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Frequently changing data</b> — documentation that evolves; no need to retrain for every update</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-am">📄 Private Docs</span>
+        <span class="mm-tag mm-tag-am">⚡ Real-Time Data</span>
+        <span class="mm-tag mm-tag-te">🏥 High-Stakes Domains</span>
+      </div>
+    </div>
+
+    <!-- Key Benefits & Metrics -->
+    <div class="mm-card c-sk">
+      <div class="mm-card-head"><div class="mm-card-ico">📊</div><div><div class="mm-card-title">Key Benefits at a Glance</div><div class="mm-card-subtitle">Why RAG is widely adopted in production AI systems</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">↑</div><span><b>Accuracy</b> — answers are grounded in retrieved evidence, drastically reducing hallucination rate</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">↓</div><span><b>Cost</b> — no GPU training runs; only standard API calls + a vector store</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">↑</div><span><b>Flexibility</b> — swap out the document store or LLM independently; modular architecture</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">↑</div><span><b>Transparency</b> — you can trace which source chunk drove each answer — auditable</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">↑</div><span><b>Speed to production</b> — working RAG pipeline in days vs weeks for fine-tuning</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-sk">🎯 Grounded Answers</span>
+        <span class="mm-tag mm-tag-sk">🔍 Source Traceable</span>
+        <span class="mm-tag mm-tag-gr">⚡ Fast to Ship</span>
+      </div>
+    </div>
+
+  </div><!-- /mm-grid -->
+
+</div><!-- /mm-page -->
+
+<script src="shared/mindmap.js"></script>
+<script>
+  MindMap.init(
+    ['RAG', 'ctx', 'chunk', '→', 'embed', '[]', 'query', 'LLM', 'vec', 'I→R→A→G'],
+    [210, 165, 270, 38, 22]
+  );
+</script>
+</body>
+</html>
