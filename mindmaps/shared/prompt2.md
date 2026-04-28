@@ -586,3 +586,53 @@ Choose 5 HSL hue values matching the page accent colours:
 - [ ] Mobile responsive at 360px?
 - [ ] Domain-specific particle tokens?
 - [ ] Warm light theme only — no dark sections?
+
+
+Create a complete, production-ready VS Code extension named "prompt-enhancer" in TypeScript that reproduces the functionality and structure described below. Deliver a full repository: package.json, tsconfig.json, README.md, and the complete src folder with implementations and minimal tests. Provide instructions to run and debug locally.
+
+Requirements
+
+Node.js >= 18, VS Code >= 1.95.0.
+Use TypeScript, VS Code Extension API, and GitHub Copilot integration where applicable.
+
+
+Commands:
+Prompt Enhancer: Enhance Selected Text — enhance highlighted editor text and open enhanced prompt side-by-side.
+Prompt Enhancer: Enhance a Prompt (Input Box) — show input box and return enhanced prompt.
+Prompt Enhancer: Switch Mode (Long/Short) — toggle mode stored in workspace/user settings.
+Prompt Enhancer: Select Default Model — let user pick a default Copilot model (persist in settings).
+Modes:
+long mode: produce structured output with Role, Task, Context (Assumptions), Inputs, What to Produce, Constraints, Output Format, Quality Checks.
+short mode: produce ~150-word concise prompt with Role, Task, Assumptions (max 3), Deliverable, Format, Constraints (max 2).
+Gap detection: detect missing audience, tone, format, constraints; expose suggestions.
+Assumption filling: auto-fill missing fields with domain-aware defaults; label them as assumptions.
+Prompt linting: flag vague terms and suggest measurable replacements.
+Chat integration: implement chatParticipant that recognizes @prompt-enhancer messages and supports /enhance-long and /enhance-short inline commands.
+Model management: modelManager auto-selects best Copilot model but respects promptEnhancer.defaultModel if set.
+Settings (must expose these keys)
+
+promptEnhancer.mode (string, default "long")
+promptEnhancer.defaultModel (string, default "")
+promptEnhancer.domainHints (string, default "general")
+promptEnhancer.maxAssumptions (number, default 5)
+Implementation details & constraints
+
+Keep modules small and testable. Expose pure functions for gapDetector, assumptionFiller, and promptLinter.
+enhancerEngine should accept (prompt, mode, domainHint, maxAssumptions, model) and return a structured enhanced prompt plus an array of assumptions and lint warnings.
+Use VS Code window.showInputBox, commands.registerCommand, workspace.getConfiguration, TextEditorEdit APIs appropriately.
+Add minimal unit tests for core pure functions (gap detection, assumption filling, linting).
+Include helpful error handling and user notifications (window.showErrorMessage / showInformationMessage).
+Document how to run and debug: npm install, npm run compile, open in VS Code and press F5.
+Deliverables
+
+Full file contents for every file listed in the structure.
+A short README with usage and config (matching the original README features).
+A short dev checklist: how to install, build, run, and debug locally.
+Example inputs and expected enhanced outputs for both long and short modes.
+A minimal test run showing the tests succeed (or instructions to run them).
+Non-functional requirements
+
+Code must be well-formatted and idiomatic TypeScript.
+Avoid external services beyond GitHub Copilot (do not require paid APIs).
+Keep total lines reasonable — implement logic concisely but fully.
+If any behavior cannot be implemented exactly (e.g., private Copilot internals), clearly state the limitation and provide a best-effort alternative.
