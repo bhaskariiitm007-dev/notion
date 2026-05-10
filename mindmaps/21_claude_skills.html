@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Skills — Train Claude Like a Specialist Intern</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#C07B00,transparent 70%);top:-80px;left:-90px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#6B3FD4,transparent 70%);top:38%;right:-130px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#0A7A6A,transparent 70%);bottom:-70px;left:38%}
+
+.mm-badge{background:linear-gradient(135deg,var(--am-bg),#FFFBF0);border-color:var(--am-b);color:var(--am)}
+.mm-dot{background:var(--am)}.mm-dot::after{border-color:var(--am)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--am) 0%,var(--or) 28%,var(--vi) 58%,var(--te) 100%)}
+
+.mm-kpi:nth-child(1){--kpi-accent:var(--am)}
+.mm-kpi:nth-child(2){--kpi-accent:var(--vi)}
+.mm-kpi:nth-child(3){--kpi-accent:var(--te)}
+.mm-kpi:nth-child(4){--kpi-accent:var(--gr)}
+
+.mc-1{--chip-bg:var(--am-bg);--chip-border:var(--am-b);--chip-color:var(--am)}.mc-1:hover{box-shadow:0 10px 26px rgba(192,123,0,.18);border-color:var(--am)!important}
+.mc-2{--chip-bg:var(--vi-bg);--chip-border:var(--vi-b);--chip-color:var(--vi)}.mc-2:hover{box-shadow:0 10px 26px rgba(107,63,212,.18);border-color:var(--vi)!important}
+.mc-3{--chip-bg:var(--te-bg);--chip-border:var(--te-b);--chip-color:var(--te)}.mc-3:hover{box-shadow:0 10px 26px rgba(10,122,106,.18);border-color:var(--te)!important}
+.mc-1 .chip-label{color:var(--am)}.mc-2 .chip-label{color:var(--vi)}.mc-3 .chip-label{color:var(--te)}
+
+.c-am{--c-accent:var(--am);--c-bg:var(--am-bg);--c-border:var(--am-b);--c-shadow:rgba(192,123,0,.18)}
+.c-vi{--c-accent:var(--vi);--c-bg:var(--vi-bg);--c-border:var(--vi-b);--c-shadow:rgba(107,63,212,.18)}
+.c-te{--c-accent:var(--te);--c-bg:var(--te-bg);--c-border:var(--te-b);--c-shadow:rgba(10,122,106,.18)}
+.c-gr{--c-accent:var(--gr);--c-bg:var(--gr-bg);--c-border:var(--gr-b);--c-shadow:rgba(24,122,58,.18)}
+.c-or{--c-accent:var(--or);--c-bg:var(--or-bg);--c-border:var(--or-b);--c-shadow:rgba(232,98,10,.18)}
+.c-ro{--c-accent:var(--ro);--c-bg:var(--ro-bg);--c-border:var(--ro-b);--c-shadow:rgba(184,24,54,.18)}
+.c-bl{--c-accent:var(--bl);--c-bg:var(--bl-bg);--c-border:var(--bl-b);--c-shadow:rgba(26,82,200,.18)}
+
+.mm-flow-am{--flow-color:var(--am);--flow-color2:var(--or);--flow-border:var(--am-b);--flow-shadow:rgba(192,123,0,.15);--flow-num-bg:var(--am-bg);--flow-num-border:var(--am-b)}
+.mm-flow-am .mm-dash{stroke:var(--am)}.mm-flow-am .mm-arrowhead{fill:var(--am)}.mm-flow-am .mm-traveldot{fill:var(--am)}.mm-flow-am .mm-step-num{color:var(--am)}
+
+/* Skill = Brain + Instruction equation */
+.skill-equation{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap;justify-content:center}
+.eq-box{border-radius:12px;padding:12px 16px;text-align:center;font-size:12px;font-weight:800;transition:transform .3s}
+.eq-box:hover{transform:scale(1.06)}
+.eq-brain{background:var(--or-bg);border:2px solid var(--or-b);color:var(--or)}
+.eq-instruction{background:var(--vi-bg);border:2px solid var(--vi-b);color:var(--vi)}
+.eq-structure{background:var(--te-bg);border:2px solid var(--te-b);color:var(--te)}
+.eq-result{background:linear-gradient(135deg,var(--am-bg),var(--or-bg));border:2px solid var(--am-b);color:var(--am);font-size:13px}
+.eq-op{font-size:22px;color:var(--muted);flex-shrink:0;font-weight:900}
+.eq-ico{font-size:18px;display:block;margin-bottom:3px}
+.eq-label{font-size:10px;font-weight:700;margin-top:2px;color:var(--muted);font-family:var(--fm)}
+
+/* Skill anatomy: claude intern analogy */
+.intern-analogy{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:11px}
+@media(max-width:500px){.intern-analogy{grid-template-columns:1fr}}
+.ia-card{border-radius:12px;padding:13px;transition:transform .3s,box-shadow .3s}
+.ia-card:hover{transform:translateY(-3px)}
+.ia-intern{background:var(--or-bg);border:1.5px solid var(--or-b)}.ia-intern:hover{box-shadow:0 7px 20px rgba(232,98,10,.16)}
+.ia-claude{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.ia-claude:hover{box-shadow:0 7px 20px rgba(107,63,212,.16)}
+.ia-title{font-size:11.5px;font-weight:800;margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.ia-intern .ia-title{color:var(--or)}.ia-claude .ia-title{color:var(--vi)}
+.ia-item{font-size:11px;color:var(--muted);margin-bottom:4px;display:flex;align-items:flex-start;gap:6px;line-height:1.45}
+.iadot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.ia-intern .iadot{background:var(--or)}.ia-claude .iadot{background:var(--vi)}
+
+/* 3-type progression */
+.progression{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:10px}
+@media(max-width:500px){.progression{grid-template-columns:1fr}}
+.prog-card{border-radius:12px;padding:13px;text-align:center;position:relative;transition:transform .3s,box-shadow .3s}
+.prog-card:hover{transform:translateY(-4px)}
+.prog-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0}
+.pc-p{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.pc-p::before{background:var(--bl)}.pc-p:hover{box-shadow:0 8px 22px rgba(26,82,200,.18)}
+.pc-pr{background:var(--te-bg);border:1.5px solid var(--te-b)}.pc-pr::before{background:var(--te)}.pc-pr:hover{box-shadow:0 8px 22px rgba(10,122,106,.18)}
+.pc-s{background:var(--am-bg);border:1.5px solid var(--am-b)}.pc-s::before{background:var(--am)}.pc-s:hover{box-shadow:0 8px 22px rgba(192,123,0,.18)}
+.prog-ico{font-size:22px;display:block;margin:5px 0 4px;transition:transform .3s}.prog-card:hover .prog-ico{transform:scale(1.2) rotate(-8deg)}
+.prog-type{font-size:9px;font-weight:800;font-family:var(--fm);letter-spacing:.5px;margin-bottom:3px;display:block}
+.pc-p .prog-type{color:var(--bl)}.pc-pr .prog-type{color:var(--te)}.pc-s .prog-type{color:var(--am)}
+.prog-name{font-size:12px;font-weight:800;margin-bottom:4px}
+.pc-p .prog-name{color:var(--bl)}.pc-pr .prog-name{color:var(--te)}.pc-s .prog-name{color:var(--am)}
+.prog-desc{font-size:10px;color:var(--muted);line-height:1.4}
+
+/* Skill examples grid */
+.skill-examples{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+@media(max-width:500px){.skill-examples{grid-template-columns:1fr}}
+.se-item{border-radius:10px;padding:11px;border-left:4px solid var(--am-b);background:var(--am-bg);transition:transform .3s,border-color .3s,box-shadow .3s}
+.se-item:hover{transform:translateX(4px);border-left-color:var(--am);box-shadow:0 5px 14px rgba(192,123,0,.14)}
+.se-name{font-size:11px;font-weight:800;color:var(--am);margin-bottom:2px}
+.se-desc{font-size:10.5px;color:var(--muted);line-height:1.4}
+</style>
+</head>
+<body>
+
+<div class="aurora">
+  <div class="aurora-blob"></div>
+  <div class="aurora-blob"></div>
+  <div class="aurora-blob"></div>
+</div>
+<div class="noise"></div>
+<canvas id="mm-canvas"></canvas>
+
+<div class="mm-page">
+
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude AI · Crash Course · Part 6 of 7</div>
+    <h1>Claude Skills<br>Train Claude Like a Specialist Intern</h1>
+    <p>Brain + Instructions + Structure = Specialized Capability · skill.md · Create your own</p>
+  </div>
+
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">skill.md</div><div class="mm-kpi-label">The file at the heart<br>of every Claude skill</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">∞</div><div class="mm-kpi-label">Skills you can<br>create and combine</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="0">0</div><div class="mm-kpi-label">Times you need to<br>re-explain after skill creation</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="3">0</div><div class="mm-kpi-label">Ways to create a skill:<br>Manual · Claude UI · Community</div></div>
+  </div>
+
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">📖</span><div class="chip-label">Skills Are Just User Manuals</div><div class="chip-desc">A skill is not magic — it's a .md file with instructions. Claude reads it like an intern reads their onboarding manual.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">🧠</span><div class="chip-label">Brain × Instructions = Expert</div><div class="chip-desc">Claude's brain is already powerful. A skill file directs that power toward a specific domain or workflow permanently.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">♾️</span><div class="chip-label">Skills Are Composable</div><div class="chip-desc">Layer multiple skills together. The combination — frontend design + data analysis + brand guidelines — is more than the sum of parts.</div></div>
+  </div>
+
+  <div class="mm-grid">
+
+    <!-- Skill equation -->
+    <div class="mm-card c-am mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🧮</div><div><div class="mm-card-title">What a Skill Actually Is</div><div class="mm-card-subtitle">Demystified — no magic, just structured instructions given to a powerful brain</div></div></div>
+      <div class="skill-equation">
+        <div class="eq-box eq-brain"><span class="eq-ico">🧠</span>Claude Brain<div class="eq-label">General Intelligence</div></div>
+        <div class="eq-op">+</div>
+        <div class="eq-box eq-instruction"><span class="eq-ico">📄</span>skill.md File<div class="eq-label">Domain Instructions</div></div>
+        <div class="eq-op">+</div>
+        <div class="eq-box eq-structure"><span class="eq-ico">⚙️</span>Output Structure<div class="eq-label">Format Rules</div></div>
+        <div class="eq-op">=</div>
+        <div class="eq-box eq-result"><span class="eq-ico">🚀</span>Specialized Capability<div class="eq-label">Expert-Level Output</div></div>
+      </div>
+      <div class="mm-rule" style="margin-top:12px">
+        <div class="mm-rule-icon">💡</div>
+        <div><div class="mm-rule-title">⭐ THE INTERN ANALOGY</div><div class="mm-rule-body">Think of Claude as a super-smart intern. A skill file is their <strong>user manual and onboarding guide</strong>. The brain is the same; the skill makes it focused on your exact domain. Skills turn the generalist into a specialist.</div></div>
+      </div>
+    </div>
+
+    <!-- Prompt vs Project vs Skill -->
+    <div class="mm-card c-vi">
+      <div class="mm-card-head"><div class="mm-card-ico">📊</div><div><div class="mm-card-title">Prompt vs Project vs Skill</div><div class="mm-card-subtitle">Three tools — pick the right one for the job</div></div></div>
+      <div class="progression">
+        <div class="prog-card pc-p">
+          <span class="prog-type">ONE-TIME</span>
+          <span class="prog-ico">⚡</span>
+          <div class="prog-name">Prompt</div>
+          <div class="prog-desc">Quick task. Written each session. Temporary context for a single output.</div>
+        </div>
+        <div class="prog-card pc-pr">
+          <span class="prog-type">ORGANIZED</span>
+          <span class="prog-ico">📁</span>
+          <div class="prog-name">Project</div>
+          <div class="prog-desc">Persistent workspace. Remembers files and instructions across all chats in it.</div>
+        </div>
+        <div class="prog-card pc-s">
+          <span class="prog-type">SPECIALIZED</span>
+          <span class="prog-ico">🎯</span>
+          <div class="prog-name">Skill</div>
+          <div class="prog-desc">Permanent capability. Claude performs this type of task at expert level forever.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Intern analogy -->
+    <div class="mm-card c-or">
+      <div class="mm-card-head"><div class="mm-card-ico">👥</div><div><div class="mm-card-title">Intern vs Claude — The Analogy That Clicks</div><div class="mm-card-subtitle">Understanding skills through a familiar mental model</div></div></div>
+      <div class="intern-analogy">
+        <div class="ia-card ia-intern">
+          <div class="ia-title">🧑 New Intern</div>
+          <div class="ia-item"><div class="iadot"></div><span>Has a great brain — smart, eager</span></div>
+          <div class="ia-item"><div class="iadot"></div><span>Needs a user manual to start correctly</span></div>
+          <div class="ia-item"><div class="iadot"></div><span>Reads onboarding guide before first task</span></div>
+          <div class="ia-item"><div class="iadot"></div><span>Refers back to guide when uncertain</span></div>
+          <div class="ia-item"><div class="iadot"></div><span>Specialized via training + practice</span></div>
+        </div>
+        <div class="ia-card ia-claude">
+          <div class="ia-title">🤖 Claude + Skill</div>
+          <div class="ia-item"><div class="iadot"></div><span>Claude's brain — powerful, general-purpose</span></div>
+          <div class="ia-item"><div class="iadot"></div><span>skill.md = the domain user manual</span></div>
+          <div class="ia-item"><div class="iadot"></div><span>Reads skill file before every relevant task</span></div>
+          <div class="ia-item"><div class="iadot"></div><span>Follows skill instructions consistently</span></div>
+          <div class="ia-item"><div class="iadot"></div><span>Specialized via skills without retraining</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Creating a skill -->
+    <div class="mm-card c-te">
+      <div class="mm-card-head"><div class="mm-card-ico">🛠️</div><div><div class="mm-card-title">Creating Your Own Skill — 3 Ways</div><div class="mm-card-subtitle">From scratch to live capability in under an hour</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">1</div><span><b>Manual creation</b> — write a <span class="mm-pill">skill.md</span> file with domain rules, output format, examples. Use markdown headings and structure.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">2</div><span><b>Skills Creator (Claude UI)</b> — describe your need in plain language; Claude scaffolds the complete skill file for you. "Skill creator" is itself a skill!</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">3</div><span><b>Community / Marketplace</b> — browse repositories like Anthropic's official skills repo or community listings. Download zip, upload, done.</span></div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">⚠️</div>
+        <div><div class="mm-rule-title">Security Warning — Third-Party Skills</div><div class="mm-rule-body">Before downloading any community skill, <strong>read the skill.md</strong> or ask Claude to check it. Malicious skills could try to access or exfiltrate your files.</div></div>
+      </div>
+    </div>
+
+    <!-- Skill creation workflow flow -->
+    <div class="mm-card c-gr mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">Custom Skill Creation Workflow — End to End</div><div class="mm-card-subtitle">From identifying a recurring task to having a permanent specialized capability</div></div></div>
+      <div class="mm-flow mm-flow-am">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">🔍</div><div class="mm-step-lbl">Spot Pattern</div><div class="mm-step-sub">Recurring task type</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#sk1"/></animateMotion></circle><path id="sk1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">✍️</div><div class="mm-step-lbl">Write skill.md</div><div class="mm-step-sub">Rules + format + examples</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#sk2"/></animateMotion></circle><path id="sk2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">📥</div><div class="mm-step-lbl">Enable in Claude</div><div class="mm-step-sub">Customize → Skills</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#sk3"/></animateMotion></circle><path id="sk3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">🧪</div><div class="mm-step-lbl">Test on Real Task</div><div class="mm-step-sub">Watch it apply skill</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#sk4"/></animateMotion></circle><path id="sk4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">🔧</div><div class="mm-step-lbl">Refine skill.md</div><div class="mm-step-sub">Tune based on output</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#sk5"/></animateMotion></circle><path id="sk5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">🔗</div><div class="mm-step-lbl">Combine Skills</div><div class="mm-step-sub">Layer for complex tasks</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.7s"><mpath href="#sk6"/></animateMotion></circle><path id="sk6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">🚀</div><div class="mm-step-lbl">Permanent Capability</div><div class="mm-step-sub">Expert output every time</div></div>
+      </div>
+    </div>
+
+    <!-- Pre-built skill examples -->
+    <div class="mm-card c-am">
+      <div class="mm-card-head"><div class="mm-card-ico">📦</div><div><div class="mm-card-title">Pre-Built Skills in the Marketplace</div><div class="mm-card-subtitle">Real skills available to enable — or use as inspiration for your own</div></div></div>
+      <div class="skill-examples">
+        <div class="se-item"><div class="se-name">🎨 Canvas Design</div><div class="se-desc">Visual design guidelines for aesthetically consistent outputs</div></div>
+        <div class="se-item"><div class="se-name">📊 Reading Excel</div><div class="se-desc">Structured approach to extracting insights from spreadsheets</div></div>
+        <div class="se-item"><div class="se-name">🎞️ Slack GIF Creator</div><div class="se-desc">Generates GIFs for Slack using Python + image processing libraries</div></div>
+        <div class="se-item"><div class="se-name">📄 Doc Co-authoring</div><div class="se-desc">Structured document drafting with section logic and formatting rules</div></div>
+        <div class="se-item"><div class="se-name">🎯 MCP Builder</div><div class="se-desc">Instructions for building MCP server connections</div></div>
+        <div class="se-item"><div class="se-name">🏗️ Skill Creator</div><div class="se-desc">A skill for creating skills — meta but extremely useful</div></div>
+      </div>
+      <div class="mm-tags" style="margin-top:10px">
+        <span class="mm-tag mm-tag-am">📦 Marketplace</span>
+        <span class="mm-tag mm-tag-vi">🔗 Composable</span>
+        <span class="mm-tag mm-tag-te">🛡️ Read Before Using</span>
+      </div>
+    </div>
+
+    <!-- Without vs with skills -->
+    <div class="mm-card c-ro">
+      <div class="mm-card-head"><div class="mm-card-ico">⚠️</div><div><div class="mm-card-title">Without Skills — The Repetition Tax</div><div class="mm-card-subtitle">Every task that could be a skill but isn't costs you time every single day</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Repeated summarization prompts</b> — typing the same "summarize in bullet points for C-level execs" across 20 sessions</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Repeated writing style context</b> — "here's how I write: casual, direct, no jargon..." pasted in 15 conversations this week</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Inconsistent report formats</b> — no skill means every analysis looks different with no style consistency</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Manual GIF / image generation setup</b> — reinstalling dependencies and re-explaining workflow every session</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-ro">⏱️ Time Wasted</span>
+        <span class="mm-tag mm-tag-ro">📉 Inconsistent</span>
+        <span class="mm-tag mm-tag-gr">✅ Skills Fix All This</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="shared/mindmap.js"></script>
+<script>
+  MindMap.init(
+    ['skill.md', '# h1', '→', '⚙️', 'fn()', 'domain', '∞', 'ctx', 'intern', '[]'],
+    [38, 270, 165, 22, 210]
+  );
+</script>
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Models & Thinking Modes — Opus, Sonnet, Haiku & Extended Thinking</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#6B3FD4,transparent 70%);top:-80px;left:-90px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#1A52C8,transparent 70%);top:40%;right:-130px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#0A7A6A,transparent 70%);bottom:-70px;left:35%}
+
+.mm-badge{background:linear-gradient(135deg,var(--vi-bg),#F5F3FF);border-color:var(--vi-b);color:var(--vi)}
+.mm-dot{background:var(--vi)}.mm-dot::after{border-color:var(--vi)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--vi) 0%,var(--bl) 28%,var(--te) 58%,var(--sk) 100%)}
+
+.mm-kpi:nth-child(1){--kpi-accent:var(--vi)}
+.mm-kpi:nth-child(2){--kpi-accent:var(--bl)}
+.mm-kpi:nth-child(3){--kpi-accent:var(--te)}
+.mm-kpi:nth-child(4){--kpi-accent:var(--am)}
+
+.mc-1{--chip-bg:var(--vi-bg);--chip-border:var(--vi-b);--chip-color:var(--vi)}.mc-1:hover{box-shadow:0 10px 26px rgba(107,63,212,.18);border-color:var(--vi)!important}
+.mc-2{--chip-bg:var(--bl-bg);--chip-border:var(--bl-b);--chip-color:var(--bl)}.mc-2:hover{box-shadow:0 10px 26px rgba(26,82,200,.18);border-color:var(--bl)!important}
+.mc-3{--chip-bg:var(--te-bg);--chip-border:var(--te-b);--chip-color:var(--te)}.mc-3:hover{box-shadow:0 10px 26px rgba(10,122,106,.18);border-color:var(--te)!important}
+.mc-1 .chip-label{color:var(--vi)}.mc-2 .chip-label{color:var(--bl)}.mc-3 .chip-label{color:var(--te)}
+
+.c-vi{--c-accent:var(--vi);--c-bg:var(--vi-bg);--c-border:var(--vi-b);--c-shadow:rgba(107,63,212,.18)}
+.c-bl{--c-accent:var(--bl);--c-bg:var(--bl-bg);--c-border:var(--bl-b);--c-shadow:rgba(26,82,200,.18)}
+.c-te{--c-accent:var(--te);--c-bg:var(--te-bg);--c-border:var(--te-b);--c-shadow:rgba(10,122,106,.18)}
+.c-am{--c-accent:var(--am);--c-bg:var(--am-bg);--c-border:var(--am-b);--c-shadow:rgba(192,123,0,.18)}
+.c-ro{--c-accent:var(--ro);--c-bg:var(--ro-bg);--c-border:var(--ro-b);--c-shadow:rgba(184,24,54,.18)}
+.c-gr{--c-accent:var(--gr);--c-bg:var(--gr-bg);--c-border:var(--gr-b);--c-shadow:rgba(24,122,58,.18)}
+.c-sk{--c-accent:var(--sk);--c-bg:var(--sk-bg);--c-border:var(--sk-b);--c-shadow:rgba(10,110,170,.18)}
+
+.mm-flow-vi{--flow-color:var(--vi);--flow-color2:var(--bl);--flow-border:var(--vi-b);--flow-shadow:rgba(107,63,212,.15);--flow-num-bg:var(--vi-bg);--flow-num-border:var(--vi-b)}
+.mm-flow-vi .mm-dash{stroke:var(--vi)}.mm-flow-vi .mm-arrowhead{fill:var(--vi)}.mm-flow-vi .mm-traveldot{fill:var(--vi)}.mm-flow-vi .mm-step-num{color:var(--vi)}
+
+/* Model tier cards — speed spectrum */
+.model-spectrum{margin-top:12px}
+.spectrum-bar{height:8px;border-radius:4px;background:linear-gradient(90deg,var(--te) 0%,var(--bl) 35%,var(--vi) 65%,var(--ro) 100%);margin-bottom:5px;position:relative}
+.spectrum-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:var(--fm);margin-bottom:14px}
+.model-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:520px){.model-cards{grid-template-columns:1fr}}
+.mcard{border-radius:13px;padding:15px;text-align:center;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s}
+.mcard:hover{transform:translateY(-5px)}
+.mcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.mc-haiku{background:var(--te-bg);border:2px solid var(--te-b)}.mc-haiku::before{background:var(--te)}.mc-haiku:hover{box-shadow:0 10px 26px rgba(10,122,106,.2)}
+.mc-sonnet{background:var(--bl-bg);border:2px solid var(--bl-b)}.mc-sonnet::before{background:var(--bl)}.mc-sonnet:hover{box-shadow:0 10px 26px rgba(26,82,200,.2)}
+.mc-opus{background:var(--vi-bg);border:2px solid var(--vi-b)}.mc-opus::before{background:var(--vi)}.mc-opus:hover{box-shadow:0 10px 26px rgba(107,63,212,.2)}
+.mcard-tier{font-size:9px;font-weight:800;font-family:var(--fm);letter-spacing:.5px;margin-bottom:5px;display:block}
+.mc-haiku .mcard-tier{color:var(--te)}.mc-sonnet .mcard-tier{color:var(--bl)}.mc-opus .mcard-tier{color:var(--vi)}
+.mcard-ico{font-size:26px;display:block;margin-bottom:6px;transition:transform .3s}.mcard:hover .mcard-ico{transform:scale(1.2) rotate(-8deg)}
+.mcard-name{font-size:13px;font-weight:900;margin-bottom:3px}
+.mc-haiku .mcard-name{color:var(--te)}.mc-sonnet .mcard-name{color:var(--bl)}.mc-opus .mcard-name{color:var(--vi)}
+.mcard-tag{display:inline-block;padding:2px 9px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:7px}
+.mc-haiku .mcard-tag{background:var(--te);color:#fff}.mc-sonnet .mcard-tag{background:var(--bl);color:#fff}.mc-opus .mcard-tag{background:var(--vi);color:#fff}
+.mcard-desc{font-size:10.5px;color:var(--muted);line-height:1.45;margin-bottom:8px}
+.mcard-use{font-size:10px;font-weight:600;padding:4px 8px;border-radius:6px;background:var(--s2);color:var(--muted)}
+
+/* Thinking mode comparison */
+.think-compare{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:10px}
+@media(max-width:500px){.think-compare{grid-template-columns:1fr}}
+.think-card{border-radius:12px;padding:13px;transition:transform .3s,box-shadow .3s}
+.think-off{background:var(--ro-bg);border:1.5px solid var(--ro-b)}.think-off:hover{transform:translateY(-3px);box-shadow:0 7px 20px rgba(184,24,54,.16)}
+.think-on{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.think-on:hover{transform:translateY(-3px);box-shadow:0 7px 20px rgba(107,63,212,.16)}
+.think-title{font-size:11.5px;font-weight:800;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.think-off .think-title{color:var(--ro)}.think-on .think-title{color:var(--vi)}
+.think-item{font-size:11px;color:var(--muted);margin-bottom:4px;display:flex;align-items:flex-start;gap:6px;line-height:1.45}
+.tdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.think-off .tdot{background:var(--ro)}.think-on .tdot{background:var(--vi)}
+
+/* Usage decision tree */
+.decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+@media(max-width:500px){.decision-grid{grid-template-columns:1fr}}
+.dec-card{border-radius:11px;padding:12px;transition:transform .3s}
+.dec-card:hover{transform:translateY(-3px)}
+.dc-1{background:var(--am-bg);border:1.5px solid var(--am-b)}.dc-1:hover{box-shadow:0 7px 18px rgba(192,123,0,.16)}
+.dc-2{background:var(--gr-bg);border:1.5px solid var(--gr-b)}.dc-2:hover{box-shadow:0 7px 18px rgba(24,122,58,.16)}
+.dec-title{font-size:11px;font-weight:800;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.dc-1 .dec-title{color:var(--am)}.dc-2 .dec-title{color:var(--gr)}
+.dec-item{font-size:10.5px;color:var(--muted);line-height:1.45;margin-bottom:3px}
+</style>
+</head>
+<body>
+
+<div class="aurora">
+  <div class="aurora-blob"></div>
+  <div class="aurora-blob"></div>
+  <div class="aurora-blob"></div>
+</div>
+<div class="noise"></div>
+<canvas id="mm-canvas"></canvas>
+
+<div class="mm-page">
+
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude AI · Crash Course · Part 2 of 7</div>
+    <h1>Claude Models &<br>Thinking Modes</h1>
+    <p>Haiku · Sonnet · Opus · Extended Thinking · When to burn tokens, when not to</p>
+  </div>
+
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="3">0</div><div class="mm-kpi-label">Model tiers:<br>Haiku · Sonnet · Opus</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">Ext.</div><div class="mm-kpi-label">Thinking mode:<br>extended reasoning</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="30">0</div><div class="mm-kpi-label">Pages Claude<br>can search at once</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="55">0</div><div class="mm-kpi-label">% weekly credits<br>typical usage example</div></div>
+  </div>
+
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">👑</span><div class="chip-label">Opus — The Deepest Thinker</div><div class="chip-desc">Most powerful model for complex, multi-step problems. More compute, best results.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">⚖️</span><div class="chip-label">Sonnet — The Sweet Spot</div><div class="chip-desc">Balanced speed and capability. Perfect for everyday use, documents, and most tasks.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">⚡</span><div class="chip-label">Haiku — The Fast Responder</div><div class="chip-desc">Quickest and cheapest. Ideal for simple questions, summaries, and high-frequency tasks.</div></div>
+  </div>
+
+  <div class="mm-grid">
+
+    <!-- Model Tier Cards — Speed Spectrum -->
+    <div class="mm-card c-vi mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🏆</div><div><div class="mm-card-title">The Three Claude Model Tiers</div><div class="mm-card-subtitle">From lightning-fast to deepest thinking — match the model to the task</div></div></div>
+      <div class="model-spectrum">
+        <div class="spectrum-labels">
+          <span>⚡ Fastest / Cheapest</span>
+          <span>Most Powerful / Deepest ⚡</span>
+        </div>
+        <div class="spectrum-bar"></div>
+        <div class="spectrum-labels" style="margin-top:4px">
+          <span>Haiku →</span>
+          <span>← Opus</span>
+        </div>
+        <div class="model-cards">
+          <div class="mcard mc-haiku">
+            <span class="mcard-tier">TIER 1 — FAST</span>
+            <span class="mcard-ico">⚡</span>
+            <div class="mcard-name">Haiku</div>
+            <div class="mcard-tag">Speed First</div>
+            <div class="mcard-desc">Fastest response time, lowest token cost. Great for repetitive tasks where speed beats depth.</div>
+            <div class="mcard-use">Best for: Summaries, quick Q&A, drafting</div>
+          </div>
+          <div class="mcard mc-sonnet">
+            <span class="mcard-tier">TIER 2 — BALANCED</span>
+            <span class="mcard-ico">⚖️</span>
+            <div class="mcard-name">Sonnet</div>
+            <div class="mcard-tag">Daily Driver</div>
+            <div class="mcard-desc">The everyday workhorse. Balances capability and cost for documents, analysis, and code.</div>
+            <div class="mcard-use">Best for: Documents, research, coding</div>
+          </div>
+          <div class="mcard mc-opus">
+            <span class="mcard-tier">TIER 3 — MAXIMUM</span>
+            <span class="mcard-ico">👑</span>
+            <div class="mcard-name">Opus</div>
+            <div class="mcard-tag">Deep Reasoning</div>
+            <div class="mcard-desc">Most capable. Handles highly complex, multi-step problems that require deep extended reasoning.</div>
+            <div class="mcard-use">Best for: Complex plans, ambiguous tasks</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Extended Thinking -->
+    <div class="mm-card c-bl">
+      <div class="mm-card-head"><div class="mm-card-ico">🧠</div><div><div class="mm-card-title">Extended Thinking Mode</div><div class="mm-card-subtitle">Claude thinks longer before it responds — more depth, more tokens</div></div></div>
+      <div class="think-compare">
+        <div class="think-card think-off">
+          <div class="think-title">🔴 Thinking OFF</div>
+          <div class="think-item"><div class="tdot"></div><span>Immediate response generation</span></div>
+          <div class="think-item"><div class="tdot"></div><span>Fast, efficient, lower token use</span></div>
+          <div class="think-item"><div class="tdot"></div><span>Good for clear, well-defined tasks</span></div>
+          <div class="think-item"><div class="tdot"></div><span>Standard quality for most requests</span></div>
+        </div>
+        <div class="think-card think-on">
+          <div class="think-title">🟣 Thinking ON</div>
+          <div class="think-item"><div class="tdot"></div><span>Claude deliberates before answering</span></div>
+          <div class="think-item"><div class="tdot"></div><span>Higher quality for complex problems</span></div>
+          <div class="think-item"><div class="tdot"></div><span>Visible thinking process in output</span></div>
+          <div class="think-item"><div class="tdot"></div><span>Uses more tokens — use judiciously</span></div>
+        </div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">⚠️</div>
+        <div><div class="mm-rule-title">Token Burn Warning</div><div class="mm-rule-body">Unnecessary extended thinking wastes credits. <strong>Only enable it for tasks where deeper reasoning genuinely matters</strong> — complex plans, ambiguous requirements, multi-step analysis.</div></div>
+      </div>
+    </div>
+
+    <!-- When to use which -->
+    <div class="mm-card c-am">
+      <div class="mm-card-head"><div class="mm-card-ico">🎯</div><div><div class="mm-card-title">Model + Thinking Decision Guide</div><div class="mm-card-subtitle">Choose the right combination to get the best results efficiently</div></div></div>
+      <div class="decision-grid">
+        <div class="dec-card dc-1">
+          <div class="dec-title">📝 Simple Tasks</div>
+          <div class="dec-item">→ <b>Haiku</b> + Thinking OFF</div>
+          <div class="dec-item">Quick emails, summaries, short drafts</div>
+          <div class="dec-item">No-brainer decisions, quick formatting</div>
+        </div>
+        <div class="dec-card dc-2">
+          <div class="dec-title">📄 Everyday Work</div>
+          <div class="dec-item">→ <b>Sonnet</b> + Thinking OFF</div>
+          <div class="dec-item">Document analysis, research, coding</div>
+          <div class="dec-item">Most professional tasks fall here</div>
+        </div>
+        <div class="dec-card dc-1">
+          <div class="dec-title">🔍 Deep Research</div>
+          <div class="dec-item">→ <b>Sonnet</b> + Thinking ON</div>
+          <div class="dec-item">Multi-source analysis, strategy work</div>
+          <div class="dec-item">When you need the model to deliberate</div>
+        </div>
+        <div class="dec-card dc-2">
+          <div class="dec-title">🏗️ Complex Projects</div>
+          <div class="dec-item">→ <b>Opus</b> + Thinking ON</div>
+          <div class="dec-item">Architecture design, plan generation</div>
+          <div class="dec-item">Highly ambiguous or high-stakes tasks</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sequential Thinking flow -->
+    <div class="mm-card c-te mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">How Extended Thinking Works — The Internal Reasoning Loop</div><div class="mm-card-subtitle">Claude's deliberate step-by-step thinking process for complex queries</div></div></div>
+      <div class="mm-flow mm-flow-vi">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">📥</div><div class="mm-step-lbl">Parse Problem</div><div class="mm-step-sub">Understand the ask</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#tm1"/></animateMotion></circle><path id="tm1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">🗺️</div><div class="mm-step-lbl">Map Sub-tasks</div><div class="mm-step-sub">Break into pieces</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#tm2"/></animateMotion></circle><path id="tm2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">🌐</div><div class="mm-step-lbl">Gather Data</div><div class="mm-step-sub">Web search if needed</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#tm3"/></animateMotion></circle><path id="tm3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">🧩</div><div class="mm-step-lbl">Reason & Connect</div><div class="mm-step-sub">Link ideas & facts</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#tm4"/></animateMotion></circle><path id="tm4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">✅</div><div class="mm-step-lbl">Self-Check</div><div class="mm-step-sub">Verify coherence</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#tm5"/></animateMotion></circle><path id="tm5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">📤</div><div class="mm-step-lbl">Deliver Answer</div><div class="mm-step-sub">Structured output</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.7s"><mpath href="#tm6"/></animateMotion></circle><path id="tm6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">🔁</div><div class="mm-step-lbl">User Iterates</div><div class="mm-step-sub">Refine & improve</div></div>
+      </div>
+    </div>
+
+    <!-- Usage Management -->
+    <div class="mm-card c-sk">
+      <div class="mm-card-head"><div class="mm-card-ico">📊</div><div><div class="mm-card-title">Managing Usage & Credits Wisely</div><div class="mm-card-subtitle">Don't run out before your key meetings</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Check usage regularly</b> — Settings → Usage shows session % and weekly % consumed</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Disable unused connectors</b> — each connected app sends context; 10+ apps drains tokens fast</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Plan before meetings</b> — check available credits before a key session or presentation</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Match model to task</b> — Haiku for simple tasks; Opus only when complexity truly demands it</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Extended thinking selectively</b> — only enable when the problem genuinely needs deep reasoning</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-sk">📊 Monitor Usage</span>
+        <span class="mm-tag mm-tag-sk">⚙️ Right Model</span>
+        <span class="mm-tag mm-tag-am">💰 Token Efficiency</span>
+      </div>
+    </div>
+
+    <!-- Free vs Paid -->
+    <div class="mm-card c-gr">
+      <div class="mm-card-head"><div class="mm-card-ico">💳</div><div><div class="mm-card-title">Free vs Paid Plans</div><div class="mm-card-subtitle">What you get and when upgrading makes sense</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">🆓</div><span><b>Free plan</b> — full access to core Claude features, Sonnet model, limited daily messages</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">💳</div><span><b>Pro/Paid plan</b> — 5× more usage, Opus model access, priority during high-demand periods</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">⏰</div><span><b>Boost periods</b> — Anthropic occasionally gives extra credits during off-peak hours and weekends</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">📅</div><span><b>Weekend boost</b> — outside 8–2 Eastern, all weekends often has more generous limits — best time to experiment</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Practical advice</b> — start on free, upgrade only when you're hitting limits regularly on real work</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-gr">🆓 Start Free</span>
+        <span class="mm-tag mm-tag-gr">⬆️ Upgrade When Needed</span>
+        <span class="mm-tag mm-tag-am">⏰ Off-Peak Bonus</span>
+      </div>
+    </div>
+
+    <!-- Pitfalls -->
+    <div class="mm-card c-ro">
+      <div class="mm-card-head"><div class="mm-card-ico">⚠️</div><div><div class="mm-card-title">Common Model Selection Mistakes</div><div class="mm-card-subtitle">Avoid these to get better results without wasting credits</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Always using Opus</b> — overkill for 90% of tasks; wastes credits and slows you down unnecessarily</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Always using Haiku</b> — too weak for complex analysis; cheap now, frustrating later when output is shallow</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Extended thinking ON always</b> — burns tokens on tasks that don't need deep deliberation</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Ignoring usage stats</b> — running out mid-day when you had a critical task coming up</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-ro">❌ Overkill</span>
+        <span class="mm-tag mm-tag-ro">❌ Underpowered</span>
+        <span class="mm-tag mm-tag-am">⚠️ Token Waste</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="shared/mindmap.js"></script>
+<script>
+  MindMap.init(
+    ['Opus', 'Sonnet', 'Haiku', '→', 'ctx', 'ext.', '🧠', 'tok', 'model', '[]'],
+    [270, 210, 165, 38, 22]
+  );
+</script>
+</body>
+</html>

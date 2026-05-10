@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artifacts & Projects — Build Tools, Organize Your AI Life</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#6B3FD4,transparent 70%);top:-80px;left:-90px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#E8620A,transparent 70%);top:38%;right:-130px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#187A3A,transparent 70%);bottom:-70px;left:38%}
+
+.mm-badge{background:linear-gradient(135deg,var(--vi-bg),#F5F3FF);border-color:var(--vi-b);color:var(--vi)}
+.mm-dot{background:var(--vi)}.mm-dot::after{border-color:var(--vi)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--vi) 0%,var(--or) 28%,var(--gr) 58%,var(--te) 100%)}
+
+.mm-kpi:nth-child(1){--kpi-accent:var(--vi)}
+.mm-kpi:nth-child(2){--kpi-accent:var(--or)}
+.mm-kpi:nth-child(3){--kpi-accent:var(--gr)}
+.mm-kpi:nth-child(4){--kpi-accent:var(--te)}
+
+.mc-1{--chip-bg:var(--vi-bg);--chip-border:var(--vi-b);--chip-color:var(--vi)}.mc-1:hover{box-shadow:0 10px 26px rgba(107,63,212,.18);border-color:var(--vi)!important}
+.mc-2{--chip-bg:var(--or-bg);--chip-border:var(--or-b);--chip-color:var(--or)}.mc-2:hover{box-shadow:0 10px 26px rgba(232,98,10,.18);border-color:var(--or)!important}
+.mc-3{--chip-bg:var(--gr-bg);--chip-border:var(--gr-b);--chip-color:var(--gr)}.mc-3:hover{box-shadow:0 10px 26px rgba(24,122,58,.18);border-color:var(--gr)!important}
+.mc-1 .chip-label{color:var(--vi)}.mc-2 .chip-label{color:var(--or)}.mc-3 .chip-label{color:var(--gr)}
+
+.c-vi{--c-accent:var(--vi);--c-bg:var(--vi-bg);--c-border:var(--vi-b);--c-shadow:rgba(107,63,212,.18)}
+.c-or{--c-accent:var(--or);--c-bg:var(--or-bg);--c-border:var(--or-b);--c-shadow:rgba(232,98,10,.18)}
+.c-gr{--c-accent:var(--gr);--c-bg:var(--gr-bg);--c-border:var(--gr-b);--c-shadow:rgba(24,122,58,.18)}
+.c-te{--c-accent:var(--te);--c-bg:var(--te-bg);--c-border:var(--te-b);--c-shadow:rgba(10,122,106,.18)}
+.c-am{--c-accent:var(--am);--c-bg:var(--am-bg);--c-border:var(--am-b);--c-shadow:rgba(192,123,0,.18)}
+.c-ro{--c-accent:var(--ro);--c-bg:var(--ro-bg);--c-border:var(--ro-b);--c-shadow:rgba(184,24,54,.18)}
+.c-bl{--c-accent:var(--bl);--c-bg:var(--bl-bg);--c-border:var(--bl-b);--c-shadow:rgba(26,82,200,.18)}
+
+.mm-flow-vi{--flow-color:var(--vi);--flow-color2:var(--or);--flow-border:var(--vi-b);--flow-shadow:rgba(107,63,212,.15);--flow-num-bg:var(--vi-bg);--flow-num-border:var(--vi-b)}
+.mm-flow-vi .mm-dash{stroke:var(--vi)}.mm-flow-vi .mm-arrowhead{fill:var(--vi)}.mm-flow-vi .mm-traveldot{fill:var(--vi)}.mm-flow-vi .mm-step-num{color:var(--vi)}
+
+/* Artifact type cards */
+.artifact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:10px}
+@media(max-width:520px){.artifact-grid{grid-template-columns:1fr 1fr}}
+.art-card{border-radius:12px;padding:13px;text-align:center;transition:transform .3s,box-shadow .3s;cursor:default}
+.art-card:hover{transform:translateY(-5px) scale(1.04)}
+.a1{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.a1:hover{box-shadow:0 8px 22px rgba(107,63,212,.2)}
+.a2{background:var(--or-bg);border:1.5px solid var(--or-b)}.a2:hover{box-shadow:0 8px 22px rgba(232,98,10,.2)}
+.a3{background:var(--te-bg);border:1.5px solid var(--te-b)}.a3:hover{box-shadow:0 8px 22px rgba(10,122,106,.2)}
+.a4{background:var(--gr-bg);border:1.5px solid var(--gr-b)}.a4:hover{box-shadow:0 8px 22px rgba(24,122,58,.2)}
+.a5{background:var(--am-bg);border:1.5px solid var(--am-b)}.a5:hover{box-shadow:0 8px 22px rgba(192,123,0,.2)}
+.a6{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.a6:hover{box-shadow:0 8px 22px rgba(26,82,200,.2)}
+.art-ico{font-size:22px;display:block;margin-bottom:5px;transition:transform .3s}.art-card:hover .art-ico{transform:scale(1.2) rotate(-8deg)}
+.art-name{font-size:11px;font-weight:800;margin-bottom:3px}
+.a1 .art-name{color:var(--vi)}.a2 .art-name{color:var(--or)}.a3 .art-name{color:var(--te)}.a4 .art-name{color:var(--gr)}.a5 .art-name{color:var(--am)}.a6 .art-name{color:var(--bl)}
+.art-desc{font-size:10px;color:var(--muted);line-height:1.4}
+
+/* Instruction Hierarchy — concentric/pyramid */
+.hierarchy{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.hier-level{border-radius:11px;padding:13px 15px;display:flex;align-items:center;gap:12px;transition:transform .3s,box-shadow .3s;position:relative}
+.hier-level:hover{transform:translateX(5px)}
+.hl-1{background:linear-gradient(135deg,var(--or-bg),#fff);border:2px solid var(--or-b)}.hl-1:hover{box-shadow:0 6px 18px rgba(232,98,10,.16)}
+.hl-2{background:linear-gradient(135deg,var(--vi-bg),#fff);border:2px solid var(--vi-b);margin-left:18px}.hl-2:hover{box-shadow:0 6px 18px rgba(107,63,212,.16)}
+.hl-3{background:linear-gradient(135deg,var(--te-bg),#fff);border:2px solid var(--te-b);margin-left:36px}.hl-3:hover{box-shadow:0 6px 18px rgba(10,122,106,.16)}
+.hier-num{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;flex-shrink:0}
+.hl-1 .hier-num{background:var(--or);color:#fff}.hl-2 .hier-num{background:var(--vi);color:#fff}.hl-3 .hier-num{background:var(--te);color:#fff}
+.hier-title{font-size:12px;font-weight:800;margin-bottom:2px}
+.hl-1 .hier-title{color:var(--or)}.hl-2 .hier-title{color:var(--vi)}.hl-3 .hier-title{color:var(--te)}
+.hier-desc{font-size:10.5px;color:var(--muted);line-height:1.4}
+.hier-pill{margin-left:auto;font-size:9px;font-weight:700;padding:3px 9px;border-radius:6px;white-space:nowrap;flex-shrink:0}
+.hl-1 .hier-pill{background:var(--or);color:#fff}.hl-2 .hier-pill{background:var(--vi);color:#fff}.hl-3 .hier-pill{background:var(--te);color:#fff}
+
+/* Project examples */
+.project-examples{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+@media(max-width:500px){.project-examples{grid-template-columns:1fr}}
+.pe-item{border-radius:10px;padding:11px;display:flex;align-items:center;gap:10px;border:1.5px solid var(--border);background:var(--s2);transition:transform .3s,border-color .3s}
+.pe-item:hover{transform:translateX(4px)}
+.pe-item:nth-child(1):hover{border-color:var(--or-b)}.pe-item:nth-child(2):hover{border-color:var(--vi-b)}.pe-item:nth-child(3):hover{border-color:var(--te-b)}.pe-item:nth-child(4):hover{border-color:var(--gr-b)}.pe-item:nth-child(5):hover{border-color:var(--am-b)}.pe-item:nth-child(6):hover{border-color:var(--bl-b)}
+.pe-ico{font-size:20px;flex-shrink:0}
+.pe-text{font-size:11px;color:var(--text);font-weight:600;line-height:1.35}
+.pe-sub{font-size:10px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div class="aurora">
+  <div class="aurora-blob"></div>
+  <div class="aurora-blob"></div>
+  <div class="aurora-blob"></div>
+</div>
+<div class="noise"></div>
+<canvas id="mm-canvas"></canvas>
+
+<div class="mm-page">
+
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude AI · Crash Course · Part 5 of 7</div>
+    <h1>Artifacts & Projects<br>Build Tools, Organize Your AI Life</h1>
+    <p>Artifacts = interactive tools · Projects = AI folders with memory · Instructions hierarchy = control</p>
+  </div>
+
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">artifact</div><div class="mm-kpi-label">Visual/interactive<br>output Claude creates</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="3">0</div><div class="mm-kpi-label">Instruction hierarchy<br>levels: Global→Project→Chat</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">folders</div><div class="mm-kpi-label">What Projects are:<br>AI workspace folders</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">↺ select</div><div class="mm-kpi-label">Highlight text in output<br>→ click Reply to refine</div></div>
+  </div>
+
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">🛠️</span><div class="chip-label">Artifacts Are Tools, Not Text</div><div class="chip-desc">Claude can generate interactive HTML, calculators, websites, dashboards — not just answers.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">📁</span><div class="chip-label">Projects Are AI Workspaces</div><div class="chip-desc">Like folders where Claude remembers your files, instructions, and context across every chat.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">⚙️</span><div class="chip-label">Instructions Have Hierarchy</div><div class="chip-desc">Global → Project → Chat. Each layer can override the one above for that specific scope.</div></div>
+  </div>
+
+  <div class="mm-grid">
+
+    <!-- Artifact Types -->
+    <div class="mm-card c-vi mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🛠️</div><div><div class="mm-card-title">What Claude Can Build as Artifacts</div><div class="mm-card-subtitle">From prompt to interactive application — no deployment required to preview</div></div></div>
+      <div class="artifact-grid">
+        <div class="art-card a1"><span class="art-ico">🌐</span><div class="art-name">Portfolio Website</div><div class="art-desc">Personal portfolio from LinkedIn data. Sections, timeline, contact form.</div></div>
+        <div class="art-card a2"><span class="art-ico">📊</span><div class="art-name">Dashboard</div><div class="art-desc">AI workflow kanban board. Priority lanes, drag & drop, visual task management.</div></div>
+        <div class="art-card a3"><span class="art-ico">🧮</span><div class="art-name">ROI Calculator</div><div class="art-desc">Interactive calculator with inputs, formulas, and real-time output display.</div></div>
+        <div class="art-card a4"><span class="art-ico">📅</span><div class="art-name">Habit Tracker</div><div class="art-desc">Personal habit tracking app with streaks, checkboxes, and weekly view.</div></div>
+        <div class="art-card a5"><span class="art-ico">📣</span><div class="art-name">Marketing Dashboard</div><div class="art-desc">Campaign metrics visualizer, charts, and funnel analysis in one screen.</div></div>
+        <div class="art-card a6"><span class="art-ico">📝</span><div class="art-name">Study Planner</div><div class="art-desc">Topic-based study schedule with progress bars and timed review sessions.</div></div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">💡</div>
+        <div><div class="mm-rule-title">⭐ THE ARTIFACT MINDSET</div><div class="mm-rule-body">Don't just use Claude for answers. Ask it to <strong>build you something</strong>. Every time you have repetitive work, consider making an artifact for it — visual tools impress managers, clients, and interviewers.</div></div>
+      </div>
+    </div>
+
+    <!-- Artifact Workflow -->
+    <div class="mm-card c-or">
+      <div class="mm-card-head"><div class="mm-card-ico">🌐</div><div><div class="mm-card-title">Portfolio Website Example</div><div class="mm-card-subtitle">From LinkedIn URL to shareable personal site in one prompt</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">1</div><span><b>Provide LinkedIn URL</b> — Claude reads your profile: roles, projects, skills, education, achievements</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">2</div><span><b>Generates full HTML</b> — complete portfolio site with header, about, experience timeline, projects, contact</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">3</div><span><b>Iterate visually</b> — "white background", "darker text", "update skills section" — changes apply immediately</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">4</div><span><b>Select + Reply</b> — highlight any text in the output, click Reply to refine just that section</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">5</div><span><b>Download or publish</b> — get the HTML code or deploy it as a shareable public URL</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-or">🌐 Full Website</span>
+        <span class="mm-tag mm-tag-or">🔗 LinkedIn Data</span>
+        <span class="mm-tag mm-tag-vi">⚡ One Prompt</span>
+      </div>
+    </div>
+
+    <!-- Projects -->
+    <div class="mm-card c-gr">
+      <div class="mm-card-head"><div class="mm-card-ico">📁</div><div><div class="mm-card-title">Claude Projects — Your AI Workspace Folders</div><div class="mm-card-subtitle">Group related chats + files + instructions around a single goal</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">★</div><span><b>What is a Project?</b> — a named workspace where Claude remembers your files, goals, and instructions across all chats inside it</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Add files to Project</b> — brand guidelines, client specs, legal docs — Claude references them automatically in every chat</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Add instructions to Project</b> — "always respond formally", "assume US audience" — applies to every new chat inside</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Real example</b> — brand guideline txt uploaded → drafting client emails now auto-follows brand tone and tagline</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Move chats to projects</b> — any existing chat can be moved into a project from the sidebar menu</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-gr">📁 Organized Workspace</span>
+        <span class="mm-tag mm-tag-gr">📄 File Memory</span>
+        <span class="mm-tag mm-tag-te">⚙️ Auto-Context</span>
+      </div>
+    </div>
+
+    <!-- Real Project Examples -->
+    <div class="mm-card c-te">
+      <div class="mm-card-head"><div class="mm-card-ico">💼</div><div><div class="mm-card-title">Real Project Examples</div><div class="mm-card-subtitle">How to structure your AI life — one project per facet</div></div></div>
+      <div class="project-examples">
+        <div class="pe-item"><div class="pe-ico">👥</div><div><div class="pe-text">AI Consultancy</div><div class="pe-sub">Client briefs, proposals, follow-ups</div></div></div>
+        <div class="pe-item"><div class="pe-ico">📹</div><div><div class="pe-text">YouTube Content</div><div class="pe-sub">Script drafts, thumbnails, ideas</div></div></div>
+        <div class="pe-item"><div class="pe-ico">🎓</div><div><div class="pe-text">AI Training / Courses</div><div class="pe-sub">Curriculum, student Q&A, resources</div></div></div>
+        <div class="pe-item"><div class="pe-ico">💻</div><div><div class="pe-text">Daily AI Work</div><div class="pe-sub">Everyday tasks, email drafts, reports</div></div></div>
+        <div class="pe-item"><div class="pe-ico">🤝</div><div><div class="pe-text">Client Projects</div><div class="pe-sub">One project per major client</div></div></div>
+        <div class="pe-item"><div class="pe-ico">📊</div><div><div class="pe-text">Research Projects</div><div class="pe-sub">Papers, analysis, literature review</div></div></div>
+      </div>
+    </div>
+
+    <!-- Instruction Hierarchy -->
+    <div class="mm-card c-am mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">⚙️</div><div><div class="mm-card-title">The Instruction Hierarchy — Who Wins When They Conflict?</div><div class="mm-card-subtitle">Three layers of instructions, each more specific than the last — most specific always wins</div></div></div>
+      <div class="hierarchy">
+        <div class="hier-level hl-1">
+          <div class="hier-num">1</div>
+          <div>
+            <div class="hier-title">Global Claude Instructions</div>
+            <div class="hier-desc">Set in your account settings. Applies to every single conversation and project. E.g. "Always ask me for goal, context, and action before responding."</div>
+          </div>
+          <div class="hier-pill">Always active</div>
+        </div>
+        <div class="hier-level hl-2">
+          <div class="hier-num">2</div>
+          <div>
+            <div class="hier-title">Project Instructions (sit on top of global)</div>
+            <div class="hier-desc">Set per project. Applies to all chats within that project. E.g. "This is a US client project. Always be formal. Use brand guideline file for tone."</div>
+          </div>
+          <div class="hier-pill">Project-scoped</div>
+        </div>
+        <div class="hier-level hl-3">
+          <div class="hier-num">3</div>
+          <div>
+            <div class="hier-title">Chat Instructions (most specific — wins locally)</div>
+            <div class="hier-desc">Set inside a specific chat. Only applies to that conversation. E.g. "For this chat only: respond in Hindi." — Overrides global and project instructions for this chat.</div>
+          </div>
+          <div class="hier-pill">Chat-only</div>
+        </div>
+      </div>
+      <div class="mm-rule" style="margin-top:12px">
+        <div class="mm-rule-icon">⭐</div>
+        <div><div class="mm-rule-title">The Hierarchy Rule to Remember</div><div class="mm-rule-body">Global applies everywhere. Project overrides global for its chats. Chat overrides both for itself. <strong>Most specific instruction always wins.</strong> This is critical to understand for Claude Code too.</div></div>
+      </div>
+    </div>
+
+    <!-- Artifact pipeline -->
+    <div class="mm-card c-bl mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">Artifact Creation & Iteration Loop</div><div class="mm-card-subtitle">From prompt to polished interactive tool in 7 steps</div></div></div>
+      <div class="mm-flow mm-flow-vi">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">📋</div><div class="mm-step-lbl">Write Prompt</div><div class="mm-step-sub">Describe the tool</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#ap1"/></animateMotion></circle><path id="ap1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">⚙️</div><div class="mm-step-lbl">Claude Builds</div><div class="mm-step-sub">HTML/JS generated</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#ap2"/></animateMotion></circle><path id="ap2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">👁️</div><div class="mm-step-lbl">Preview in Place</div><div class="mm-step-sub">Rendered artifact</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#ap3"/></animateMotion></circle><path id="ap3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">✍️</div><div class="mm-step-lbl">Select + Reply</div><div class="mm-step-sub">Refine any section</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#ap4"/></animateMotion></circle><path id="ap4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">🎨</div><div class="mm-step-lbl">Style Changes</div><div class="mm-step-sub">Colors, layout, text</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#ap5"/></animateMotion></circle><path id="ap5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">✅</div><div class="mm-step-lbl">Final Polish</div><div class="mm-step-sub">Production-ready</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.7s"><mpath href="#ap6"/></animateMotion></circle><path id="ap6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">📤</div><div class="mm-step-lbl">Share or Deploy</div><div class="mm-step-sub">Download code / publish</div></div>
+      </div>
+    </div>
+
+    <!-- Projects vs plain chats -->
+    <div class="mm-card c-ro">
+      <div class="mm-card-head"><div class="mm-card-ico">⚠️</div><div><div class="mm-card-title">Without Projects: The Pain Points</div><div class="mm-card-subtitle">Why casual AI users waste hours that project users save effortlessly</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">✕</div><span><b>Re-explaining every time</b> — "I work on voice agents for healthcare..." typed again, every new chat</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✕</div><span><b>Lost chats</b> — scrolling through hundreds of conversations to find the one from last week about Client X</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✕</div><span><b>Inconsistent outputs</b> — without brand guidelines in context, tone and style varies unpredictably</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✕</div><span><b>Manual file attachment every time</b> — same spec document uploaded again and again across sessions</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-ro">🔄 Repetitive</span>
+        <span class="mm-tag mm-tag-ro">🔍 Can't Find Chats</span>
+        <span class="mm-tag mm-tag-gr">✅ Projects Fix All This</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="shared/mindmap.js"></script>
+<script>
+  MindMap.init(
+    ['artifact', 'project', '→', 'HTML', '[]', 'ctx', 'folder', 'deploy', 'fn()', 'publish'],
+    [270, 22, 130, 165, 38]
+  );
+</script>
+</body>
+</html>

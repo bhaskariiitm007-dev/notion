@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Effective Prompting — Talk to Claude Like an Expert</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#E8620A,transparent 70%);top:-80px;left:-90px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#0A7A6A,transparent 70%);top:40%;right:-130px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#C07B00,transparent 70%);bottom:-70px;left:38%}
+
+.mm-badge{background:linear-gradient(135deg,var(--or-bg),#FFFAF5);border-color:var(--or-b);color:var(--or)}
+.mm-dot{background:var(--or)}.mm-dot::after{border-color:var(--or)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--or) 0%,var(--am) 28%,var(--te) 60%,var(--gr) 100%)}
+
+.mm-kpi:nth-child(1){--kpi-accent:var(--or)}
+.mm-kpi:nth-child(2){--kpi-accent:var(--te)}
+.mm-kpi:nth-child(3){--kpi-accent:var(--am)}
+.mm-kpi:nth-child(4){--kpi-accent:var(--gr)}
+
+.mc-1{--chip-bg:var(--or-bg);--chip-border:var(--or-b);--chip-color:var(--or)}.mc-1:hover{box-shadow:0 10px 26px rgba(232,98,10,.18);border-color:var(--or)!important}
+.mc-2{--chip-bg:var(--te-bg);--chip-border:var(--te-b);--chip-color:var(--te)}.mc-2:hover{box-shadow:0 10px 26px rgba(10,122,106,.18);border-color:var(--te)!important}
+.mc-3{--chip-bg:var(--am-bg);--chip-border:var(--am-b);--chip-color:var(--am)}.mc-3:hover{box-shadow:0 10px 26px rgba(192,123,0,.18);border-color:var(--am)!important}
+.mc-1 .chip-label{color:var(--or)}.mc-2 .chip-label{color:var(--te)}.mc-3 .chip-label{color:var(--am)}
+
+.c-or{--c-accent:var(--or);--c-bg:var(--or-bg);--c-border:var(--or-b);--c-shadow:rgba(232,98,10,.18)}
+.c-te{--c-accent:var(--te);--c-bg:var(--te-bg);--c-border:var(--te-b);--c-shadow:rgba(10,122,106,.18)}
+.c-am{--c-accent:var(--am);--c-bg:var(--am-bg);--c-border:var(--am-b);--c-shadow:rgba(192,123,0,.18)}
+.c-gr{--c-accent:var(--gr);--c-bg:var(--gr-bg);--c-border:var(--gr-b);--c-shadow:rgba(24,122,58,.18)}
+.c-ro{--c-accent:var(--ro);--c-bg:var(--ro-bg);--c-border:var(--ro-b);--c-shadow:rgba(184,24,54,.18)}
+.c-bl{--c-accent:var(--bl);--c-bg:var(--bl-bg);--c-border:var(--bl-b);--c-shadow:rgba(26,82,200,.18)}
+.c-vi{--c-accent:var(--vi);--c-bg:var(--vi-bg);--c-border:var(--vi-b);--c-shadow:rgba(107,63,212,.18)}
+
+.mm-flow-or{--flow-color:var(--or);--flow-color2:var(--am);--flow-border:var(--or-b);--flow-shadow:rgba(232,98,10,.15);--flow-num-bg:var(--or-bg);--flow-num-border:var(--or-b)}
+.mm-flow-or .mm-dash{stroke:var(--or)}.mm-flow-or .mm-arrowhead{fill:var(--or)}.mm-flow-or .mm-traveldot{fill:var(--or)}.mm-flow-or .mm-step-num{color:var(--or)}
+
+/* PROMPT ACRONYM — G.C.A.F. */
+.acronym-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:10px}
+@media(max-width:520px){.acronym-grid{grid-template-columns:1fr 1fr}}
+.acro-card{border-radius:12px;padding:14px;text-align:center;transition:transform .3s,box-shadow .3s;position:relative;overflow:hidden;cursor:default}
+.acro-card:hover{transform:translateY(-5px) scale(1.03)}
+.acro-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:3px}
+.ac-1{background:var(--or-bg);border:2px solid var(--or-b)}.ac-1::before{background:var(--or)}.ac-1:hover{box-shadow:0 10px 26px rgba(232,98,10,.2)}
+.ac-2{background:var(--te-bg);border:2px solid var(--te-b)}.ac-2::before{background:var(--te)}.ac-2:hover{box-shadow:0 10px 26px rgba(10,122,106,.2)}
+.ac-3{background:var(--vi-bg);border:2px solid var(--vi-b)}.ac-3::before{background:var(--vi)}.ac-3:hover{box-shadow:0 10px 26px rgba(107,63,212,.2)}
+.ac-4{background:var(--am-bg);border:2px solid var(--am-b)}.ac-4::before{background:var(--am)}.ac-4:hover{box-shadow:0 10px 26px rgba(192,123,0,.2)}
+.acro-letter{font-size:38px;font-weight:900;font-family:var(--fm);line-height:1;margin-bottom:4px;display:block;transition:transform .3s}
+.acro-card:hover .acro-letter{transform:rotate(-8deg) scale(1.2)}
+.ac-1 .acro-letter{color:var(--or)}.ac-2 .acro-letter{color:var(--te)}.ac-3 .acro-letter{color:var(--vi)}.ac-4 .acro-letter{color:var(--am)}
+.acro-word{font-size:12px;font-weight:800;margin-bottom:5px}
+.ac-1 .acro-word{color:var(--or)}.ac-2 .acro-word{color:var(--te)}.ac-3 .acro-word{color:var(--vi)}.ac-4 .acro-word{color:var(--am)}
+.acro-desc{font-size:10.5px;color:var(--muted);line-height:1.4}
+.acro-example{font-size:9.5px;color:var(--muted);font-family:var(--fm);margin-top:5px;padding:4px 7px;background:var(--s2);border-radius:5px;text-align:left}
+
+/* Markdown reference table */
+.md-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:11px}
+.md-table th{text-align:left;padding:7px 10px;background:var(--s2);color:var(--muted);font-weight:700;font-family:var(--fm);font-size:10px;letter-spacing:.4px}
+.md-table td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:middle;transition:background .2s}
+.md-table tr:hover td{background:var(--s2)}
+.md-table tr:last-child td{border-bottom:none}
+.md-code{font-family:var(--fm);background:var(--s2);padding:2px 6px;border-radius:4px;font-size:10px;color:var(--or);border:1px solid var(--or-b)}
+.md-result{color:var(--muted)}
+
+/* Iteration loop diagram */
+.iter-loop{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap;justify-content:center}
+.iter-node{border-radius:12px;padding:10px 13px;text-align:center;font-size:11px;font-weight:700;flex-shrink:0;transition:transform .3s}
+.iter-node:hover{transform:scale(1.05)}
+.in-1{background:var(--or-bg);border:1.5px solid var(--or-b);color:var(--or)}
+.in-2{background:var(--am-bg);border:1.5px solid var(--am-b);color:var(--am)}
+.in-3{background:var(--te-bg);border:1.5px solid var(--te-b);color:var(--te)}
+.in-4{background:var(--gr-bg);border:1.5px solid var(--gr-b);color:var(--gr)}
+.iter-arrow{font-size:18px;color:var(--muted);flex-shrink:0}
+
+/* Custom instructions sections */
+.inst-block{background:var(--s2);border:1.5px solid var(--border);border-radius:11px;padding:12px;margin-bottom:9px;transition:transform .3s,border-color .3s}
+.inst-block:hover{transform:translateX(4px)}
+.inst-block:nth-child(1):hover{border-color:var(--or-b)}
+.inst-block:nth-child(2):hover{border-color:var(--te-b)}
+.inst-block:nth-child(3):hover{border-color:var(--vi-b)}
+.inst-head{font-size:11px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:7px}
+.ib-1 .inst-head{color:var(--or)}.ib-2 .inst-head{color:var(--te)}.ib-3 .inst-head{color:var(--vi)}
+.inst-body{font-size:11px;color:var(--muted);line-height:1.5}
+</style>
+</head>
+<body>
+
+<div class="aurora">
+  <div class="aurora-blob"></div>
+  <div class="aurora-blob"></div>
+  <div class="aurora-blob"></div>
+</div>
+<div class="noise"></div>
+<canvas id="mm-canvas"></canvas>
+
+<div class="mm-page">
+
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude AI · Crash Course · Part 3 of 7</div>
+    <h1>Effective Prompting<br>Talk to Claude Like an Expert</h1>
+    <p>Goal · Context · Action · Format · Iterate · Never settle for the first response</p>
+  </div>
+
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="4">0</div><div class="mm-kpi-label">Elements of a<br>great prompt</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">G.C.A.F</div><div class="mm-kpi-label">Prompt framework:<br>Goal·Context·Action·Format</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="0">0</div><div class="mm-kpi-label">Perfect results on<br>1st try (expect this)</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">#,**,→</div><div class="mm-kpi-label">Markdown cues<br>for structure</div></div>
+  </div>
+
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">📋</span><div class="chip-label">Brief Tasks, Not Questions</div><div class="chip-desc">Think of Claude as an intelligent assistant, not a search bar. Assign tasks, not queries.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">🔄</span><div class="chip-label">Iteration Is the Strategy</div><div class="chip-desc">First response is a draft. Shape it with follow-up prompts until it's exactly right.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">⚙️</span><div class="chip-label">Custom Instructions Are Leverage</div><div class="chip-desc">Set once, applies forever. Tell Claude how to think for you — not what to do each time.</div></div>
+  </div>
+
+  <div class="mm-grid">
+
+    <!-- GCAF Acronym -->
+    <div class="mm-card c-or mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">📐</div><div><div class="mm-card-title">The G.C.A.F. Prompt Framework</div><div class="mm-card-subtitle">Every great prompt has these four elements — the more complete, the better the output</div></div></div>
+      <div class="acronym-grid">
+        <div class="acro-card ac-1">
+          <span class="acro-letter">G</span>
+          <div class="acro-word">Goal</div>
+          <div class="acro-desc">What exactly is the desired outcome? Be specific about the end result you want.</div>
+          <div class="acro-example">e.g. "Create a short outreach email for US clients"</div>
+        </div>
+        <div class="acro-card ac-2">
+          <span class="acro-letter">C</span>
+          <div class="acro-word">Context</div>
+          <div class="acro-desc">What background does Claude need? Your role, audience, project, constraints.</div>
+          <div class="acro-example">e.g. "We sell voice agent solutions to medical clinics"</div>
+        </div>
+        <div class="acro-card ac-3">
+          <span class="acro-letter">A</span>
+          <div class="acro-word">Action</div>
+          <div class="acro-desc">What exact steps should Claude take to complete the task? Course of action.</div>
+          <div class="acro-example">e.g. "Draft, then ask if I want variations"</div>
+        </div>
+        <div class="acro-card ac-4">
+          <span class="acro-letter">F</span>
+          <div class="acro-word">Format</div>
+          <div class="acro-desc">How should the output be structured? Length, bullet points, headers, tone.</div>
+          <div class="acro-example">e.g. "Short email, formal tone, no more than 100 words"</div>
+        </div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">🎯</div>
+        <div><div class="mm-rule-title">⭐ THE MINDSET SHIFT</div><div class="mm-rule-body">Don't ask Claude a question — <strong>assign Claude a task</strong>. Provide the problem like you'd brief a brilliant assistant. More context in = better output guaranteed.</div></div>
+      </div>
+    </div>
+
+    <!-- Markdown Reference -->
+    <div class="mm-card c-te">
+      <div class="mm-card-head"><div class="mm-card-ico">📝</div><div><div class="mm-card-title">Markdown for Better Prompts</div><div class="mm-card-subtitle">Formatting signals tell Claude how to organize its thinking</div></div></div>
+      <table class="md-table">
+        <thead>
+          <tr><th>Syntax</th><th>Meaning</th><th>Use When...</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="md-code"># Heading</span></td><td class="md-result">Main section</td><td>Separating major parts of a prompt</td></tr>
+          <tr><td><span class="md-code">## Sub</span></td><td class="md-result">Sub-section</td><td>Nesting information hierarchically</td></tr>
+          <tr><td><span class="md-code">**bold**</span></td><td class="md-result"><strong>Bold text</strong></td><td>Highlighting key constraints/terms</td></tr>
+          <tr><td><span class="md-code">- item</span></td><td class="md-result">Bullet list</td><td>Listing requirements or examples</td></tr>
+          <tr><td><span class="md-code">`code`</span></td><td class="md-result"><code>inline code</code></td><td>Technical terms, commands, paths</td></tr>
+          <tr><td><span class="md-code">&gt; quote</span></td><td class="md-result">Blockquote</td><td>Referencing a specific text excerpt</td></tr>
+        </tbody>
+      </table>
+      <div class="mm-tags" style="margin-top:11px">
+        <span class="mm-tag mm-tag-te">📄 Better Structure</span>
+        <span class="mm-tag mm-tag-te">🧠 Clearer Signal</span>
+        <span class="mm-tag mm-tag-am">✅ Better Output</span>
+      </div>
+    </div>
+
+    <!-- Custom Instructions -->
+    <div class="mm-card c-am">
+      <div class="mm-card-head"><div class="mm-card-ico">⚙️</div><div><div class="mm-card-title">Custom Instructions — Set Once, Works Forever</div><div class="mm-card-subtitle">Personalize Claude's behavior across every conversation</div></div></div>
+      <div class="inst-block ib-1">
+        <div class="inst-head">📋 Ask for Goal, Context & Action</div>
+        <div class="inst-body">"For any task I provide, please ask me: what is the goal, what context is needed, what action should you take, and what is the desired output format."</div>
+      </div>
+      <div class="inst-block ib-2">
+        <div class="inst-head">❓ Always Ask Clarifying Questions</div>
+        <div class="inst-body">"Make sure you ask me questions regarding the problem so we can tackle it effectively — don't assume."</div>
+      </div>
+      <div class="inst-block ib-3">
+        <div class="inst-head">🚫 Don't Be a Yes-Man</div>
+        <div class="inst-body">"Don't always agree with me — make sure you present what is actually best for the task at hand. Act like a senior mentor who corrects my thinking."</div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-am">🎯 Personalized Claude</span>
+        <span class="mm-tag mm-tag-am">❓ Auto-Clarify</span>
+        <span class="mm-tag mm-tag-or">🚫 Avoid Sycophancy</span>
+      </div>
+    </div>
+
+    <!-- Claude Asks Questions Back -->
+    <div class="mm-card c-gr">
+      <div class="mm-card-head"><div class="mm-card-ico">💬</div><div><div class="mm-card-title">Claude Asks Questions Back</div><div class="mm-card-subtitle">One of Claude's biggest advantages over simple chatbots</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">★</div><span><b>Clarifying questions</b> — Claude asks what other AI skips, making outputs dramatically more relevant</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Gives you choices</b> — instead of just asking open questions, Claude offers multiple-choice options too</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Example</b> — uploading a 50-page startup report: Claude asks "Who is this for?" and "How deep should each insight be?"</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Reduces prompt burden</b> — even users with no prompting experience get guided to the right output</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Power of custom instructions</b> — asking for this behavior in your instructions triggers it for every single prompt</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-gr">💬 Clarification</span>
+        <span class="mm-tag mm-tag-gr">📋 Multiple Choice</span>
+        <span class="mm-tag mm-tag-te">🎯 Better Output</span>
+      </div>
+    </div>
+
+    <!-- Iterative Prompting Flow -->
+    <div class="mm-card c-vi mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">The Iterative Prompting Loop — How Real Experts Use Claude</div><div class="mm-card-subtitle">Never settle for the first response — shape it step by step</div></div></div>
+      <div class="mm-flow mm-flow-or">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">📋</div><div class="mm-step-lbl">Write Full Prompt</div><div class="mm-step-sub">Goal+Context+Action+Format</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#it1"/></animateMotion></circle><path id="it1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">💬</div><div class="mm-step-lbl">Claude Asks</div><div class="mm-step-sub">Clarifying questions</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#it2"/></animateMotion></circle><path id="it2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">📤</div><div class="mm-step-lbl">First Response</div><div class="mm-step-sub">Initial draft output</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#it3"/></animateMotion></circle><path id="it3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">🔍</div><div class="mm-step-lbl">Review Output</div><div class="mm-step-sub">Evaluate vs goal</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#it4"/></animateMotion></circle><path id="it4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">🎯</div><div class="mm-step-lbl">Refine Prompt</div><div class="mm-step-sub">Add constraints/direction</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#it5"/></animateMotion></circle><path id="it5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">⬆️</div><div class="mm-step-lbl">Improved Output</div><div class="mm-step-sub">Getting closer to goal</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.7s"><mpath href="#it6"/></animateMotion></circle><path id="it6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">✅</div><div class="mm-step-lbl">Final Result</div><div class="mm-step-sub">Exactly what you needed</div></div>
+      </div>
+    </div>
+
+    <!-- Prompt Pitfalls -->
+    <div class="mm-card c-ro">
+      <div class="mm-card-head"><div class="mm-card-ico">🚨</div><div><div class="mm-card-title">Prompting Mistakes to Avoid</div><div class="mm-card-subtitle">Common patterns that lead to shallow, generic responses</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">✕</div><span><b>Vague questions</b> — "help me with my email" gives you nothing; "write a formal outreach email to a US healthcare startup" gives gold</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✕</div><span><b>No context</b> — Claude without context is like a consultant without a brief — they guess and usually miss</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✕</div><span><b>Accepting first output</b> — treating Claude as a vending machine instead of a thinking partner you can shape</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✕</div><span><b>Asking "questions" not briefing tasks</b> — "What's the best way to...?" vs "Give me a step-by-step plan to..."</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-ro">🚫 Vague</span>
+        <span class="mm-tag mm-tag-ro">🚫 No Context</span>
+        <span class="mm-tag mm-tag-am">💡 Brief Properly</span>
+      </div>
+    </div>
+
+    <!-- Prompt Examples -->
+    <div class="mm-card c-bl">
+      <div class="mm-card-head"><div class="mm-card-ico">💡</div><div><div class="mm-card-title">Real Iteration Example: Adventure Trip Planning</div><div class="mm-card-subtitle">How layering prompts builds a far better result</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">1</div><span><b>First prompt:</b> "I'm looking for adventure trip options for 5 people, budget-friendly, North India" — basic output received</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">2</div><span><b>Iterate:</b> "Make the activities more adventurous" — Claude pivots to paragliding, bouldering, white-water rafting, jungle camping</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">3</div><span><b>Iterate again:</b> "Add approximate cost estimates per person and for group of 5" — detailed budget breakdown appears</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">4</div><span><b>Result:</b> Fully usable, specific, costed adventure plan — shaped by three simple follow-up prompts</span></div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">🏆</div>
+        <div><div class="mm-rule-title">The Real Power of Iteration</div><div class="mm-rule-body">Each follow-up prompt is a <strong>refinement instruction</strong>. You're sculpting the output, not starting over. This is how professionals use Claude to get work done.</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="shared/mindmap.js"></script>
+<script>
+  MindMap.init(
+    ['G.C.A.F', '#h1', '**bold**', '→', 'ctx', 'task', 'iterate', '[]', 'prompt', 'goal'],
+    [22, 38, 165, 210, 130]
+  );
+</script>
+</body>
+</html>

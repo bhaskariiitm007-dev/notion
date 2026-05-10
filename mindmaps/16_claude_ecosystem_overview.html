@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Claude Ecosystem — From Chatbot to AI Assistant</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#E8620A,transparent 70%);top:-80px;left:-100px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#6B3FD4,transparent 70%);top:38%;right:-140px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#0A7A6A,transparent 70%);bottom:-70px;left:38%}
+
+.mm-badge{background:linear-gradient(135deg,var(--or-bg),#FFFAF5);border-color:var(--or-b);color:var(--or)}
+.mm-dot{background:var(--or)}.mm-dot::after{border-color:var(--or)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--or) 0%,var(--am) 28%,var(--vi) 58%,var(--te) 100%)}
+
+.mm-kpi:nth-child(1){--kpi-accent:var(--or)}
+.mm-kpi:nth-child(2){--kpi-accent:var(--vi)}
+.mm-kpi:nth-child(3){--kpi-accent:var(--te)}
+.mm-kpi:nth-child(4){--kpi-accent:var(--am)}
+
+.mc-1{--chip-bg:var(--or-bg);--chip-border:var(--or-b);--chip-color:var(--or)}.mc-1:hover{box-shadow:0 10px 26px rgba(232,98,10,.18);border-color:var(--or)!important}
+.mc-2{--chip-bg:var(--vi-bg);--chip-border:var(--vi-b);--chip-color:var(--vi)}.mc-2:hover{box-shadow:0 10px 26px rgba(107,63,212,.18);border-color:var(--vi)!important}
+.mc-3{--chip-bg:var(--te-bg);--chip-border:var(--te-b);--chip-color:var(--te)}.mc-3:hover{box-shadow:0 10px 26px rgba(10,122,106,.18);border-color:var(--te)!important}
+.mc-1 .chip-label{color:var(--or)}.mc-2 .chip-label{color:var(--vi)}.mc-3 .chip-label{color:var(--te)}
+
+.c-ro{--c-accent:var(--ro);--c-bg:var(--ro-bg);--c-border:var(--ro-b);--c-shadow:rgba(184,24,54,.18)}
+.c-or{--c-accent:var(--or);--c-bg:var(--or-bg);--c-border:var(--or-b);--c-shadow:rgba(232,98,10,.18)}
+.c-vi{--c-accent:var(--vi);--c-bg:var(--vi-bg);--c-border:var(--vi-b);--c-shadow:rgba(107,63,212,.18)}
+.c-te{--c-accent:var(--te);--c-bg:var(--te-bg);--c-border:var(--te-b);--c-shadow:rgba(10,122,106,.18)}
+.c-bl{--c-accent:var(--bl);--c-bg:var(--bl-bg);--c-border:var(--bl-b);--c-shadow:rgba(26,82,200,.18)}
+.c-gr{--c-accent:var(--gr);--c-bg:var(--gr-bg);--c-border:var(--gr-b);--c-shadow:rgba(24,122,58,.18)}
+.c-am{--c-accent:var(--am);--c-bg:var(--am-bg);--c-border:var(--am-b);--c-shadow:rgba(192,123,0,.18)}
+
+.mm-flow-or{--flow-color:var(--or);--flow-color2:var(--am);--flow-border:var(--or-b);--flow-shadow:rgba(232,98,10,.15);--flow-num-bg:var(--or-bg);--flow-num-border:var(--or-b)}
+.mm-flow-or .mm-dash{stroke:var(--or)}.mm-flow-or .mm-arrowhead{fill:var(--or)}.mm-flow-or .mm-traveldot{fill:var(--or)}.mm-flow-or .mm-step-num{color:var(--or)}
+
+/* Before/After layout */
+.before-after{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin-top:10px}
+.ba-panel{border-radius:13px;padding:15px}
+.ba-before{background:var(--ro-bg);border:2px solid var(--ro-b)}
+.ba-after{background:var(--gr-bg);border:2px solid var(--gr-b)}
+.ba-arrow{font-size:22px;text-align:center;color:var(--muted)}
+.ba-title{font-size:11px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.ba-before .ba-title{color:var(--ro)}.ba-after .ba-title{color:var(--gr)}
+.ba-item{font-size:11px;color:var(--muted);margin-bottom:4px;display:flex;align-items:flex-start;gap:6px;line-height:1.45}
+.ba-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.ba-before .ba-dot{background:var(--ro)}.ba-after .ba-dot{background:var(--gr)}
+@media(max-width:500px){.before-after{grid-template-columns:1fr}}
+
+/* 3 Layer Hub */
+.three-layers{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:10px}
+@media(max-width:520px){.three-layers{grid-template-columns:1fr}}
+.layer-card{border-radius:13px;padding:15px;text-align:center;transition:transform .3s,box-shadow .3s;position:relative;overflow:hidden}
+.layer-card::after{content:'';position:absolute;top:-100%;left:-50%;width:30%;height:300%;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.2) 50%,transparent 60%);transition:all .5s}
+.layer-card:hover::after{top:100%;left:120%}
+.lc-1{background:var(--or-bg);border:2px solid var(--or-b)}.lc-1:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(232,98,10,.2)}
+.lc-2{background:var(--te-bg);border:2px solid var(--te-b)}.lc-2:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(10,122,106,.2)}
+.lc-3{background:var(--vi-bg);border:2px solid var(--vi-b)}.lc-3:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(107,63,212,.2)}
+.layer-icon{font-size:24px;margin-bottom:6px;display:block;transition:transform .3s}.layer-card:hover .layer-icon{transform:scale(1.18) rotate(-8deg)}
+.layer-name{font-size:12px;font-weight:800;margin-bottom:3px}
+.lc-1 .layer-name{color:var(--or)}.lc-2 .layer-name{color:var(--te)}.lc-3 .layer-name{color:var(--vi)}
+.layer-role{font-size:10px;font-weight:700;margin-bottom:5px;padding:2px 8px;border-radius:6px;display:inline-block}
+.lc-1 .layer-role{background:var(--or);color:#fff}.lc-2 .layer-role{background:var(--te);color:#fff}.lc-3 .layer-role{background:var(--vi);color:#fff}
+.layer-desc{font-size:10.5px;color:var(--muted);line-height:1.45}
+
+/* VS Duel */
+.vs-duel{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:start;margin-top:10px}
+.vs-badge{width:38px;height:38px;background:#1E1C18;color:#F7F6F2;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;align-self:center;box-shadow:0 4px 14px rgba(0,0,0,.25);animation:vsGlow 2s ease-in-out infinite alternate}
+@keyframes vsGlow{0%{box-shadow:0 4px 14px rgba(0,0,0,.25)}100%{box-shadow:0 4px 24px rgba(0,0,0,.4)}}
+.vs-panel{border-radius:13px;padding:14px}
+.vs-gpt{background:var(--gr-bg);border:2px solid var(--gr-b)}.vs-claude{background:var(--bl-bg);border:2px solid var(--bl-b)}
+.vs-panel-title{font-size:12px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.vs-gpt .vs-panel-title{color:var(--gr)}.vs-claude .vs-panel-title{color:var(--bl)}
+.vs-item{font-size:11px;color:var(--muted);margin-bottom:5px;display:flex;align-items:flex-start;gap:6px;line-height:1.45;transition:transform .2s}
+.vs-item:hover{transform:translateX(3px)}
+.vdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.vs-gpt .vdot{background:var(--gr)}.vs-claude .vdot{background:var(--bl)}
+@media(max-width:500px){.vs-duel{grid-template-columns:1fr}}
+
+/* 3-mode use cards */
+.use-modes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+@media(max-width:520px){.use-modes{grid-template-columns:1fr}}
+.mode-card{border-radius:12px;padding:13px;text-align:center;transition:transform .3s,box-shadow .3s}
+.mode-card:hover{transform:translateY(-4px)}
+.mc-r{background:var(--or-bg);border:1.5px solid var(--or-b)}.mc-r:hover{box-shadow:0 8px 22px rgba(232,98,10,.2)}
+.mc-t{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.mc-t:hover{box-shadow:0 8px 22px rgba(107,63,212,.2)}
+.mc-b{background:var(--te-bg);border:1.5px solid var(--te-b)}.mc-b:hover{box-shadow:0 8px 22px rgba(10,122,106,.2)}
+.mode-ico{font-size:22px;display:block;margin-bottom:5px;transition:transform .3s}.mode-card:hover .mode-ico{transform:scale(1.2) rotate(-8deg)}
+.mode-lbl{font-size:11.5px;font-weight:800;margin-bottom:3px}
+.mc-r .mode-lbl{color:var(--or)}.mc-t .mode-lbl{color:var(--vi)}.mc-b .mode-lbl{color:var(--te)}
+.mode-desc{font-size:10px;color:var(--muted);line-height:1.4}
+</style>
+</head>
+<body>
+
+<div class="aurora">
+  <div class="aurora-blob"></div>
+  <div class="aurora-blob"></div>
+  <div class="aurora-blob"></div>
+</div>
+<div class="noise"></div>
+<canvas id="mm-canvas"></canvas>
+
+<div class="mm-page">
+
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude AI · Crash Course · Part 1 of 7</div>
+    <h1>The Claude Ecosystem<br>Brain, Engineer & Operator</h1>
+    <p>AI assistants aren't chatbots · Three layers of Claude · One platform, three power modes</p>
+  </div>
+
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="3">0</div><div class="mm-kpi-label">Layers in the<br>Claude ecosystem</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="3">0</div><div class="mm-kpi-label">Modes Claude<br>operates in</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">hrs→min</div><div class="mm-kpi-label">Time savings:<br>manual → AI-assisted</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="2026">0</div><div class="mm-kpi-label">Year AI assistants<br>became essential</div></div>
+  </div>
+
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">🧠</span><div class="chip-label">Not a Chatbot</div><div class="chip-desc">Claude is an AI assistant that connects to tools, understands your work, and acts on your behalf.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">⚡</span><div class="chip-label">Mindset Shift Required</div><div class="chip-desc">Like calculators changed math and Google changed search — AI assistants change how we work.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">🔗</span><div class="chip-label">Three Layers, One Brain</div><div class="chip-desc">Claude Chat, Claude Code, and Claude Co-work are three faces of the same intelligence.</div></div>
+  </div>
+
+  <div class="mm-grid">
+
+    <!-- Before/After -->
+    <div class="mm-card c-ro mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">The Mindset Shift: Before vs After AI Assistants</div><div class="mm-card-subtitle">This is not about knowing Claude — it's about unlocking what you can become with it</div></div></div>
+      <div class="before-after">
+        <div class="ba-panel ba-before">
+          <div class="ba-title">❌ Manual Work Era</div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Hours of document processing by hand</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Emails, calendars, research — all manual</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Ideas, reports, presentations take full days</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Each professional siloed in their own tools</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Only simple, static Q&A from AI bots</span></div>
+        </div>
+        <div class="ba-arrow">→</div>
+        <div class="ba-panel ba-after">
+          <div class="ba-title">✅ AI Assistant Era</div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Minutes instead of hours — same output</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>AI connects to your tools and everyday docs</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Claude understands your work style and skills</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Research, analysis, and writing in one place</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Handles complex tasks with sequential thinking</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 Layers -->
+    <div class="mm-card c-or mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🏗️</div><div><div class="mm-card-title">The Three Layers of Claude</div><div class="mm-card-subtitle">One brain — three different ways to access and use it</div></div></div>
+      <div class="three-layers">
+        <div class="layer-card lc-1">
+          <span class="layer-icon">💬</span>
+          <div class="layer-name">Claude Chat / Claude.ai</div>
+          <div class="layer-role">THE BRAIN</div>
+          <div class="layer-desc">The main interface — ask questions, analyze docs, do research, create artifacts. Foundation of everything. Access at claude.ai or desktop app.</div>
+        </div>
+        <div class="layer-card lc-2">
+          <span class="layer-icon">💻</span>
+          <div class="layer-name">Claude Code</div>
+          <div class="layer-role">THE ENGINEER</div>
+          <div class="layer-desc">Technical coding assistant — Python, JS, full-stack. Gives you code outputs, runs scripts, builds complete applications in a structured coding manner.</div>
+        </div>
+        <div class="layer-card lc-3">
+          <span class="layer-icon">🤝</span>
+          <div class="layer-name">Claude Co-work</div>
+          <div class="layer-role">THE OPERATOR</div>
+          <div class="layer-desc">Brain + direct functionality. Works inside your machine, connects to tools, has skills and plugins. Handles day-to-day tasks end-to-end as an operator.</div>
+        </div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">💡</div>
+        <div><div class="mm-rule-title">⭐ THE FOUNDATION PRINCIPLE</div><div class="mm-rule-body">Claude Chat is the <strong>main brain</strong> — Code and Co-work are built on top of it. Master the chat interface first, and everything else becomes intuitive.</div></div>
+      </div>
+    </div>
+
+    <!-- 3 Use Modes -->
+    <div class="mm-card c-vi">
+      <div class="mm-card-head"><div class="mm-card-ico">🎭</div><div><div class="mm-card-title">3 Modes Claude Operates In</div><div class="mm-card-subtitle">Depending on how you use it — it becomes a different expert</div></div></div>
+      <div class="use-modes">
+        <div class="mode-card mc-r"><span class="mode-ico">🔍</span><div class="mode-lbl">Research Assistant</div><div class="mode-desc">Searches 30+ pages, synthesizes information, produces structured analysis</div></div>
+        <div class="mode-card mc-t"><span class="mode-ico">🧠</span><div class="mode-lbl">Thinking Partner</div><div class="mode-desc">Brainstorms ideas, creates step-by-step plans, explores complex problems with you</div></div>
+        <div class="mode-card mc-b"><span class="mode-ico">🛠️</span><div class="mode-lbl">Tool Builder</div><div class="mode-desc">Builds calculators, websites, dashboards, and end-to-end applications</div></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-or">🔍 Research</span>
+        <span class="mm-tag mm-tag-vi">🧠 Thinking</span>
+        <span class="mm-tag mm-tag-te">🛠️ Building</span>
+      </div>
+    </div>
+
+    <!-- Claude vs ChatGPT -->
+    <div class="mm-card c-bl">
+      <div class="mm-card-head"><div class="mm-card-ico">⚖️</div><div><div class="mm-card-title">Claude vs ChatGPT</div><div class="mm-card-subtitle">How do the two leading AI assistants differ?</div></div></div>
+      <div class="vs-duel">
+        <div class="vs-panel vs-gpt">
+          <div class="vs-panel-title">🤖 ChatGPT</div>
+          <div class="vs-item"><div class="vdot"></div><span>Go-to AI for most users historically</span></div>
+          <div class="vs-item"><div class="vdot"></div><span>Also has project/memory features</span></div>
+          <div class="vs-item"><div class="vdot"></div><span>Strong general-purpose performance</span></div>
+          <div class="vs-item"><div class="vdot"></div><span>Good for quick tasks and broad queries</span></div>
+        </div>
+        <div class="vs-badge">VS</div>
+        <div class="vs-panel vs-claude">
+          <div class="vs-panel-title">✨ Claude</div>
+          <div class="vs-item"><div class="vdot"></div><span>Sequential step-by-step deep reasoning</span></div>
+          <div class="vs-item"><div class="vdot"></div><span>Skills system for specialized tasks</span></div>
+          <div class="vs-item"><div class="vdot"></div><span>Superior for complex document analysis</span></div>
+          <div class="vs-item"><div class="vdot"></div><span>Extended thinking for hard problems</span></div>
+        </div>
+      </div>
+      <div class="mm-rule" style="margin-top:12px">
+        <div class="mm-rule-icon">🤝</div>
+        <div><div class="mm-rule-title">Both are powerful — pick the right tool</div><div class="mm-rule-body">Both can help similarly. Claude excels at <strong>deep analysis, structured reasoning, skills, and tool connections</strong>. Use what fits your workflow.</div></div>
+      </div>
+    </div>
+
+    <!-- How to Access -->
+    <div class="mm-card c-te">
+      <div class="mm-card-head"><div class="mm-card-ico">🚪</div><div><div class="mm-card-title">How to Access Claude</div><div class="mm-card-subtitle">Web, desktop, and the free vs paid decision</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">🌐</div><span><b>Web app</b> — go to claude.ai, sign up with Google or email, works in any browser immediately</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">💻</div><span><b>Desktop app</b> — downloadable app for Mac/Windows; connects to more local tools and extensions on your machine</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">🆓</div><span><b>Free plan</b> — full access to core features, limited daily usage — great for starting out</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">💳</div><span><b>Paid plan</b> — higher usage limits, access to more powerful models (Opus), priority during peak hours</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">📊</div><span><b>Usage check</b> — go to Settings → Usage to see weekly limits; plan before key meetings to avoid running out</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-te">🌐 claude.ai</span>
+        <span class="mm-tag mm-tag-te">💻 Desktop App</span>
+        <span class="mm-tag mm-tag-am">📊 Monitor Usage</span>
+      </div>
+    </div>
+
+    <!-- Sequential Thinking Flow -->
+    <div class="mm-card c-am mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">How Claude Thinks — Sequential Research Flow</div><div class="mm-card-subtitle">Unlike simple chatbots, Claude moves through steps like a human expert would</div></div></div>
+      <div class="mm-flow mm-flow-or">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">📥</div><div class="mm-step-lbl">Receive Query</div><div class="mm-step-sub">Parse goal & context</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#ec1"/></animateMotion></circle><path id="ec1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">🌐</div><div class="mm-step-lbl">Web Search</div><div class="mm-step-sub">Searches 30+ pages</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#ec2"/></animateMotion></circle><path id="ec2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">🧠</div><div class="mm-step-lbl">Deep Think</div><div class="mm-step-sub">Extended reasoning</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#ec3"/></animateMotion></circle><path id="ec3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">⚖️</div><div class="mm-step-lbl">Weigh Options</div><div class="mm-step-sub">Pros, cons, trade-offs</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#ec4"/></animateMotion></circle><path id="ec4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">📝</div><div class="mm-step-lbl">Synthesize</div><div class="mm-step-sub">Form structured notes</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#ec5"/></animateMotion></circle><path id="ec5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">📤</div><div class="mm-step-lbl">Deliver Answer</div><div class="mm-step-sub">Structured, clear output</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.7s"><mpath href="#ec6"/></animateMotion></circle><path id="ec6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">🔁</div><div class="mm-step-lbl">Iterate</div><div class="mm-step-sub">Refine with feedback</div></div>
+      </div>
+    </div>
+
+    <!-- What Claude Is Good At -->
+    <div class="mm-card c-gr">
+      <div class="mm-card-head"><div class="mm-card-ico">🎯</div><div><div class="mm-card-title">What Claude Is Actually Great At</div><div class="mm-card-subtitle">Real-world use cases that change your workflow</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Document analysis</b> — analyze 50-page PDFs, find insights, create summaries for specific audiences</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Web research</b> — compare laptops, products, topics by reading and synthesizing 30+ sources</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Build tools</b> — create calculators, dashboards, portfolio websites — complete HTML/JS artifacts</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Connect to your apps</b> — Gmail, Google Calendar, Drive, Notion — reads and writes your real data</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Specialized via Skills</b> — teach Claude domain knowledge once, get expert-level output forever</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-gr">📄 Analysis</span>
+        <span class="mm-tag mm-tag-gr">🌐 Research</span>
+        <span class="mm-tag mm-tag-gr">🛠️ Build</span>
+        <span class="mm-tag mm-tag-gr">🔗 Connect</span>
+      </div>
+    </div>
+
+    <!-- Misconceptions -->
+    <div class="mm-card c-ro">
+      <div class="mm-card-head"><div class="mm-card-ico">🚨</div><div><div class="mm-card-title">Common Misconceptions to Unlearn</div><div class="mm-card-subtitle">The wrong mental models that hold most users back</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">✕</div><span><b>"It's just a chatbot"</b> — no, it's an AI assistant that can connect to your tools and build real things</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✕</div><span><b>"I just ask it questions"</b> — think of it as giving tasks to a brilliant assistant, not running a search engine</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✕</div><span><b>"Claude Code is only for developers"</b> — non-tech users can create useful tools with the right prompting</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✕</div><span><b>"Claude/ChatGPT are the same"</b> — both are strong, but Claude has a distinct edge in deep reasoning & skills</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-ro">🚫 Wrong Model</span>
+        <span class="mm-tag mm-tag-am">💡 Reframe</span>
+        <span class="mm-tag mm-tag-gr">✅ Correct View</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="shared/mindmap.js"></script>
+<script>
+  MindMap.init(
+    ['Claude', 'AI', '→', '🧠', 'chat', 'brain', 'fn()', '3x', 'ctx', 'skills'],
+    [22, 38, 270, 165, 210]
+  );
+</script>
+</body>
+</html>
