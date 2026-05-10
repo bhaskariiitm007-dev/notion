@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Masterclass — Stay Relevant by 2027</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+/* ── PAGE-SPECIFIC AURORA ── */
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#6B3FD4,transparent 70%);top:-80px;left:-100px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#E8620A,transparent 70%);top:38%;right:-140px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#0A7A6A,transparent 70%);bottom:-80px;left:40%}
+
+/* Badge + dot */
+.mm-badge{background:linear-gradient(135deg,var(--vi-bg),#F5F0FF);border-color:var(--vi-b);color:var(--vi)}
+.mm-dot{background:var(--vi)}.mm-dot::after{border-color:var(--vi)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--vi) 0%,var(--or) 30%,var(--te) 60%,var(--bl) 100%)}
+
+/* KPI accents */
+.mm-kpi:nth-child(1){--kpi-accent:var(--vi)}
+.mm-kpi:nth-child(2){--kpi-accent:var(--gr)}
+.mm-kpi:nth-child(3){--kpi-accent:var(--or)}
+.mm-kpi:nth-child(4){--kpi-accent:var(--ro)}
+
+/* Chip accents */
+.mc-1{--chip-bg:var(--or-bg);--chip-border:var(--or-b);--chip-color:var(--or)}.mc-1:hover{box-shadow:0 10px 26px rgba(232,98,10,.18);border-color:var(--or)!important}
+.mc-2{--chip-bg:var(--vi-bg);--chip-border:var(--vi-b);--chip-color:var(--vi)}.mc-2:hover{box-shadow:0 10px 26px rgba(107,63,212,.18);border-color:var(--vi)!important}
+.mc-3{--chip-bg:var(--ro-bg);--chip-border:var(--ro-b);--chip-color:var(--ro)}.mc-3:hover{box-shadow:0 10px 26px rgba(184,24,54,.18);border-color:var(--ro)!important}
+.mc-1 .chip-label{color:var(--or)}.mc-2 .chip-label{color:var(--vi)}.mc-3 .chip-label{color:var(--ro)}
+
+/* Card accents */
+.c-ro{--c-accent:var(--ro);--c-bg:var(--ro-bg);--c-border:var(--ro-b);--c-shadow:rgba(184,24,54,.18)}
+.c-or{--c-accent:var(--or);--c-bg:var(--or-bg);--c-border:var(--or-b);--c-shadow:rgba(232,98,10,.18)}
+.c-te{--c-accent:var(--te);--c-bg:var(--te-bg);--c-border:var(--te-b);--c-shadow:rgba(10,122,106,.18)}
+.c-bl{--c-accent:var(--bl);--c-bg:var(--bl-bg);--c-border:var(--bl-b);--c-shadow:rgba(26,82,200,.18)}
+.c-vi{--c-accent:var(--vi);--c-bg:var(--vi-bg);--c-border:var(--vi-b);--c-shadow:rgba(107,63,212,.18)}
+.c-am{--c-accent:var(--am);--c-bg:var(--am-bg);--c-border:var(--am-b);--c-shadow:rgba(192,123,0,.18)}
+.c-gr{--c-accent:var(--gr);--c-bg:var(--gr-bg);--c-border:var(--gr-b);--c-shadow:rgba(24,122,58,.18)}
+.c-sk{--c-accent:var(--sk);--c-bg:var(--sk-bg);--c-border:var(--sk-b);--c-shadow:rgba(10,110,170,.18)}
+
+/* Flow — violet */
+.mm-flow-vi{--flow-color:var(--vi);--flow-color2:var(--or);--flow-border:var(--vi-b);--flow-shadow:rgba(107,63,212,.15);--flow-num-bg:var(--vi-bg);--flow-num-border:var(--vi-b)}
+.mm-flow-vi .mm-dash{stroke:var(--vi)}.mm-flow-vi .mm-arrowhead{fill:var(--vi)}.mm-flow-vi .mm-traveldot{fill:var(--vi)}.mm-flow-vi .mm-step-num{color:var(--vi)}
+
+/* ── BEFORE / AFTER ── */
+.ba-wrap{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:stretch;margin-top:10px}
+.ba-panel{border-radius:13px;padding:15px;transition:transform .3s,box-shadow .3s}
+.ba-before{background:var(--ro-bg);border:2px solid var(--ro-b)}.ba-before:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(184,24,54,.2)}
+.ba-after {background:var(--gr-bg);border:2px solid var(--gr-b)}.ba-after:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(24,122,58,.2)}
+.ba-label{font-size:11.5px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.ba-before .ba-label{color:var(--ro)}.ba-after .ba-label{color:var(--gr)}
+.ba-item{display:flex;gap:7px;font-size:11px;margin-bottom:5px;line-height:1.5;align-items:flex-start;color:var(--muted)}
+.ba-dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0;margin-top:4px}
+.ba-before .ba-dot{background:var(--ro)}.ba-after .ba-dot{background:var(--gr)}
+.ba-arrow-col{display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--or);animation:arrowPulse 1.6s ease-in-out infinite}
+@keyframes arrowPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.35) translateX(3px)}}
+@media(max-width:500px){.ba-wrap{grid-template-columns:1fr}.ba-arrow-col{display:none}}
+
+/* ── SHAPE LETTER GRID ── */
+.shape-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:14px}
+@media(max-width:700px){.shape-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:420px){.shape-grid{grid-template-columns:1fr 1fr}}
+
+.shape-card{
+  border-radius:14px;padding:20px 12px 16px;text-align:center;
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1),box-shadow .3s,border-color .3s;
+  position:relative;overflow:hidden;cursor:default;
+  animation:slideUp .6s ease both;
+}
+.shape-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0;background:var(--shape-color)}
+.shape-card::after{content:'';position:absolute;top:-100%;left:-50%;width:30%;height:300%;
+  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.22) 50%,transparent 60%);
+  transition:all .5s}
+.shape-card:hover::after{top:100%;left:120%}
+.shape-card:hover{transform:translateY(-9px) scale(1.04)}
+.shape-card:hover .shape-letter-val{transform:rotate(-12deg) scale(1.28)}
+
+.sc-s{background:var(--or-bg);border:2px solid var(--or-b);--shape-color:var(--or);animation-delay:.05s}.sc-s:hover{box-shadow:0 12px 30px rgba(232,98,10,.28);border-color:var(--or)}
+.sc-h{background:var(--te-bg);border:2px solid var(--te-b);--shape-color:var(--te);animation-delay:.10s}.sc-h:hover{box-shadow:0 12px 30px rgba(10,122,106,.28);border-color:var(--te)}
+.sc-a{background:var(--vi-bg);border:2px solid var(--vi-b);--shape-color:var(--vi);animation-delay:.15s}.sc-a:hover{box-shadow:0 12px 30px rgba(107,63,212,.28);border-color:var(--vi)}
+.sc-p{background:var(--bl-bg);border:2px solid var(--bl-b);--shape-color:var(--bl);animation-delay:.20s}.sc-p:hover{box-shadow:0 12px 30px rgba(26,82,200,.28);border-color:var(--bl)}
+.sc-e{background:var(--gr-bg);border:2px solid var(--gr-b);--shape-color:var(--gr);animation-delay:.25s}.sc-e:hover{box-shadow:0 12px 30px rgba(24,122,58,.28);border-color:var(--gr)}
+
+.shape-letter-val{
+  font-family:var(--fm);font-size:54px;font-weight:800;line-height:1;
+  margin-bottom:8px;display:block;
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+  animation:letterPop .7s cubic-bezier(.34,1.56,.64,1) both;
+}
+.sc-s .shape-letter-val{color:var(--or);animation-delay:.15s}
+.sc-h .shape-letter-val{color:var(--te);animation-delay:.22s}
+.sc-a .shape-letter-val{color:var(--vi);animation-delay:.29s}
+.sc-p .shape-letter-val{color:var(--bl);animation-delay:.36s}
+.sc-e .shape-letter-val{color:var(--gr);animation-delay:.43s}
+@keyframes letterPop{from{opacity:0;transform:scale(.2) rotate(-24deg)}to{opacity:1;transform:scale(1) rotate(0)}}
+
+.shape-word{font-size:10.5px;font-weight:800;margin-bottom:6px;letter-spacing:.2px}
+.sc-s .shape-word{color:var(--or)}.sc-h .shape-word{color:var(--te)}.sc-a .shape-word{color:var(--vi)}.sc-p .shape-word{color:var(--bl)}.sc-e .shape-word{color:var(--gr)}
+.shape-desc{font-size:9.5px;color:var(--muted);line-height:1.5}
+
+/* ── 5 HUMAN SKILLS ── */
+.skill-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.skill-item{border-radius:11px;padding:13px;transition:transform .3s,box-shadow .3s;position:relative;overflow:hidden}
+.skill-item::after{content:'';position:absolute;top:-100%;left:-50%;width:30%;height:300%;
+  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.2) 50%,transparent 60%);transition:all .5s}
+.skill-item:hover::after{top:100%;left:120%}
+.sk-1{background:var(--gr-bg);border:1.5px solid var(--gr-b)}.sk-1:hover{transform:translateY(-3px);box-shadow:0 7px 20px rgba(24,122,58,.2)}
+.sk-2{background:var(--am-bg);border:1.5px solid var(--am-b)}.sk-2:hover{transform:translateY(-3px);box-shadow:0 7px 20px rgba(192,123,0,.2)}
+.sk-3{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.sk-3:hover{transform:translateY(-3px);box-shadow:0 7px 20px rgba(107,63,212,.2)}
+.sk-4{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.sk-4:hover{transform:translateY(-3px);box-shadow:0 7px 20px rgba(26,82,200,.2)}
+.sk-full{grid-column:1/-1;background:var(--te-bg);border:1.5px solid var(--te-b)}.sk-full:hover{transform:translateY(-3px);box-shadow:0 7px 20px rgba(10,122,106,.2)}
+.skill-ico{font-size:20px;margin-bottom:4px;display:block;transition:transform .3s}.skill-item:hover .skill-ico{transform:rotate(-10deg) scale(1.2)}
+.skill-name{font-size:11.5px;font-weight:800;margin-bottom:3px}
+.sk-1 .skill-name{color:var(--gr)}.sk-2 .skill-name{color:var(--am)}.sk-3 .skill-name{color:var(--vi)}.sk-4 .skill-name{color:var(--bl)}.sk-full .skill-name{color:var(--te)}
+.skill-desc{font-size:10px;color:var(--muted);line-height:1.45}
+
+/* ── BUSINESS 3-COL ── */
+.biz-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+@media(max-width:600px){.biz-grid{grid-template-columns:1fr}}
+.biz-block{border-radius:13px;padding:16px;transition:transform .3s,box-shadow .3s,border-color .3s}
+.biz-1{background:var(--or-bg);border:2px solid var(--or-b)}.biz-1:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(232,98,10,.24);border-color:var(--or)}
+.biz-2{background:var(--te-bg);border:2px solid var(--te-b)}.biz-2:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(10,122,106,.24);border-color:var(--te)}
+.biz-3{background:var(--vi-bg);border:2px solid var(--vi-b)}.biz-3:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(107,63,212,.24);border-color:var(--vi)}
+.biz-ico{font-size:28px;margin-bottom:8px;display:block;transition:transform .3s}.biz-block:hover .biz-ico{transform:rotate(-10deg) scale(1.18)}
+.biz-title{font-size:13px;font-weight:800;margin-bottom:3px}
+.biz-1 .biz-title{color:var(--or)}.biz-2 .biz-title{color:var(--te)}.biz-3 .biz-title{color:var(--vi)}
+.biz-sub{font-size:10px;color:var(--muted);margin-bottom:10px;font-style:italic;line-height:1.4}
+.biz-item{display:flex;gap:7px;font-size:11px;margin-bottom:5px;line-height:1.5;align-items:flex-start}
+.biz-dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0;margin-top:4px}
+.biz-1 .biz-dot{background:var(--or)}.biz-2 .biz-dot{background:var(--te)}.biz-3 .biz-dot{background:var(--vi)}
+.biz-item span{color:var(--muted)}
+
+/* ── GEO vs SEO DUEL ── */
+.duel-wrap{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin-top:12px}
+.duel-side{border-radius:13px;padding:14px;transition:transform .3s,box-shadow .3s}
+.duel-old{background:var(--am-bg);border:2px solid var(--am-b)}.duel-old:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(192,123,0,.22)}
+.duel-new{background:var(--te-bg);border:2px solid var(--te-b)}.duel-new:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(10,122,106,.22)}
+.duel-head{font-size:12.5px;font-weight:800;margin-bottom:9px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.duel-old .duel-head{color:var(--am)}.duel-new .duel-head{color:var(--te)}
+.dtag{padding:3px 9px;border-radius:7px;font-size:9px;font-weight:700;font-family:var(--fm)}
+.duel-old .dtag{background:var(--am);color:#FEF5DC}.duel-new .dtag{background:var(--te);color:#E3F5F2}
+.duel-item{display:flex;gap:7px;font-size:11px;margin-bottom:5px;line-height:1.5;color:var(--muted);align-items:flex-start}
+.ddot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0;margin-top:4px}
+.duel-old .ddot{background:var(--am)}.duel-new .ddot{background:var(--te)}
+.duel-vs{display:flex;align-items:center;justify-content:center}
+.vs-badge{
+  width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(135deg,var(--vi),var(--bl));
+  color:#fff;font-size:12px;font-weight:900;font-family:var(--fm);
+  display:flex;align-items:center;justify-content:center;
+  animation:vsSpin 5s linear infinite;box-shadow:0 4px 14px rgba(107,63,212,.35)
+}
+@keyframes vsSpin{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.12) rotate(180deg)}}
+@media(max-width:480px){.duel-wrap{grid-template-columns:1fr}.duel-vs{display:none}}
+
+/* ── HOMEWORK GRID ── */
+.hw-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+@media(max-width:500px){.hw-grid{grid-template-columns:1fr}}
+.hw-item{
+  background:var(--sk-bg);border:1.5px solid var(--sk-b);border-radius:11px;padding:13px;
+  display:flex;gap:10px;align-items:flex-start;
+  transition:transform .3s,box-shadow .3s,border-color .3s;
+  position:relative;overflow:hidden;
+}
+.hw-item::after{content:'';position:absolute;top:-100%;left:-50%;width:30%;height:300%;
+  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.2) 50%,transparent 60%);
+  transition:all .5s}
+.hw-item:hover::after{top:100%;left:120%}
+.hw-item:hover{transform:translateX(5px);box-shadow:0 6px 18px rgba(10,110,170,.18);border-color:var(--sk)}
+.hw-check{
+  width:26px;height:26px;border-radius:7px;background:var(--sk);color:#E3F2FB;
+  display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;
+  margin-top:1px;transition:transform .3s;animation:dotPop .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+.hw-item:hover .hw-check{transform:rotate(14deg) scale(1.18)}
+.hw-title{font-size:11.5px;font-weight:700;color:var(--sk);margin-bottom:3px}
+.hw-desc{font-size:10.5px;color:var(--muted);line-height:1.45}
+
+/* ── QUOTE HIGHLIGHT ── */
+.drunk-quote{
+  background:linear-gradient(135deg,var(--am-bg),#FFFEF5);
+  border:2px solid var(--am-b);border-radius:14px;
+  padding:18px;margin-top:12px;position:relative;overflow:hidden;
+}
+.drunk-quote::before{content:'"';position:absolute;top:-10px;left:12px;font-size:80px;
+  color:var(--am);opacity:.12;font-family:Georgia,serif;line-height:1}
+.drunk-q-text{font-size:14px;font-weight:700;color:var(--am);line-height:1.55;position:relative;z-index:1;margin-bottom:6px}
+.drunk-q-attr{font-size:10px;color:var(--muted);font-family:var(--fm);position:relative;z-index:1}
+</style>
+</head>
+<body>
+
+<div class="aurora">
+  <div class="aurora-blob"></div>
+  <div class="aurora-blob"></div>
+  <div class="aurora-blob"></div>
+</div>
+<div class="noise"></div>
+<canvas id="mm-canvas"></canvas>
+
+<div class="mm-page">
+
+  <!-- HEADER -->
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>AI Masterclass · Ansh Mehra × Ranveer Allahbadia</div>
+    <h1>Stay Relevant by 2027<br>in the Age of AI Agents</h1>
+    <p>Agents > Tools · SHAPE Framework · Avoid Intellectual Obesity · Human Skills AI cannot replace</p>
+  </div>
+
+  <!-- KPIs -->
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">SHAPE</div><div class="mm-kpi-label">Framework for<br>staying employable</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="5">0</div><div class="mm-kpi-label">Human skills AI<br>can never replace</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">3mo</div><div class="mm-kpi-label">AI skill half-life —<br>relearn or fall behind</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="0">5</div><div class="mm-kpi-label">Times to treat AI<br>output as finish line</div></div>
+  </div>
+
+  <!-- CHIPS -->
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">🤖</span><div class="chip-label">Agents > Tools</div><div class="chip-desc">ChatGPT alone is "dumb." Agentic AI orchestrates multi-step workflows on autopilot — that's the real breakthrough.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">📋</span><div class="chip-label">SHAPE Framework</div><div class="chip-desc">5 pillars to stay employable: SOP-Driven · Human Loop · Arbitrage · Productivity & Distribution · Employability.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">🧠</span><div class="chip-label">Avoid Intellectual Obesity</div><div class="chip-desc">Over-relying on AI to think shrinks your brain. Deep thinkers will become exponentially rarer and more valuable.</div></div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="mm-grid">
+
+    <!-- Tools vs Agents — Before/After -->
+    <div class="mm-card c-ro">
+      <div class="mm-card-head"><div class="mm-card-ico">⚡</div><div><div class="mm-card-title">AI Tools → AI Agents</div><div class="mm-card-subtitle">The shift that changes everything in the AI landscape</div></div></div>
+      <div class="ba-wrap">
+        <div class="ba-panel ba-before">
+          <div class="ba-label">❌ AI Tools (Standalone)</div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Single-task execution only</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Manual prompt per step</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>No tool orchestration</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>You do all the glue work</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Relatively "dumb" alone</span></div>
+        </div>
+        <div class="ba-arrow-col">→</div>
+        <div class="ba-panel ba-after">
+          <div class="ba-label">✅ AI Agents (Agentic)</div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Multi-step workflows</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Executes on autopilot</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Orchestrates multiple tools</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Context-aware, memory-backed</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Agents building other agents</span></div>
+        </div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-ro">🤖 Standalone Tools</span>
+        <span class="mm-tag mm-tag-gr">⚡ Agentic AI</span>
+        <span class="mm-tag mm-tag-or">🔄 Multi-Step Workflows</span>
+      </div>
+    </div>
+
+    <!-- Drunk Intern -->
+    <div class="mm-card c-am">
+      <div class="mm-card-head"><div class="mm-card-ico">🍺</div><div><div class="mm-card-title">AI Is a "Drunk Intern"</div><div class="mm-card-subtitle">Never treat AI output as the finish line</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Confident ≠ Correct</b> — AI never signals when it is hallucinating or guessing. It always sounds sure.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>You are the senior engineer</b> — validate, refine, and build on top of every AI output with your own judgment.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Output ceiling = your intelligence</b> — the better YOU direct and review AI, the better the final result.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>First draft ≠ final output</b> — every AI response is a starting point, never a conclusion.</span></div>
+      </div>
+      <div class="drunk-quote">
+        <div class="drunk-q-text">"AI is a brilliant but unreliable intern. Your human intelligence is the amplifier — validate, judge, and elevate every single output."</div>
+        <div class="drunk-q-attr">— Ansh Mehra, AI Masterclass</div>
+      </div>
+    </div>
+
+    <!-- SHAPE Framework — FULL WIDTH -->
+    <div class="mm-card c-vi mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">📋</div><div><div class="mm-card-title">The SHAPE Framework — Your 2027 Survival Blueprint</div><div class="mm-card-subtitle">5 pillars to stay employable and competitive in the AI-driven economy</div></div></div>
+      <div class="shape-grid">
+        <div class="shape-card sc-s">
+          <span class="shape-letter-val">S</span>
+          <div class="shape-word">SOP-Driven</div>
+          <div class="shape-desc">Document everything. As AI automates technical tasks, your ability to create and manage repeatable processes becomes your primary value to any organization.</div>
+        </div>
+        <div class="shape-card sc-h">
+          <span class="shape-letter-val">H</span>
+          <div class="shape-word">Human-in-Loop</div>
+          <div class="shape-desc">Never treat AI as the finish line. Always validate, exercise judgment, and build on top of AI output using your uniquely human intelligence and experience.</div>
+        </div>
+        <div class="shape-card sc-a">
+          <span class="shape-letter-val">A</span>
+          <div class="shape-word">Arbitrage</div>
+          <div class="shape-desc">AI skills have a 3-month half-life. You are in a constant state of learning. Master how to learn difficult foundational concepts faster than the people around you.</div>
+        </div>
+        <div class="shape-card sc-p">
+          <span class="shape-letter-val">P</span>
+          <div class="shape-word">Productivity & Distribution</div>
+          <div class="shape-desc">Building products is no longer a moat — AI replicates anything quickly. Your true competitive edge is building Trust and Distribution in a specific niche.</div>
+        </div>
+        <div class="shape-card sc-e">
+          <span class="shape-letter-val">E</span>
+          <div class="shape-word">Employability</div>
+          <div class="shape-desc">Focus on high-level problem-solving and programming thinking over just writing code. Resist intellectual obesity — your cognitive edge is your last real moat.</div>
+        </div>
+      </div>
+      <div class="mm-tags" style="margin-top:16px">
+        <span class="mm-tag mm-tag-or">📄 SOPs &amp; Workflows</span>
+        <span class="mm-tag mm-tag-te">👤 Human Review Gate</span>
+        <span class="mm-tag mm-tag-vi">⚡ Learn-to-Learn</span>
+        <span class="mm-tag mm-tag-bl">📡 Trust + Distribution</span>
+        <span class="mm-tag mm-tag-gr">💼 High-Level Thinking</span>
+      </div>
+    </div>
+
+    <!-- Intellectual Obesity -->
+    <div class="mm-card c-ro">
+      <div class="mm-card-head"><div class="mm-card-ico">🍔</div><div><div class="mm-card-title">Intellectual Obesity</div><div class="mm-card-subtitle">The silent cognitive threat of over-relying on AI</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">✕</div><span><b>AI for every summary</b> — letting AI read and think for you weakens your own processing and synthesis abilities</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✕</div><span><b>Zero long-form reading</b> — avoiding books and deep reads atrophies your ability to hold complex ideas</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✕</div><span><b>No creative judgment</b> — outsourcing all creative decisions to AI erases your unique point of view</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✕</div><span><b>Average thinking → average output</b> — as average people think like average AI models, deep thinkers become exponentially rarer</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-ro">🧠 Cognitive Decline</span>
+        <span class="mm-tag mm-tag-ro">📉 Lazy Brain Trap</span>
+        <span class="mm-tag mm-tag-am">⚠️ Over-Reliance Risk</span>
+      </div>
+    </div>
+
+    <!-- 5 Human Skills -->
+    <div class="mm-card c-gr">
+      <div class="mm-card-head"><div class="mm-card-ico">🌟</div><div><div class="mm-card-title">5 Skills AI Can Never Replace</div><div class="mm-card-subtitle">Your irreplaceable human edge in a world full of AI</div></div></div>
+      <div class="skill-grid">
+        <div class="skill-item sk-1">
+          <span class="skill-ico">💪</span>
+          <div class="skill-name">Health</div>
+          <div class="skill-desc">Physical and mental wellbeing is a human-only resource. Energy and clarity cannot be automated.</div>
+        </div>
+        <div class="skill-item sk-2">
+          <span class="skill-ico">🎨</span>
+          <div class="skill-name">Taste</div>
+          <div class="skill-desc">Aesthetic judgment and cultural discernment emerge from lived human experience — not training data.</div>
+        </div>
+        <div class="skill-item sk-3">
+          <span class="skill-ico">⚖️</span>
+          <div class="skill-name">Judgment</div>
+          <div class="skill-desc">Wisdom in ambiguous situations requires context, ethics, and intuition that no model can truly match.</div>
+        </div>
+        <div class="skill-item sk-4">
+          <span class="skill-ico">🔍</span>
+          <div class="skill-name">Pattern Finding</div>
+          <div class="skill-desc">Spotting non-obvious cross-domain patterns — the insight that comes from years of deep expertise.</div>
+        </div>
+        <div class="skill-item sk-full">
+          <span class="skill-ico">💬</span>
+          <div class="skill-name">Vocabulary &amp; Articulation</div>
+          <div class="skill-desc">Reading long-form content, synthesizing complex ideas, and communicating with nuance and precision. As the average person offloads this to AI, those who retain this skill become exponentially more valuable.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Journey Flow — Full Width -->
+    <div class="mm-card c-vi mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">The Journey: AI Tool User → AI Champion</div><div class="mm-card-subtitle">7 stages from passive consumer to active orchestrator of AI-driven workflows</div></div></div>
+      <div class="mm-flow mm-flow-vi">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">😴</div><div class="mm-step-lbl">Passive Consumer</div><div class="mm-step-sub">Scrolling AI content</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#j1"/></animateMotion></circle><path id="j1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">🛠️</div><div class="mm-step-lbl">Learn the Tools</div><div class="mm-step-sub">ChatGPT, Claude basics</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#j2"/></animateMotion></circle><path id="j2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">📋</div><div class="mm-step-lbl">Document SOPs</div><div class="mm-step-sub">Build repeatable flows</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#j3"/></animateMotion></circle><path id="j3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">🤖</div><div class="mm-step-lbl">Master Agents</div><div class="mm-step-sub">Orchestrate workflows</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#j4"/></animateMotion></circle><path id="j4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">🏆</div><div class="mm-step-lbl">AI Champion</div><div class="mm-step-sub">Drive team adoption</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#j5"/></animateMotion></circle><path id="j5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">📡</div><div class="mm-step-lbl">Build Distribution</div><div class="mm-step-sub">Trust = real moat</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.70s"><mpath href="#j6"/></animateMotion></circle><path id="j6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">🚀</div><div class="mm-step-lbl">Stay Relevant</div><div class="mm-step-sub">Compound advantage</div></div>
+      </div>
+    </div>
+
+    <!-- Business Strategy — Full Width -->
+    <div class="mm-card c-te mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🏢</div><div><div class="mm-card-title">Strategic AI Implementation for Businesses</div><div class="mm-card-subtitle">How founders and agencies should actually build with AI — not just wrap an LLM around a website</div></div></div>
+      <div class="biz-grid">
+        <div class="biz-block biz-1">
+          <span class="biz-ico">🎯</span>
+          <div class="biz-title">Find Your Niche</div>
+          <div class="biz-sub">Solve a real problem faster, cheaper, better</div>
+          <div class="biz-item"><div class="biz-dot"></div><span>Pick a specific industry vertical, not a broad AI wrapper</span></div>
+          <div class="biz-item"><div class="biz-dot"></div><span>Identify a genuine pain point businesses actually face</span></div>
+          <div class="biz-item"><div class="biz-dot"></div><span>Use AI to solve it faster, cheaper, and more reliably</span></div>
+          <div class="biz-item"><div class="biz-dot"></div><span>Avoid "stupid" startups that just call an LLM API</span></div>
+        </div>
+        <div class="biz-block biz-2">
+          <span class="biz-ico">🔍</span>
+          <div class="biz-title">GEO over SEO</div>
+          <div class="biz-sub">Generative Engine Optimization is the future of discovery</div>
+          <div class="biz-item"><div class="biz-dot"></div><span>Optimize for how AI models discover and cite your brand</span></div>
+          <div class="biz-item"><div class="biz-dot"></div><span>Position yourself in AI-generated answers and summaries</span></div>
+          <div class="biz-item"><div class="biz-dot"></div><span>Discoverability is shifting from Google to Generative AI</span></div>
+          <div class="biz-item"><div class="biz-dot"></div><span>Authority, clarity, and citation-ability over keywords</span></div>
+        </div>
+        <div class="biz-block biz-3">
+          <span class="biz-ico">🏛️</span>
+          <div class="biz-title">Build an AI Lab</div>
+          <div class="biz-sub">Internal innovation team to drive AI adoption</div>
+          <div class="biz-item"><div class="biz-dot"></div><span>Identify "AI Champions" — naturally curious employees</span></div>
+          <div class="biz-item"><div class="biz-dot"></div><span>Train them to drive AI adoption across all departments</span></div>
+          <div class="biz-item"><div class="biz-dot"></div><span>Document workflows and build internal SOPs together</span></div>
+          <div class="biz-item"><div class="biz-dot"></div><span>Champions experiment, learn, then teach the whole org</span></div>
+        </div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">💡</div>
+        <div><div class="mm-rule-title">⭐ THE STRATEGIC INSIGHT</div><div class="mm-rule-body">The winning move is not to build the cleverest AI product. It is to <strong>build the deepest distribution and trust in a specific niche</strong> — then use AI to deliver 10× faster than anyone else.</div></div>
+      </div>
+    </div>
+
+    <!-- GEO vs SEO Duel -->
+    <div class="mm-card c-am">
+      <div class="mm-card-head"><div class="mm-card-ico">🔍</div><div><div class="mm-card-title">GEO vs SEO</div><div class="mm-card-subtitle">How discoverability is fundamentally changing in the AI era</div></div></div>
+      <div class="duel-wrap">
+        <div class="duel-side duel-old">
+          <div class="duel-head">📊 SEO <span class="dtag">FADING</span></div>
+          <div class="duel-item"><div class="ddot"></div><span>Optimizes for Google search rankings</span></div>
+          <div class="duel-item"><div class="ddot"></div><span>Keyword density and backlinks drive it</span></div>
+          <div class="duel-item"><div class="ddot"></div><span>Click-through-rate is the primary metric</span></div>
+          <div class="duel-item"><div class="ddot"></div><span>User clicks to your website to read</span></div>
+          <div class="duel-item"><div class="ddot"></div><span>Classic ten-blue-links paradigm</span></div>
+        </div>
+        <div class="duel-vs"><div class="vs-badge">VS</div></div>
+        <div class="duel-side duel-new">
+          <div class="duel-head">🤖 GEO <span class="dtag">RISING</span></div>
+          <div class="duel-item"><div class="ddot"></div><span>Optimizes for AI-generated answers</span></div>
+          <div class="duel-item"><div class="ddot"></div><span>Authority, clarity and citation-ability</span></div>
+          <div class="duel-item"><div class="ddot"></div><span>Brand mentioned in AI responses</span></div>
+          <div class="duel-item"><div class="ddot"></div><span>AI recommends you directly to users</span></div>
+          <div class="duel-item"><div class="ddot"></div><span>Conversational discovery paradigm</span></div>
+        </div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-am">📉 SEO Declining</span>
+        <span class="mm-tag mm-tag-te">📈 GEO Rising</span>
+        <span class="mm-tag mm-tag-vi">🤖 AI Discoverability</span>
+      </div>
+    </div>
+
+    <!-- Actionable Homework -->
+    <div class="mm-card c-sk">
+      <div class="mm-card-head"><div class="mm-card-ico">📝</div><div><div class="mm-card-title">Actionable Homework</div><div class="mm-card-subtitle">4 things to do right now to avoid the lazy brain trap</div></div></div>
+      <div class="hw-grid">
+        <div class="hw-item">
+          <div class="hw-check">✍️</div>
+          <div>
+            <div class="hw-title">Handwrite Your Notes</div>
+            <div class="hw-desc">Take handwritten notes from this session and post them online. Build your "second brain" through active recall — never via AI summaries.</div>
+          </div>
+        </div>
+        <div class="hw-item">
+          <div class="hw-check">🔍</div>
+          <div>
+            <div class="hw-title">Practice Active Inquiry</div>
+            <div class="hw-desc">Use Gemini Deep Research or Perplexity to research hard concepts. Always ask "why" — not just "what." Use AI for understanding, not for thinking.</div>
+          </div>
+        </div>
+        <div class="hw-item">
+          <div class="hw-check">🧩</div>
+          <div>
+            <div class="hw-title">Challenge Your Brain Daily</div>
+            <div class="hw-desc">Give yourself a new, complex problem to solve every day. If you are not uncomfortable, you are not growing. Discomfort is the signal of real learning.</div>
+          </div>
+        </div>
+        <div class="hw-item">
+          <div class="hw-check">📋</div>
+          <div>
+            <div class="hw-title">Create Your First SOP</div>
+            <div class="hw-desc">Document one repeatable workflow in your life or work. Then automate part of it with an AI agent. This one action unlocks the SHAPE framework in practice.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /mm-grid -->
+</div><!-- /mm-page -->
+
+<script src="shared/mindmap.js"></script>
+<script>
+  MindMap.init(
+    ['SHAPE', 'Agent', 'SOP', '→', 'GEO', '[]', 'LLM', 'ctx', 'fn()', '∞'],
+    [270, 22, 165, 38, 210]
+  );
+</script>
+</body>
+</html>
