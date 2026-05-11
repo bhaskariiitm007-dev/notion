@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 10 — Hooks · Claude Code Crash Course</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#E8620A,transparent 70%);top:-80px;left:-90px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#B81836,transparent 70%);top:40%;right:-130px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#6B3FD4,transparent 70%);bottom:-70px;left:35%}
+.mm-badge{background:linear-gradient(135deg,var(--or-bg),#FFF5F0);border-color:var(--or-b);color:var(--or)}
+.mm-dot{background:var(--or)}.mm-dot::after{border-color:var(--or)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--or) 0%,var(--ro) 40%,var(--vi) 100%)}
+.mm-kpi:nth-child(1){--kpi-accent:var(--or)}.mm-kpi:nth-child(2){--kpi-accent:var(--ro)}.mm-kpi:nth-child(3){--kpi-accent:var(--gr)}.mm-kpi:nth-child(4){--kpi-accent:var(--vi)}
+.mc-1{--chip-bg:var(--or-bg);--chip-border:var(--or-b);--chip-color:var(--or)}.mc-1 .chip-label{color:var(--or)}
+.mc-2{--chip-bg:var(--ro-bg);--chip-border:var(--ro-b);--chip-color:var(--ro)}.mc-2 .chip-label{color:var(--ro)}
+.mc-3{--chip-bg:var(--gr-bg);--chip-border:var(--gr-b);--chip-color:var(--gr)}.mc-3 .chip-label{color:var(--gr)}
+/* HOOK EVENTS */
+.events-list{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.event-row{display:flex;align-items:flex-start;gap:10px;padding:10px 13px;border-radius:10px;border:1.5px solid var(--s3);background:var(--s1)}
+.event-tag{font-family:var(--fm);font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;white-space:nowrap;margin-top:2px;flex-shrink:0}
+.ev-or{background:var(--or);color:#fff}
+.ev-ro{background:var(--ro);color:#fff}
+.ev-te{background:var(--te);color:#fff}
+.ev-vi{background:var(--vi);color:#fff}
+.ev-bl{background:var(--bl);color:#fff}
+.ev-gr{background:var(--gr);color:#fff}
+.event-name{font-size:11px;font-weight:700;color:var(--fg);margin-bottom:2px}
+.event-desc{font-size:10px;color:var(--muted);line-height:1.4}
+/* EXIT CODES */
+.exit-codes{display:flex;flex-direction:column;gap:9px;margin-top:10px}
+.exit-box{border-radius:11px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px}
+.exit-num{font-family:var(--fm);font-size:22px;font-weight:900;line-height:1;flex-shrink:0;margin-top:2px}
+.ex-0{background:var(--gr-bg);border:1.5px solid var(--gr-b)}.ex-0 .exit-num{color:var(--gr)}
+.ex-1{background:var(--am-bg);border:1.5px solid var(--am-b)}.ex-1 .exit-num{color:var(--am)}
+.ex-2{background:var(--ro-bg);border:2px solid var(--ro)}.ex-2 .exit-num{color:var(--ro)}
+.exit-title{font-size:11px;font-weight:800;margin-bottom:3px}
+.ex-0 .exit-title{color:var(--gr)}.ex-1 .exit-title{color:var(--am)}.ex-2 .exit-title{color:var(--ro)}
+.exit-desc{font-size:10px;color:var(--muted);line-height:1.4}
+/* USE CASES */
+.usecase-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}
+.uc-item{border-radius:10px;padding:11px 13px}
+.uc-1{background:var(--or-bg);border:1.5px solid var(--or-b)}
+.uc-2{background:var(--ro-bg);border:1.5px solid var(--ro-b)}
+.uc-3{background:var(--vi-bg);border:1.5px solid var(--vi-b)}
+.uc-title{font-size:11px;font-weight:800;margin-bottom:4px}
+.uc-1 .uc-title{color:var(--or)}.uc-2 .uc-title{color:var(--ro)}.uc-3 .uc-title{color:var(--vi)}
+.uc-desc{font-size:10px;color:var(--muted);line-height:1.4}
+/* HOOK PIPELINE */
+.hook-pipe{margin-top:10px;display:flex;flex-direction:column;gap:4px}
+.hp-row{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;background:var(--s1);border:1px solid var(--s3);font-size:10px}
+.hp-icon{font-size:16px;flex-shrink:0}
+.hp-label{flex:1;color:var(--fg)}
+.hp-arrow{color:var(--muted);font-size:12px}
+.hp-action{font-family:var(--fm);font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px}
+.hp-allow{background:var(--gr);color:#fff}
+.hp-block{background:var(--ro);color:#fff}
+.hp-log{background:var(--bl);color:#fff}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+<div class="noise"></div><canvas id="mm-canvas"></canvas>
+<div class="mm-page">
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude Code Crash Course · Chapter 10 of 12</div>
+    <h1>Hooks —<br>The Emergency Brake</h1>
+    <p>Event-driven automation · 6 hook events · Exit code system · Guardrails · Zero-token cost</p>
+  </div>
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="0">0</div><div class="mm-kpi-label">Tokens used by<br>a hook (LLM-free)</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="6">0</div><div class="mm-kpi-label">Hook event types<br>to intercept</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="2">0</div><div class="mm-kpi-label">Exit code that stops<br>Claude no matter what</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="3">0</div><div class="mm-kpi-label">Use cases: auto-<br>mation, logging, guardrails</div></div>
+  </div>
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">⚡</span><div class="chip-label">Event-Driven Architecture</div><div class="chip-desc">Hooks fire on events inside Claude's agentic loop — think → create file → run bash → respond. Each step is catchable. Your script runs automatically when the event fires.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">🛑</span><div class="chip-label">The Emergency Brake</div><div class="chip-desc">Exit code 2 is absolute. Even if you've given Claude full dangerously-skip-permissions mode, exit 2 from a hook stops the action completely. You shall not pass.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">💾</span><div class="chip-label">Pure Software Logic</div><div class="chip-desc">Hooks don't need an LLM. They're plain bash/Python/JS scripts. Deterministic, fast, free. No "maybe Claude will catch this" — it will catch it, every single time.</div></div>
+  </div>
+  <div class="mm-grid">
+
+    <div class="mm-card c-or">
+      <div class="mm-card-head"><div class="mm-card-ico">📡</div><div><div class="mm-card-title">6 Hook Events — What You Can Intercept</div><div class="mm-card-subtitle">Every critical moment in Claude's session is catchable</div></div></div>
+      <div class="events-list">
+        <div class="event-row"><div class="event-tag ev-or">SESSION_START</div><div><div class="event-name">Session begins</div><div class="event-desc">Runs when Claude Code launches. Use it to play a notification sound, load context, or log session start time.</div></div></div>
+        <div class="event-row"><div class="event-tag ev-ro">USER_PROMPT_SUBMIT</div><div><div class="event-name">Before Claude reads your message</div><div class="event-desc">Intercept prompts before processing. Can sanitize, transform, or block certain messages. Example: replace "destroy" with "review".</div></div></div>
+        <div class="event-row"><div class="event-tag ev-te">PRE_TOOL_USE</div><div><div class="event-name">Before a tool runs — most powerful</div><div class="event-desc">Block dangerous bash commands (rm -rf), log tool calls, enforce permissions. The main security guardrail event.</div></div></div>
+        <div class="event-row"><div class="event-tag ev-vi">POST_TOOL_USE</div><div><div class="event-name">After a tool completes</div><div class="event-desc">Auto-format code after writes. Log what changed. Run linters. Send Slack/Telegram notification. Async = run while Claude continues.</div></div></div>
+        <div class="event-row"><div class="event-tag ev-bl">SUB_AGENT_START/STOP</div><div><div class="event-name">When a sub-agent is spawned or ends</div><div class="event-desc">Monitor sub-agent lifecycle. Log when specialist agents start/fail. Useful for debugging complex multi-agent workflows.</div></div></div>
+        <div class="event-row"><div class="event-tag ev-gr">SESSION_END</div><div><div class="event-name">Session terminates gracefully</div><div class="event-desc">Write a session summary. Clean up temp files. Send a completion notification. Runs on proper exit (not terminal kill).</div></div></div>
+      </div>
+    </div>
+
+    <div class="mm-card c-ro">
+      <div class="mm-card-head"><div class="mm-card-ico">🚦</div><div><div class="mm-card-title">Exit Code System — The Access Control</div><div class="mm-card-subtitle">Return the right number and you control what Claude does</div></div></div>
+      <div class="exit-codes">
+        <div class="exit-box ex-0">
+          <div class="exit-num">0</div>
+          <div><div class="exit-title">✅ Success — Allow the action</div><div class="exit-desc">Hook ran fine. Claude proceeds normally. You can pass JSON output back — Claude will read it. Default happy path.</div></div>
+        </div>
+        <div class="exit-box ex-1">
+          <div class="exit-num">1</div>
+          <div><div class="exit-title">⚠️ Non-blocking Error</div><div class="exit-desc">Hook failed but Claude continues anyway. Good for optional logging/notification hooks where failure isn't critical.</div></div>
+        </div>
+        <div class="exit-box ex-2">
+          <div class="exit-num">2</div>
+          <div><div class="exit-title">🛑 BLOCKING ERROR — Gandalf Mode</div><div class="exit-desc"><b>Stops the action completely. No exceptions.</b> Bypasses ALL permission modes including dangerously-skip-permissions. stderr message goes back to Claude as an error. Use for hard security rules that must never be broken.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mm-card c-vi mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔬</div><div><div class="mm-card-title">3 Use Cases — Automation · Logging · Guardrails</div><div class="mm-card-subtitle">Real hooks Claude Code professionals actually build</div></div></div>
+      <div class="usecase-grid">
+        <div class="uc-item uc-1">
+          <div class="uc-title">⚙️ Automation</div>
+          <div class="uc-desc">Run prettier/eslint after every file write. Send Slack notification when Claude finishes a task. Auto-commit changes with a formatted message. Remove long dashes Claude adds to text automatically.</div>
+        </div>
+        <div class="uc-item uc-2">
+          <div class="uc-title">📋 Logging</div>
+          <div class="uc-desc">Write every bash command to audit.log. Record which files were changed and when. Track token usage per session. Monitor sub-agent costs in production. Full audit trail — who deleted what.</div>
+        </div>
+        <div class="uc-item uc-3">
+          <div class="uc-title">🛡️ Guardrails</div>
+          <div class="uc-desc">Block all rm -rf commands (exit 2). Prevent commits to the main branch. Deny access to sensitive env files. Check for API keys in output before writing. Hard limits that Claude cannot bypass even accidentally.</div>
+        </div>
+      </div>
+      <div class="mm-rule-box" style="margin-top:12px">⚡ <b>async: true</b> — Add this to any hook to run it in parallel while Claude continues working. Perfect for notifications, logging, or formatting that doesn't need to block Claude's workflow.</div>
+    </div>
+
+    <div class="mm-card c-gr">
+      <div class="mm-card-head"><div class="mm-card-ico">🔐</div><div><div class="mm-card-title">Setting Up a Hook — How It Works</div><div class="mm-card-subtitle">Added to settings.json in your .claude folder</div></div></div>
+      <div style="background:var(--s1);border:1.5px solid var(--gr-b);border-radius:10px;padding:13px 16px;margin-top:10px;font-family:var(--fm);font-size:10px;line-height:1.7">
+        <div style="color:var(--muted)">// .claude/settings.json</div>
+        <div style="color:var(--fg)">{"hooks": {</div>
+        <div style="padding-left:16px;color:var(--gr);font-weight:700">"PreToolUse": [{</div>
+        <div style="padding-left:32px;color:var(--bl)">"matcher": "bash",</div>
+        <div style="padding-left:32px;color:var(--bl)">"hooks": [{</div>
+        <div style="padding-left:48px;color:var(--te)">"type": "command",</div>
+        <div style="padding-left:48px;color:var(--te)">"command": "~/.scripts/block-rm.sh"</div>
+        <div style="padding-left:32px;color:var(--bl)">}]</div>
+        <div style="padding-left:16px;color:var(--gr);font-weight:700">}]</div>
+        <div style="color:var(--fg)">}}</div>
+      </div>
+      <div class="hook-pipe">
+        <div class="hp-row"><div class="hp-icon">⌨️</div><div class="hp-label">Claude tries to run: rm -rf temp/</div><div class="hp-action hp-block">PRE_TOOL_USE fires</div></div>
+        <div class="hp-row"><div class="hp-icon">🔍</div><div class="hp-label">block-rm.sh checks: does command contain "rm"?</div><div class="hp-arrow">→</div><div class="hp-action hp-log">Yes</div></div>
+        <div class="hp-row"><div class="hp-icon">🛑</div><div class="hp-label">Script exits with code 2. Error → Claude.</div><div class="hp-action hp-block">BLOCKED</div></div>
+        <div class="hp-row"><div class="hp-icon">💬</div><div class="hp-label">Claude receives: "Destructive command blocked by hook"</div><div class="hp-action hp-allow">SAFE</div></div>
+      </div>
+    </div>
+
+  </div>
+  <div class="mm-footer">
+    <div class="mm-nav"><a class="mm-nav-btn" href="cc_chapter09_skills.html">← Ch 9: Skills</a><a class="mm-nav-btn mm-nav-next" href="cc_chapter11_mcp.html">Ch 11: MCP →</a></div>
+    <div class="mm-footer-brand">Claude Code Crash Course · 12 Chapters</div>
+  </div>
+</div>
+<script src="shared/mindmap.js"></script>
+</body>
+</html>

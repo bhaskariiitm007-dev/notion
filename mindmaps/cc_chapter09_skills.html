@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 9 — Skills · Claude Code Crash Course</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#6B3FD4,transparent 70%);top:-80px;left:-90px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#1A7A5E,transparent 70%);top:40%;right:-130px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#C07B00,transparent 70%);bottom:-70px;left:35%}
+.mm-badge{background:linear-gradient(135deg,var(--vi-bg),#FAF5FF);border-color:var(--vi-b);color:var(--vi)}
+.mm-dot{background:var(--vi)}.mm-dot::after{border-color:var(--vi)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--vi) 0%,var(--te) 40%,var(--am) 100%)}
+.mm-kpi:nth-child(1){--kpi-accent:var(--vi)}.mm-kpi:nth-child(2){--kpi-accent:var(--te)}.mm-kpi:nth-child(3){--kpi-accent:var(--am)}.mm-kpi:nth-child(4){--kpi-accent:var(--bl)}
+.mc-1{--chip-bg:var(--vi-bg);--chip-border:var(--vi-b);--chip-color:var(--vi)}.mc-1 .chip-label{color:var(--vi)}
+.mc-2{--chip-bg:var(--te-bg);--chip-border:var(--te-b);--chip-color:var(--te)}.mc-2 .chip-label{color:var(--te)}
+.mc-3{--chip-bg:var(--am-bg);--chip-border:var(--am-b);--chip-color:var(--am)}.mc-3 .chip-label{color:var(--am)}
+/* SKILL FILE ANATOMY */
+.skill-file{background:var(--s1);border:1.5px solid var(--vi-b);border-radius:11px;padding:14px 16px;margin-top:10px;font-family:var(--fm);font-size:11px;line-height:1.8}
+.sf-header{color:var(--vi);font-weight:900;font-size:12px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.sf-comment{color:var(--muted)}
+.sf-key{color:var(--bl)}
+.sf-val{color:var(--te)}
+.sf-section{color:var(--am);font-weight:700}
+/* SKILL TYPES */
+.skill-types{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.sk-type{border-radius:11px;padding:12px 14px}
+.sk-1{background:var(--vi-bg);border:1.5px solid var(--vi-b)}
+.sk-2{background:var(--te-bg);border:1.5px solid var(--te-b)}
+.sk-3{background:var(--am-bg);border:1.5px solid var(--am-b)}
+.sk-4{background:var(--bl-bg);border:1.5px solid var(--bl-b)}
+.sk-title{font-size:11px;font-weight:800;margin-bottom:4px}
+.sk-1 .sk-title{color:var(--vi)}.sk-2 .sk-title{color:var(--te)}.sk-3 .sk-title{color:var(--am)}.sk-4 .sk-title{color:var(--bl)}
+.sk-desc{font-size:10px;color:var(--muted);line-height:1.4}
+/* SKILL VS SUB-AGENT TABLE */
+.compare-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:10px}
+.compare-table th{padding:7px 10px;text-align:left;font-size:10px;font-weight:800;border-bottom:2px solid var(--s3)}
+.compare-table td{padding:7px 10px;border-bottom:1px solid var(--s2);color:var(--muted);line-height:1.4}
+.compare-table tr:last-child td{border-bottom:none}
+.ct-h1{color:var(--vi)}.ct-h2{color:var(--am)}
+.ct-good{color:var(--gr);font-weight:700}
+.ct-bad{color:var(--ro);font-weight:700}
+/* SHARING */
+.share-row{display:flex;align-items:center;gap:10px;padding:10px 13px;border-radius:9px;background:var(--s1);border:1.5px solid var(--s3);margin-bottom:7px}
+.share-icon{font-size:18px}
+.share-title{font-size:11px;font-weight:700;color:var(--fg)}
+.share-desc{font-size:10px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+<div class="noise"></div><canvas id="mm-canvas"></canvas>
+<div class="mm-page">
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude Code Crash Course · Chapter 9 of 12</div>
+    <h1>Skills —<br>Reusable AI Playbooks</h1>
+    <p>Skills anatomy · Parameterized skills · Custom commands · Sharing .skll files · Skill vs Sub-agent</p>
+  </div>
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="90000">0</div><div class="mm-kpi-label">Community skills<br>available at skills.sh</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="0">0</div><div class="mm-kpi-label">Extra tokens used<br>to invoke a skill</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="9">0</div><div class="mm-kpi-label">Domains covered<br>across skill libraries</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="50">0</div><div class="mm-kpi-label">% of repetitive work<br>a skill can automate</div></div>
+  </div>
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">📚</span><div class="chip-label">Teach Claude a Craft</div><div class="chip-desc">A skill is like teaching Claude a repeatable craft — like training a new employee. Once you write a data-analysis skill, Claude can run it any time without you re-explaining.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">⚡</span><div class="chip-label">Zero Token Overhead</div><div class="chip-desc">Skills don't load into context unless invoked. Unlike CLAUDE.md which loads every session, skills only cost tokens when you actually call them. Smart resource management.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">🔗</span><div class="chip-label">Light or Heavy</div><div class="chip-desc">Light skills = just a prompt file. Heavy skills = prompt + supporting scripts in any language (Python, JS, bash). The script can run code, hit APIs, or automate terminal commands.</div></div>
+  </div>
+  <div class="mm-grid">
+
+    <div class="mm-card c-vi">
+      <div class="mm-card-head"><div class="mm-card-ico">🔬</div><div><div class="mm-card-title">Anatomy of a Skill File</div><div class="mm-card-subtitle">What lives inside .claude/skills/my-skill.md</div></div></div>
+      <div class="skill-file">
+        <div class="sf-header">📄 .claude/skills/data-analysis.md</div>
+        <div><span class="sf-comment">---  ← front matter (YAML)</span></div>
+        <div><span class="sf-key">name:</span> <span class="sf-val">Kegel Data Analysis</span></div>
+        <div><span class="sf-key">description:</span> <span class="sf-val">Analyze structured datasets</span></div>
+        <div><span class="sf-key">version:</span> <span class="sf-val">1.0</span></div>
+        <div><span class="sf-key">parameters:</span></div>
+        <div style="padding-left:14px"><span class="sf-key">- name:</span> <span class="sf-val">file_path</span></div>
+        <div style="padding-left:14px"><span class="sf-key">- name:</span> <span class="sf-val">output_format</span></div>
+        <div><span class="sf-comment">---</span></div>
+        <div style="margin-top:6px"><span class="sf-section">## Instructions</span></div>
+        <div><span class="sf-comment">You are a data analyst. Given {{file_path}},</span></div>
+        <div><span class="sf-comment">clean the data, produce summary stats,</span></div>
+        <div><span class="sf-comment">and output as {{output_format}}.</span></div>
+        <div style="margin-top:6px"><span class="sf-section">## Steps</span></div>
+        <div><span class="sf-comment">1. Load and inspect the data</span></div>
+        <div><span class="sf-comment">2. Handle nulls and outliers</span></div>
+        <div><span class="sf-comment">3. Generate visualizations...</span></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-vi">📋 Front matter = metadata</span><span class="mm-tag mm-tag-bl">🔧 {{params}} = dynamic</span></div>
+    </div>
+
+    <div class="mm-card c-te">
+      <div class="mm-card-head"><div class="mm-card-ico">🧩</div><div><div class="mm-card-title">4 Types of Skills</div><div class="mm-card-subtitle">From simple prompts to full automation pipelines</div></div></div>
+      <div class="skill-types">
+        <div class="sk-type sk-1"><div class="sk-title">📝 Light Skill</div><div class="sk-desc">Just a markdown prompt. Invoke to get Claude to follow a specific workflow — like writing PR descriptions in a specific format.</div></div>
+        <div class="sk-type sk-2"><div class="sk-title">⚙️ Script Skill</div><div class="sk-desc">Prompt + supporting script in Python, JS, or bash. The script does heavy lifting (API calls, file transformations, etc).</div></div>
+        <div class="sk-type sk-3"><div class="sk-title">🔀 Parameterized Skill</div><div class="sk-desc">Uses {{variables}} in the prompt. Pass file paths, formats, or targets when invoking. Reusable across different inputs.</div></div>
+        <div class="sk-type sk-4"><div class="sk-title">🔒 Private / Global</div><div class="sk-desc">Project skills live in .claude/skills/ (this project only). Global skills in ~/.claude/skills/ (available everywhere).</div></div>
+      </div>
+      <div class="mm-rule-box" style="margin-top:12px">📁 <b>Supporting files</b> — any script or file in the same skills folder can be referenced. Claude executes them as needed. Python, JS, bash — any language works.</div>
+    </div>
+
+    <div class="mm-card c-am">
+      <div class="mm-card-head"><div class="mm-card-ico">📊</div><div><div class="mm-card-title">Skills vs Sub-Agents — Know the Difference</div><div class="mm-card-subtitle">Same context window vs own isolated session</div></div></div>
+      <table class="compare-table">
+        <tr><th class="ct-h1">Skill</th><th class="ct-h2">Sub-Agent</th></tr>
+        <tr><td>Runs in <b>same context window</b> as parent</td><td>Gets its <b>own isolated context window</b></td></tr>
+        <tr><td>Inherits <span class="ct-good">all parent tools</span> and permissions</td><td>Can have <b>different model</b> (cheaper Haiku)</td></tr>
+        <tr><td>Best for: <b>repeatable workflows</b></td><td>Best for: <b>parallel or isolated tasks</b></td></tr>
+        <tr><td>No token savings — shares context</td><td><span class="ct-good">Saves tokens</span> — returns only a summary</td></tr>
+        <tr><td>Invoked directly by name / command</td><td>Spawned by parent Claude session</td></tr>
+        <tr><td>Like a <b>macro or template</b></td><td>Like an <b>intern with their own desk</b></td></tr>
+      </table>
+    </div>
+
+    <div class="mm-card c-bl">
+      <div class="mm-card-head"><div class="mm-card-ico">🌐</div><div><div class="mm-card-title">Sharing & Finding Skills</div><div class="mm-card-subtitle">The growing ecosystem of community skills</div></div></div>
+      <div class="share-row"><div class="share-icon">⬇️</div><div><div class="share-title">Download as .skll file</div><div class="share-desc">Skills export as .skll — a packaged format with prompt, metadata, and supporting files bundled together. Single file, shareable anywhere.</div></div></div>
+      <div class="share-row"><div class="share-icon">🌐</div><div><div class="share-title">skills.sh — 90,000+ community skills</div><div class="share-desc">Filter by AI (Claude, Perplexity, GPT) and domain. Covers coding, writing, data, DevOps. Free to browse and download.</div></div></div>
+      <div class="share-row"><div class="share-icon">⚠️</div><div><div class="share-title">Security warning — read before installing</div><div class="share-desc">Skills can execute scripts and hit APIs. Only install from trusted sources. A malicious skill could exfiltrate your API keys.</div></div></div>
+      <div class="share-row"><div class="share-icon">🔧</div><div><div class="share-title">Skill Creator plugin (built-in)</div><div class="share-desc">Ask Claude to "create a skill for [your workflow]" — it generates the full skill.md with front matter, steps, and parameters automatically.</div></div></div>
+    </div>
+
+    <div class="mm-card c-gr mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🚀</div><div><div class="mm-card-title">Real-World Skill Examples — What You'd Actually Build</div><div class="mm-card-subtitle">Skills that turn 30-minute tasks into 30-second invocations</div></div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px">
+        <div style="background:var(--vi-bg);border:1.5px solid var(--vi-b);border-radius:10px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:800;color:var(--vi);margin-bottom:4px">📋 PR Description Writer</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.4">Reads git diff → writes a formatted PR description with Summary, Testing, Breaking Changes sections. Never repeat yourself.</div>
+          <div style="margin-top:6px;font-family:var(--fm);font-size:9px;color:var(--vi);font-weight:700">/pr-description</div>
+        </div>
+        <div style="background:var(--te-bg);border:1.5px solid var(--te-b);border-radius:10px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:800;color:var(--te);margin-bottom:4px">📊 Daily Briefing</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.4">Reads Gmail + Calendar + Slack (via MCP) → summarizes urgent emails, today's meetings, pending tasks. Morning automation.</div>
+          <div style="margin-top:6px;font-family:var(--fm);font-size:9px;color:var(--te);font-weight:700">/daily-brief</div>
+        </div>
+        <div style="background:var(--am-bg);border:1.5px solid var(--am-b);border-radius:10px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:800;color:var(--am);margin-bottom:4px">🔍 Code Review</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.4">Reviews any file for bugs, anti-patterns, naming violations, and missing edge cases. Uses your CLAUDE.md standards as the rulebook.</div>
+          <div style="margin-top:6px;font-family:var(--fm);font-size:9px;color:var(--am);font-weight:700">/code-review</div>
+        </div>
+        <div style="background:var(--bl-bg);border:1.5px solid var(--bl-b);border-radius:10px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:800;color:var(--bl);margin-bottom:4px">🧪 Test Generator</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.4">Accepts a function or file → generates unit tests with edge cases, mocks, and coverage for the happy/sad/error paths.</div>
+          <div style="margin-top:6px;font-family:var(--fm);font-size:9px;color:var(--bl);font-weight:700">/gen-tests</div>
+        </div>
+        <div style="background:var(--gr-bg);border:1.5px solid var(--gr-b);border-radius:10px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:800;color:var(--gr);margin-bottom:4px">📝 LinkedIn Post</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.4">Takes a topic or project → writes an engaging LinkedIn post with hook, insight, CTA. Uses Tavily MCP to add current stats.</div>
+          <div style="margin-top:6px;font-family:var(--fm);font-size:9px;color:var(--gr);font-weight:700">/linkedin-post</div>
+        </div>
+        <div style="background:var(--ro-bg);border:1.5px solid var(--ro-b);border-radius:10px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:800;color:var(--ro);margin-bottom:4px">🔄 Migration Script</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.4">Reads old DB schema, generates migration SQL + rollback, writes tests, updates ORM models. Three-command database migration.</div>
+          <div style="margin-top:6px;font-family:var(--fm);font-size:9px;color:var(--ro);font-weight:700">/migrate-db</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="mm-footer">
+    <div class="mm-nav"><a class="mm-nav-btn" href="cc_chapter08_claudemd.html">← Ch 8: CLAUDE.md</a><a class="mm-nav-btn mm-nav-next" href="cc_chapter10_hooks.html">Ch 10: Hooks →</a></div>
+    <div class="mm-footer-brand">Claude Code Crash Course · 12 Chapters</div>
+  </div>
+</div>
+<script src="shared/mindmap.js"></script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 3 — Claude Code Basics · Claude Code Crash Course</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#0A7A6A,transparent 70%);top:-80px;left:-90px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#E8620A,transparent 70%);top:40%;right:-120px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#1A52C8,transparent 70%);bottom:-70px;left:36%}
+.mm-badge{background:linear-gradient(135deg,var(--te-bg),#F0FBFA);border-color:var(--te-b);color:var(--te)}
+.mm-dot{background:var(--te)}.mm-dot::after{border-color:var(--te)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--te) 0%,var(--or) 35%,var(--bl) 70%,var(--vi) 100%)}
+.mm-kpi:nth-child(1){--kpi-accent:var(--te)}.mm-kpi:nth-child(2){--kpi-accent:var(--or)}.mm-kpi:nth-child(3){--kpi-accent:var(--bl)}.mm-kpi:nth-child(4){--kpi-accent:var(--vi)}
+.mc-1{--chip-bg:var(--te-bg);--chip-border:var(--te-b);--chip-color:var(--te)}.mc-1 .chip-label{color:var(--te)}
+.mc-2{--chip-bg:var(--or-bg);--chip-border:var(--or-b);--chip-color:var(--or)}.mc-2 .chip-label{color:var(--or)}
+.mc-3{--chip-bg:var(--bl-bg);--chip-border:var(--bl-b);--chip-color:var(--bl)}.mc-3 .chip-label{color:var(--bl)}
+/* VS DUEL */
+.vs-duel{display:grid;grid-template-columns:1fr 50px 1fr;gap:10px;align-items:center;margin-top:10px}
+.vs-badge{width:40px;height:40px;background:linear-gradient(135deg,var(--vi),var(--bl));color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;animation:vsSpin 4s ease-in-out infinite;box-shadow:0 4px 14px rgba(107,63,212,.35)}
+@keyframes vsSpin{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.vs-panel{border-radius:13px;padding:14px;transition:transform .3s,box-shadow .3s}
+.vs-panel:hover{transform:translateY(-4px)}
+.vs-chat{background:var(--am-bg);border:2px solid var(--am-b)}.vs-chat:hover{box-shadow:0 8px 22px rgba(192,123,0,.2)}
+.vs-code{background:var(--te-bg);border:2px solid var(--te-b)}.vs-code:hover{box-shadow:0 8px 22px rgba(10,122,106,.2)}
+.vs-title{font-size:12px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.vs-chat .vs-title{color:var(--am)}.vs-code .vs-title{color:var(--te)}
+.vs-item{font-size:11px;color:var(--muted);margin-bottom:4px;display:flex;align-items:flex-start;gap:6px;line-height:1.45}
+.vdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.vs-chat .vdot{background:var(--am)}.vs-code .vdot{background:var(--te)}
+@media(max-width:500px){.vs-duel{grid-template-columns:1fr}.vs-badge{display:none}}
+/* ACCESS METHODS */
+.access-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+@media(max-width:500px){.access-grid{grid-template-columns:1fr}}
+.acc-card{border-radius:12px;padding:13px;text-align:center;transition:transform .3s,box-shadow .3s}
+.acc-card:hover{transform:translateY(-4px)}
+.acc-web{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.acc-web:hover{box-shadow:0 7px 18px rgba(26,82,200,.18)}
+.acc-desk{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.acc-desk:hover{box-shadow:0 7px 18px rgba(107,63,212,.18)}
+.acc-code{background:var(--te-bg);border:1.5px solid var(--te-b)}.acc-code:hover{box-shadow:0 7px 18px rgba(10,122,106,.18)}
+.acc-ico{font-size:22px;display:block;margin-bottom:5px;transition:transform .3s}.acc-card:hover .acc-ico{transform:scale(1.2) rotate(-8deg)}
+.acc-name{font-size:12px;font-weight:800;margin-bottom:3px}
+.acc-web .acc-name{color:var(--bl)}.acc-desk .acc-name{color:var(--vi)}.acc-code .acc-name{color:var(--te)}
+.acc-desc{font-size:10px;color:var(--muted);line-height:1.4}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+<div class="noise"></div><canvas id="mm-canvas"></canvas>
+<div class="mm-page">
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude Code Crash Course · Chapter 3 of 12</div>
+    <h1>Claude Code Basics<br>Brain vs Brain With Hands</h1>
+    <p>Claude Chat vs Claude Code · Terminal access · The hands analogy · Why it's fundamentally different</p>
+  </div>
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="3">0</div><div class="mm-kpi-label">Ways to access<br>Claude (Web/Desktop/Code)</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">Brain+Hands</div><div class="mm-kpi-label">The best analogy for<br>what Claude Code is</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="0">0</div><div class="mm-kpi-label">Prior coding needed<br>to follow this course</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">Terminal</div><div class="mm-kpi-label">How Claude Code<br>controls your machine</div></div>
+  </div>
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">📱</span><div class="chip-label">Smart Person on Phone</div><div class="chip-desc">Claude Chat is like a brilliant expert on the phone. It can tell you exactly what to do — but YOU have to do it yourself.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">🤖</span><div class="chip-label">Brain With Hands</div><div class="chip-desc">Claude Code is the same brain, but it can now reach into your machine, run commands, create files, and build things directly.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">💻</span><div class="chip-label">Terminal = Computer Control</div><div class="chip-desc">The terminal is where a computer can be fully controlled. Claude Code gets installed and operates via this channel.</div></div>
+  </div>
+  <div class="mm-grid">
+
+    <div class="mm-card c-or mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">⚖️</div><div><div class="mm-card-title">Claude Chat vs Claude Code — The Fundamental Difference</div><div class="mm-card-subtitle">Same brain, completely different capability — this distinction is everything</div></div></div>
+      <div class="vs-duel">
+        <div class="vs-panel vs-chat">
+          <div class="vs-title">💬 Claude Chat (Web/Desktop)</div>
+          <div class="vs-item"><div class="vdot"></div>Talks to you — gives advice, writes text, answers questions</div>
+          <div class="vs-item"><div class="vdot"></div>Provides code but YOU copy, paste, run it yourself</div>
+          <div class="vs-item"><div class="vdot"></div>Cannot access your files, folders, or machine</div>
+          <div class="vs-item"><div class="vdot"></div>Smart person on the phone — expert advice only</div>
+          <div class="vs-item"><div class="vdot"></div>Free to use, no installation needed</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center"><div class="vs-badge">VS</div></div>
+        <div class="vs-panel vs-code">
+          <div class="vs-title">⚡ Claude Code (Terminal/IDE)</div>
+          <div class="vs-item"><div class="vdot"></div>Acts for you — creates files, runs scripts, builds projects</div>
+          <div class="vs-item"><div class="vdot"></div>Writes code AND executes it directly on your machine</div>
+          <div class="vs-item"><div class="vdot"></div>Full access to your terminal, filesystem, and tools</div>
+          <div class="vs-item"><div class="vdot"></div>Smart person with hands — advice AND action</div>
+          <div class="vs-item"><div class="vdot"></div>Requires installation, connects to Claude brain via API</div>
+        </div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">🔑</div>
+        <div><div class="mm-rule-title">THE KEY DISTINCTION</div><div class="mm-rule-body">Claude Code is <strong>not Claude with a different interface</strong>. It is a fundamentally different category of tool. Claude Chat answers. Claude Code acts. That distinction changes everything about how you work.</div></div>
+      </div>
+    </div>
+
+    <div class="mm-card c-te">
+      <div class="mm-card-head"><div class="mm-card-ico">🖥️</div><div><div class="mm-card-title">3 Ways to Access Claude</div><div class="mm-card-subtitle">Each interface serves a different purpose</div></div></div>
+      <div class="access-grid">
+        <div class="acc-card acc-web"><span class="acc-ico">🌐</span><div class="acc-name">claude.ai</div><div class="acc-desc">Browser-based chat. No install. Great for thinking, writing, and research tasks.</div></div>
+        <div class="acc-card acc-desk"><span class="acc-ico">🖥️</span><div class="acc-name">Desktop App</div><div class="acc-desc">Installed application. Screenshot access, system tray icon, faster on Mac/Windows.</div></div>
+        <div class="acc-card acc-code"><span class="acc-ico">⚡</span><div class="acc-name">Claude Code</div><div class="acc-desc">Terminal/IDE agent. Builds, runs code, creates files. This is what we master.</div></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-bl">🌐 Web = Think</span><span class="mm-tag mm-tag-vi">🖥️ Desktop = Quick</span><span class="mm-tag mm-tag-te">⚡ Code = Build</span></div>
+    </div>
+
+    <div class="mm-card c-bl">
+      <div class="mm-card-head"><div class="mm-card-ico">⌨️</div><div><div class="mm-card-title">The Terminal — Why It Matters</div><div class="mm-card-subtitle">This is how Claude Code gets its "hands" on your machine</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">→</div><span><b>What terminal is</b> — text-based interface where you control a computer directly with typed commands. Not a GUI.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">→</div><span><b>Why it's powerful</b> — anyone with terminal access can create files, run programs, modify settings, manage the whole machine</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">★</div><span><b>Claude Code's secret</b> — it gets installed and runs terminal commands on your behalf. That's how it creates, edits, runs code.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>You don't need to learn terminal</b> — Claude Code handles it. But understanding it removes the "magic" confusion completely.</span></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-bl">⌨️ Terminal = Power</span><span class="mm-tag mm-tag-bl">🔧 Claude runs cmds</span><span class="mm-tag mm-tag-gr">✅ No need to learn it</span></div>
+    </div>
+
+    <div class="mm-card c-vi">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">What Claude Code Actually Does</div><div class="mm-card-subtitle">Under the hood — actions, not just answers</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">1</div><span><b>You ask it anything</b> — in plain English. "Build me a Python script that checks if a number is prime."</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">2</div><span><b>It plans the work</b> — thinks through what commands to run, what files to create, what to verify</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">3</div><span><b>It asks for permission</b> — before running bash commands, it asks: "Can I run this?" You approve or deny</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">4</div><span><b>It executes on machine</b> — creates files, runs scripts, checks output, fixes errors — all directly on your computer</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">5</div><span><b>It reports results</b> — "Created prime.py, ran it, output was correct. Here's what happened:" — full transparency</span></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-vi">📝 Plan</span><span class="mm-tag mm-tag-vi">✅ Approve</span><span class="mm-tag mm-tag-vi">⚡ Execute</span><span class="mm-tag mm-tag-vi">📤 Report</span></div>
+    </div>
+
+    <div class="mm-card c-gr mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">How Claude Code Handles Your Requests — The Full Loop</div><div class="mm-card-subtitle">From your plain English request to a working result on your machine</div></div></div>
+      <div class="mm-flow mm-flow-gr">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">💬</div><div class="mm-step-lbl">You Ask</div><div class="mm-step-sub">Plain English</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#cc1"/></animateMotion></circle><path id="cc1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">🧠</div><div class="mm-step-lbl">Claude Plans</div><div class="mm-step-sub">Tools & steps</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#cc2"/></animateMotion></circle><path id="cc2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">❓</div><div class="mm-step-lbl">Asks Permission</div><div class="mm-step-sub">"Run this bash?"</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#cc3"/></animateMotion></circle><path id="cc3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">✅</div><div class="mm-step-lbl">You Approve</div><div class="mm-step-sub">Yes / No / All</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#cc4"/></animateMotion></circle><path id="cc4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">⚡</div><div class="mm-step-lbl">Executes</div><div class="mm-step-sub">Files, code, runs</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#cc5"/></animateMotion></circle><path id="cc5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">🔍</div><div class="mm-step-lbl">Verifies</div><div class="mm-step-sub">Output checked</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.7s"><mpath href="#cc6"/></animateMotion></circle><path id="cc6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">📤</div><div class="mm-step-lbl">Reports Back</div><div class="mm-step-sub">Done + next steps</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="shared/mindmap.js"></script>
+<script>MindMap.init(['claude','code','bash','→','ls','mkdir','touch','py','[]','cmd'],[165,22,210,38,270]);</script>
+</body>
+</html>

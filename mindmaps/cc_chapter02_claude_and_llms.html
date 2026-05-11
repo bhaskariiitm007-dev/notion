@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 2 — Understanding Claude & LLMs · Claude Code Crash Course</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#6B3FD4,transparent 70%);top:-80px;left:-90px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#1A52C8,transparent 70%);top:40%;right:-130px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#0A7A6A,transparent 70%);bottom:-70px;left:35%}
+.mm-badge{background:linear-gradient(135deg,var(--vi-bg),#F5F0FF);border-color:var(--vi-b);color:var(--vi)}
+.mm-dot{background:var(--vi)}.mm-dot::after{border-color:var(--vi)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--vi) 0%,var(--bl) 30%,var(--te) 65%,var(--sk) 100%)}
+.mm-kpi:nth-child(1){--kpi-accent:var(--vi)}.mm-kpi:nth-child(2){--kpi-accent:var(--bl)}.mm-kpi:nth-child(3){--kpi-accent:var(--te)}.mm-kpi:nth-child(4){--kpi-accent:var(--am)}
+.mc-1{--chip-bg:var(--vi-bg);--chip-border:var(--vi-b);--chip-color:var(--vi)}.mc-1 .chip-label{color:var(--vi)}
+.mc-2{--chip-bg:var(--bl-bg);--chip-border:var(--bl-b);--chip-color:var(--bl)}.mc-2 .chip-label{color:var(--bl)}
+.mc-3{--chip-bg:var(--te-bg);--chip-border:var(--te-b);--chip-color:var(--te)}.mc-3 .chip-label{color:var(--te)}
+/* MODEL SPECTRUM */
+.model-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+@media(max-width:520px){.model-cards{grid-template-columns:1fr}}
+.mcard{border-radius:13px;padding:15px;text-align:center;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s}
+.mcard:hover{transform:translateY(-5px)}
+.mcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.mc-haiku{background:var(--te-bg);border:2px solid var(--te-b)}.mc-haiku::before{background:var(--te)}.mc-haiku:hover{box-shadow:0 10px 26px rgba(10,122,106,.2)}
+.mc-sonnet{background:var(--bl-bg);border:2px solid var(--bl-b)}.mc-sonnet::before{background:var(--bl)}.mc-sonnet:hover{box-shadow:0 10px 26px rgba(26,82,200,.2)}
+.mc-opus{background:var(--vi-bg);border:2px solid var(--vi-b)}.mc-opus::before{background:var(--vi)}.mc-opus:hover{box-shadow:0 10px 26px rgba(107,63,212,.2)}
+.mcard-tier{font-size:9px;font-weight:800;font-family:var(--fm);letter-spacing:.5px;margin-bottom:5px;display:block}
+.mc-haiku .mcard-tier{color:var(--te)}.mc-sonnet .mcard-tier{color:var(--bl)}.mc-opus .mcard-tier{color:var(--vi)}
+.mcard-ico{font-size:26px;display:block;margin-bottom:6px;transition:transform .3s}.mcard:hover .mcard-ico{transform:scale(1.2) rotate(-8deg)}
+.mcard-name{font-size:14px;font-weight:900;margin-bottom:3px}
+.mc-haiku .mcard-name{color:var(--te)}.mc-sonnet .mcard-name{color:var(--bl)}.mc-opus .mcard-name{color:var(--vi)}
+.mcard-tag{display:inline-block;padding:2px 9px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:7px}
+.mc-haiku .mcard-tag{background:var(--te);color:#fff}.mc-sonnet .mcard-tag{background:var(--bl);color:#fff}.mc-opus .mcard-tag{background:var(--vi);color:#fff}
+.mcard-desc{font-size:10.5px;color:var(--muted);line-height:1.45}
+/* LLM BRAIN DIAGRAM */
+.llm-brain{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin-top:10px}
+.llm-side{border-radius:12px;padding:13px}
+.llm-input{background:var(--am-bg);border:1.5px solid var(--am-b)}.llm-output{background:var(--gr-bg);border:1.5px solid var(--gr-b)}
+.llm-title{font-size:11px;font-weight:800;margin-bottom:6px}.llm-input .llm-title{color:var(--am)}.llm-output .llm-title{color:var(--gr)}
+.llm-item{font-size:10.5px;color:var(--muted);margin-bottom:3px;display:flex;gap:5px;align-items:flex-start;line-height:1.4}
+.llm-center{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px}
+.brain-ico{font-size:32px;animation:brainPulse 2s ease-in-out infinite}
+@keyframes brainPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.brain-label{font-size:9px;font-weight:800;font-family:var(--fm);color:var(--vi);text-align:center}
+@media(max-width:500px){.llm-brain{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+<div class="noise"></div><canvas id="mm-canvas"></canvas>
+<div class="mm-page">
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude Code Crash Course · Chapter 2 of 12</div>
+    <h1>Understanding Claude<br>& How LLMs Work</h1>
+    <p>Anthropic · LLMs as brains · Haiku · Sonnet · Opus · Extended Thinking</p>
+  </div>
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="3">0</div><div class="mm-kpi-label">Claude model tiers:<br>Haiku · Sonnet · Opus</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="200">0</div><div class="mm-kpi-label">Billion+ words of<br>training data (approx)</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">Next word</div><div class="mm-kpi-label">What LLMs actually<br>predict, at the core</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">Safety 1st</div><div class="mm-kpi-label">Anthropic's founding<br>mission & philosophy</div></div>
+  </div>
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">🏢</span><div class="chip-label">Anthropic Built Claude</div><div class="chip-desc">Founded by ex-OpenAI researchers who left to build the most safe, trustworthy, and powerful AI — safety first, power second.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">🧠</span><div class="chip-label">LLMs Are Next-Word Predictors</div><div class="chip-desc">At their core, all LLMs (GPT, Gemini, Claude) predict the next best word based on training data. Incredibly simple idea, world-changing results.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">⚖️</span><div class="chip-label">Match Model to Task</div><div class="chip-desc">Haiku for speed, Sonnet for balance, Opus for depth. Picking the right model for the right job is a core professional skill.</div></div>
+  </div>
+  <div class="mm-grid">
+
+    <div class="mm-card c-vi">
+      <div class="mm-card-head"><div class="mm-card-ico">🏢</div><div><div class="mm-card-title">Anthropic vs OpenAI</div><div class="mm-card-subtitle">Two companies, two philosophies, one shared mission</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">→</div><span><b>OpenAI</b> builds ChatGPT — the model that made AI famous. Sam Altman-led, GPT-3 through GPT-5 family.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">→</div><span><b>Anthropic</b> builds Claude — founded by people who left OpenAI. Dario Amodei-led. Same goal, different values.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">★</div><span><b>Anthropic's core belief:</b> "AI research and products that put safety at the frontier" — safety is not a constraint, it IS the goal.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">→</div><span><b>The result:</b> Claude models are deeply aligned, thoughtful, and have strong constitutional AI principles baked in from the start.</span></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-vi">🏢 Anthropic</span><span class="mm-tag mm-tag-bl">🤖 OpenAI</span><span class="mm-tag mm-tag-or">🛡️ Safety First</span></div>
+    </div>
+
+    <div class="mm-card c-am">
+      <div class="mm-card-head"><div class="mm-card-ico">🧠</div><div><div class="mm-card-title">How LLMs Actually Work</div><div class="mm-card-subtitle">The brilliant-but-simple idea behind all AI assistants</div></div></div>
+      <div class="llm-brain">
+        <div class="llm-side llm-input">
+          <div class="llm-title">📥 Training Input</div>
+          <div class="llm-item">📚 Billions of text documents</div>
+          <div class="llm-item">🌐 Web pages, books, code</div>
+          <div class="llm-item">💬 Conversations, forums</div>
+          <div class="llm-item">🔬 Scientific papers, articles</div>
+        </div>
+        <div class="llm-center">
+          <span class="brain-ico">🧠</span>
+          <div class="brain-label">LLM<br>BRAIN</div>
+        </div>
+        <div class="llm-side llm-output">
+          <div class="llm-title">📤 What It Learns</div>
+          <div class="llm-item">📝 Patterns in language</div>
+          <div class="llm-item">🔗 Relationships between concepts</div>
+          <div class="llm-item">⚡ Next-word probabilities</div>
+          <div class="llm-item">🎯 Context-aware predictions</div>
+        </div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">💡</div>
+        <div><div class="mm-rule-title">⭐ THE KEY INSIGHT</div><div class="mm-rule-body">An LLM is trained like a student who studied for an exam. When you ask it something, it predicts the most likely <strong>next word</strong>, then the next, building up a complete, coherent answer.</div></div>
+      </div>
+    </div>
+
+    <div class="mm-card c-bl mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🏆</div><div><div class="mm-card-title">The Claude Model Family — Speed vs Intelligence</div><div class="mm-card-subtitle">Three tiers designed for different jobs — pick the right tool for each task</div></div></div>
+      <div class="model-cards">
+        <div class="mcard mc-haiku">
+          <span class="mcard-tier">TIER 1 — FAST</span>
+          <span class="mcard-ico">⚡</span>
+          <div class="mcard-name">Haiku</div>
+          <div class="mcard-tag">Speed First</div>
+          <div class="mcard-desc">Fastest response, lowest token cost. Great for simple tasks: quick questions, summaries, maintenance, error hunting.</div>
+        </div>
+        <div class="mcard mc-sonnet">
+          <span class="mcard-tier">TIER 2 — BALANCED</span>
+          <span class="mcard-ico">⚖️</span>
+          <div class="mcard-name">Sonnet</div>
+          <div class="mcard-tag">Daily Driver</div>
+          <div class="mcard-desc">The everyday workhorse. Balances capability and cost for documents, coding, analysis, and most everyday tasks.</div>
+        </div>
+        <div class="mcard mc-opus">
+          <span class="mcard-tier">TIER 3 — MAXIMUM</span>
+          <span class="mcard-ico">👑</span>
+          <div class="mcard-name">Opus</div>
+          <div class="mcard-tag">Deep Reasoning</div>
+          <div class="mcard-desc">Most capable. Complex planning, ambiguous requirements, architecture design. Use when it really needs to think hard.</div>
+        </div>
+      </div>
+      <div class="mm-tags" style="margin-top:14px"><span class="mm-tag mm-tag-te">⚡ Haiku = Maintenance</span><span class="mm-tag mm-tag-bl">⚖️ Sonnet = Building</span><span class="mm-tag mm-tag-vi">👑 Opus = Planning</span></div>
+    </div>
+
+    <div class="mm-card c-te">
+      <div class="mm-card-head"><div class="mm-card-ico">🎯</div><div><div class="mm-card-title">Model Selection Strategy</div><div class="mm-card-subtitle">The professional approach — Opus for plans, Sonnet for work, Haiku for checks</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">1</div><span><b>Start with Opus</b> — use it for initial planning, architecture design, and understanding complex requirements. It thinks deepest.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">2</div><span><b>Switch to Sonnet</b> — for building major components, writing code, and day-to-day development work where balance matters.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">3</div><span><b>Use Haiku for checks</b> — maintenance, finding bugs, quick formatting, simple edits. Fast and cheap for these use cases.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Never always pick Opus</b> — it's overkill for 90% of tasks and will burn through context and credits far too fast.</span></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-or">📋 Plan → Opus</span><span class="mm-tag mm-tag-bl">🔨 Build → Sonnet</span><span class="mm-tag mm-tag-te">🔍 Fix → Haiku</span></div>
+    </div>
+
+    <div class="mm-card c-gr">
+      <div class="mm-card-head"><div class="mm-card-ico">🔬</div><div><div class="mm-card-title">Extended Thinking Mode</div><div class="mm-card-subtitle">Claude deliberates before answering — depth over speed</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">★</div><span><b>What it is</b> — Claude spends extra time reasoning through the problem before giving a final answer. Like "show your work".</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>When to use</b> — complex plans, ambiguous requirements, multi-step architecture, debugging tricky logic</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Context benefit</b> — extended thinking uses a separate thinking tab, so it doesn't pollute your main context window</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Don't overuse</b> — unnecessary extended thinking wastes tokens. Only enable it when deeper reasoning genuinely matters.</span></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-gr">🔬 Deep Reasoning</span><span class="mm-tag mm-tag-gr">✅ Separate Context</span><span class="mm-tag mm-tag-am">⚠️ Use Judiciously</span></div>
+    </div>
+
+    <div class="mm-card c-or mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">How an LLM Processes Your Prompt — Step by Step</div><div class="mm-card-subtitle">From your words to a complete, context-aware answer</div></div></div>
+      <div class="mm-flow mm-flow-or">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">📝</div><div class="mm-step-lbl">You Type</div><div class="mm-step-sub">Prompt as tokens</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#llm1"/></animateMotion></circle><path id="llm1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">🔢</div><div class="mm-step-lbl">Tokenize</div><div class="mm-step-sub">Words → numbers</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#llm2"/></animateMotion></circle><path id="llm2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">🧠</div><div class="mm-step-lbl">Model Thinks</div><div class="mm-step-sub">Context + training</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#llm3"/></animateMotion></circle><path id="llm3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">🎯</div><div class="mm-step-lbl">Predict Next</div><div class="mm-step-sub">Highest prob word</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#llm4"/></animateMotion></circle><path id="llm4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">🔁</div><div class="mm-step-lbl">Repeat Loop</div><div class="mm-step-sub">Token by token</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#llm5"/></animateMotion></circle><path id="llm5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">📤</div><div class="mm-step-lbl">Full Response</div><div class="mm-step-sub">Streamed to you</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.7s"><mpath href="#llm6"/></animateMotion></circle><path id="llm6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">🔄</div><div class="mm-step-lbl">You Iterate</div><div class="mm-step-sub">Refine & improve</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="shared/mindmap.js"></script>
+<script>MindMap.init(['LLM','Opus','Sonnet','Haiku','→','token','brain','ctx','ŷ','Claude'],[270,210,165,38,22]);</script>
+</body>
+</html>

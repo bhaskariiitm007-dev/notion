@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 8 — CLAUDE.md · Claude Code Crash Course</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#1A7A5E,transparent 70%);top:-80px;left:-90px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#1A52C8,transparent 70%);top:40%;right:-130px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#7B3FC4,transparent 70%);bottom:-70px;left:35%}
+.mm-badge{background:linear-gradient(135deg,var(--te-bg),#EFF6FF);border-color:var(--te-b);color:var(--te)}
+.mm-dot{background:var(--te)}.mm-dot::after{border-color:var(--te)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--te) 0%,var(--bl) 40%,var(--vi) 100%)}
+.mm-kpi:nth-child(1){--kpi-accent:var(--te)}.mm-kpi:nth-child(2){--kpi-accent:var(--bl)}.mm-kpi:nth-child(3){--kpi-accent:var(--vi)}.mm-kpi:nth-child(4){--kpi-accent:var(--gr)}
+.mc-1{--chip-bg:var(--te-bg);--chip-border:var(--te-b);--chip-color:var(--te)}.mc-1 .chip-label{color:var(--te)}
+.mc-2{--chip-bg:var(--bl-bg);--chip-border:var(--bl-b);--chip-color:var(--bl)}.mc-2 .chip-label{color:var(--bl)}
+.mc-3{--chip-bg:var(--vi-bg);--chip-border:var(--vi-b);--chip-color:var(--vi)}.mc-3 .chip-label{color:var(--vi)}
+/* FOLDER TREE */
+.folder-tree{font-family:var(--fm);font-size:11px;background:var(--s1);border:1.5px solid var(--s3);border-radius:10px;padding:14px 16px;margin-top:10px;line-height:1.9}
+.ft-root{color:var(--te);font-weight:800}
+.ft-branch{padding-left:16px;border-left:2px solid var(--te-b);margin-left:6px}
+.ft-file{color:var(--muted)}
+.ft-file b{color:var(--fg)}
+.ft-hl{color:var(--te);font-weight:700}
+.ft-vi{color:var(--vi);font-weight:700}
+.ft-bl{color:var(--bl);font-weight:700}
+.ft-am{color:var(--am);font-weight:700}
+/* PRIORITY LADDER */
+.pri-ladder{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.pri-rung{display:flex;align-items:center;gap:10px;border-radius:9px;padding:10px 13px}
+.pri-icon{font-size:18px;flex-shrink:0}
+.pri-title{font-size:11px;font-weight:800}
+.pri-desc{font-size:10px;color:var(--muted);line-height:1.4}
+.pri-badge{font-family:var(--fm);font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:auto;flex-shrink:0}
+.pr-1{background:var(--te-bg);border:1.5px solid var(--te-b)}.pr-1 .pri-title{color:var(--te)}.pr-1 .pri-badge{background:var(--te);color:#fff}
+.pr-2{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.pr-2 .pri-title{color:var(--bl)}.pr-2 .pri-badge{background:var(--bl);color:#fff}
+.pr-3{background:var(--am-bg);border:1.5px solid var(--am-b)}.pr-3 .pri-title{color:var(--am)}.pr-3 .pri-badge{background:var(--am);color:#fff}
+/* ANATOMY BOX */
+.anat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.anat-item{border-radius:10px;padding:11px 13px}
+.ai-1{background:var(--te-bg);border:1.5px solid var(--te-b)}
+.ai-2{background:var(--bl-bg);border:1.5px solid var(--bl-b)}
+.ai-3{background:var(--vi-bg);border:1.5px solid var(--vi-b)}
+.ai-4{background:var(--gr-bg);border:1.5px solid var(--gr-b)}
+.ai-5{background:var(--am-bg);border:1.5px solid var(--am-b)}
+.ai-6{background:var(--or-bg);border:1.5px solid var(--or-b)}
+.anat-section{font-size:10px;font-weight:800;margin-bottom:3px}
+.ai-1 .anat-section{color:var(--te)}.ai-2 .anat-section{color:var(--bl)}.ai-3 .anat-section{color:var(--vi)}.ai-4 .anat-section{color:var(--gr)}.ai-5 .anat-section{color:var(--am)}.ai-6 .anat-section{color:var(--or)}
+.anat-desc{font-size:10px;color:var(--muted);line-height:1.4}
+/* GOLDEN RULES */
+.rules-list{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.rule-row{display:flex;align-items:flex-start;gap:10px;padding:10px 13px;border-radius:10px;background:var(--s1);border:1.5px solid var(--s3);transition:background .2s}
+.rule-row:hover{background:var(--s2)}
+.rule-num{font-family:var(--fm);font-size:10px;font-weight:900;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.rule-row:nth-child(1) .rule-num{background:var(--te);color:#fff}
+.rule-row:nth-child(2) .rule-num{background:var(--bl);color:#fff}
+.rule-row:nth-child(3) .rule-num{background:var(--vi);color:#fff}
+.rule-row:nth-child(4) .rule-num{background:var(--gr);color:#fff}
+.rule-row:nth-child(5) .rule-num{background:var(--am);color:#fff}
+.rule-txt{font-size:11px;line-height:1.5}
+.rule-txt b{color:var(--fg)}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+<div class="noise"></div><canvas id="mm-canvas"></canvas>
+<div class="mm-page">
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude Code Crash Course · Chapter 8 of 12</div>
+    <h1>CLAUDE.md —<br>The Project Brain</h1>
+    <p>.claude directory · Priority hierarchy · What to put in · Golden rules · Custom commands</p>
+  </div>
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="1">0</div><div class="mm-kpi-label">Most important<br>file in your project</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="200">0</div><div class="mm-kpi-label">Lines max before<br>Claude starts ignoring</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="3">0</div><div class="mm-kpi-label">Priority levels<br>(auth · global · project)</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="100">0</div><div class="mm-kpi-label">% sessions it loads<br>automatically</div></div>
+  </div>
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">🧠</span><div class="chip-label">It's a Briefing Doc</div><div class="chip-desc">CLAUDE.md is loaded at the start of every session — like a daily briefing. Claude reads it before doing anything, so it always knows your stack, rules, and conventions.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">📂</span><div class="chip-label">Hidden by Design</div><div class="chip-desc">The .claude folder starts with a dot — intentionally hidden from casual users. ls won't show it. Use ls -la to see it. This is where your project's AI intelligence lives.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">⚡</span><div class="chip-label">Closer = Stronger</div><div class="chip-desc">Project-level rules override global rules which override auth rules. The closer to your actual codebase, the more control you have. Project always wins conflicts.</div></div>
+  </div>
+  <div class="mm-grid">
+
+    <div class="mm-card c-te">
+      <div class="mm-card-head"><div class="mm-card-ico">📁</div><div><div class="mm-card-title">The .claude Directory — Full Structure</div><div class="mm-card-subtitle">Everything lives here. Hidden but powerful.</div></div></div>
+      <div class="folder-tree">
+        <div class="ft-root">📁 your-project/</div>
+        <div class="ft-branch">
+          <div><span class="ft-hl">📄 CLAUDE.md</span> <span class="ft-file">← briefing doc, loaded every session</span></div>
+          <div><span class="ft-file">📄 CLAUDE.local.md</span> <span class="ft-file">← personal rules, never committed to git</span></div>
+          <div class="ft-root" style="margin-top:4px">📁 .claude/ <span class="ft-file">(hidden)</span></div>
+          <div class="ft-branch">
+            <div><span class="ft-vi">📄 settings.json</span> <span class="ft-file">← permissions, hooks, tools config</span></div>
+            <div><span class="ft-vi">📄 settings.local.json</span> <span class="ft-file">← personal overrides, gitignored</span></div>
+            <div><span class="ft-bl">📄 mcp.json</span> <span class="ft-file">← MCP server connections</span></div>
+            <div><span class="ft-am">📁 skills/</span> <span class="ft-file">← reusable playbook files (.md)</span></div>
+            <div><span class="ft-am">📁 commands/</span> <span class="ft-file">← custom slash commands</span></div>
+            <div><span class="ft-am">📁 agents/</span> <span class="ft-file">← sub-agent definitions</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-te">🧠 CLAUDE.md</span><span class="mm-tag mm-tag-bl">⚙️ settings.json</span><span class="mm-tag mm-tag-vi">🔌 mcp.json</span></div>
+    </div>
+
+    <div class="mm-card c-bl">
+      <div class="mm-card-head"><div class="mm-card-ico">🏆</div><div><div class="mm-card-title">Priority Hierarchy — Who Wins Conflicts?</div><div class="mm-card-subtitle">Three levels. Closest to your project wins.</div></div></div>
+      <div class="pri-ladder">
+        <div class="pri-rung pr-1">
+          <div class="pri-icon">📌</div>
+          <div><div class="pri-title">Project-Level (.claude/)</div><div class="pri-desc">Rules inside your specific project folder. Closest to Claude. Always highest priority.</div></div>
+          <div class="pri-badge">WINS</div>
+        </div>
+        <div class="pri-rung pr-2">
+          <div class="pri-icon">🏠</div>
+          <div><div class="pri-title">Global (~/.claude/)</div><div class="pri-desc">Preferences in your home folder. Applies across ALL projects unless overridden.</div></div>
+          <div class="pri-badge">MID</div>
+        </div>
+        <div class="pri-rung pr-3">
+          <div class="pri-icon">🏢</div>
+          <div><div class="pri-title">Auth / Organization Level</div><div class="pri-desc">Company-wide rules. Useful for enforcing standards across all engineers at a company.</div></div>
+          <div class="pri-badge">BASE</div>
+        </div>
+      </div>
+      <div class="mm-rule-box" style="margin-top:10px">💡 <b>Real example:</b> Auth says "always use Python". Your project CLAUDE.md says "this is a Java 8 project". Claude will use Java 8 — and may even ask you to clarify if they conflict.</div>
+    </div>
+
+    <div class="mm-card c-vi">
+      <div class="mm-card-head"><div class="mm-card-ico">📝</div><div><div class="mm-card-title">What Goes in CLAUDE.md?</div><div class="mm-card-subtitle">Six sections that turn Claude into a project expert</div></div></div>
+      <div class="anat-grid">
+        <div class="anat-item ai-1"><div class="anat-section">🧱 Stack & Architecture</div><div class="anat-desc">Language, framework, DB, deployment. "React frontend, Node.js API, PostgreSQL, deployed on AWS."</div></div>
+        <div class="anat-item ai-2"><div class="anat-section">📏 Coding Standards</div><div class="anat-desc">Naming conventions, indent size, camelCase vs snake_case. Claude will follow these in every file it touches.</div></div>
+        <div class="anat-item ai-3"><div class="anat-section">⚙️ Common Commands</div><div class="anat-desc">npm run dev, docker compose up, run tests. Claude knows these without you typing them every time.</div></div>
+        <div class="anat-item ai-4"><div class="anat-section">🚦 Behavior Rules</div><div class="anat-desc">"Never commit to main." "Always write tests." "Ask before deleting files." Hard constraints.</div></div>
+        <div class="anat-item ai-5"><div class="anat-section">🌿 Git Conventions</div><div class="anat-desc">Branch naming, commit message format, PR description style. Keeps your repo history clean.</div></div>
+        <div class="anat-item ai-6"><div class="anat-section">🏗️ Project Context</div><div class="anat-desc">What is this app? Who uses it? Any important quirks? Helps Claude make smarter decisions.</div></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-vi">📋 Loaded every session</span><span class="mm-tag mm-tag-gr">✅ No need to repeat yourself</span></div>
+    </div>
+
+    <div class="mm-card c-gr">
+      <div class="mm-card-head"><div class="mm-card-ico">⚖️</div><div><div class="mm-card-title">5 Golden Rules for CLAUDE.md</div><div class="mm-card-subtitle">What experienced Claude Code users actually follow</div></div></div>
+      <div class="rules-list">
+        <div class="rule-row"><div class="rule-num">1</div><div class="rule-txt"><b>Keep it under 200 lines.</b> Long files get ignored. Every line costs tokens. Lean CLAUDE.md = smarter Claude.</div></div>
+        <div class="rule-row"><div class="rule-num">2</div><div class="rule-txt"><b>Move details to Skills.</b> Detailed workflows belong in .claude/skills/ not CLAUDE.md. Keep this file as a high-level briefing.</div></div>
+        <div class="rule-row"><div class="rule-num">3</div><div class="rule-txt"><b>Use CLAUDE.local.md for personal rules.</b> This file is gitignored — safe for personal API keys, personal style preferences, local machine paths.</div></div>
+        <div class="rule-row"><div class="rule-num">4</div><div class="rule-txt"><b>List your most-used commands.</b> Add npm run dev, docker compose up, migration commands. Claude will always know how to run your project.</div></div>
+        <div class="rule-row"><div class="rule-num">5</div><div class="rule-txt"><b>Let Claude help write it.</b> Ask Claude to generate a CLAUDE.md from your existing codebase. It scans your files and creates a perfect briefing doc in seconds.</div></div>
+      </div>
+    </div>
+
+    <div class="mm-card c-am mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">⚡</div><div><div class="mm-card-title">Custom Commands — Your Personal Slash Commands</div><div class="mm-card-subtitle">Add anything to .claude/commands/ and invoke it with /command-name</div></div></div>
+      <div class="mm-flow" style="margin-top:10px">
+        <div class="mm-flow-step"><div class="mm-flow-num">1</div><div><b>Create file</b><br><span style="font-size:10px;color:var(--muted)">.claude/commands/code-review.md</span></div></div>
+        <div class="mm-flow-arrow"></div>
+        <div class="mm-flow-step"><div class="mm-flow-num">2</div><div><b>Write the prompt</b><br><span style="font-size:10px;color:var(--muted)">"Review this file for improvements..."</span></div></div>
+        <div class="mm-flow-arrow"></div>
+        <div class="mm-flow-step"><div class="mm-flow-num">3</div><div><b>Open new session</b><br><span style="font-size:10px;color:var(--muted)">Claude scans .claude/commands/</span></div></div>
+        <div class="mm-flow-arrow"></div>
+        <div class="mm-flow-step"><div class="mm-flow-num">4</div><div><b>Use /code-review</b><br><span style="font-size:10px;color:var(--muted)">Available as a slash command!</span></div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px">
+        <div style="background:var(--te-bg);border:1.5px solid var(--te-b);border-radius:9px;padding:10px 12px"><div style="font-size:10px;font-weight:800;color:var(--te);margin-bottom:3px">📋 /push-to-github</div><div style="font-size:10px;color:var(--muted)">Stage, commit with message, push to origin. Reusable git workflow.</div></div>
+        <div style="background:var(--bl-bg);border:1.5px solid var(--bl-b);border-radius:9px;padding:10px 12px"><div style="font-size:10px;font-weight:800;color:var(--bl);margin-bottom:3px">🔍 /code-review</div><div style="font-size:10px;color:var(--muted)">Review any file for bugs, patterns, improvements. Project-aware.</div></div>
+        <div style="background:var(--vi-bg);border:1.5px solid var(--vi-b);border-radius:9px;padding:10px 12px"><div style="font-size:10px;font-weight:800;color:var(--vi);margin-bottom:3px">🚀 /init-context</div><div style="font-size:10px;color:var(--muted)">Load project context, ask clarifying questions, set coding mode.</div></div>
+      </div>
+      <div class="mm-rule-box" style="margin-top:12px">🏠 <b>Global commands</b> go in <span style="font-family:var(--fm);color:var(--am)">~/.claude/commands/</span> — available in ALL projects. <b>Project commands</b> go in <span style="font-family:var(--fm);color:var(--te)">.claude/commands/</span> — only this project.</div>
+    </div>
+
+  </div>
+  <div class="mm-footer">
+    <div class="mm-nav"><a class="mm-nav-btn" href="cc_chapter07_context_management.html">← Ch 7: Context</a><a class="mm-nav-btn mm-nav-next" href="cc_chapter09_skills.html">Ch 9: Skills →</a></div>
+    <div class="mm-footer-brand">Claude Code Crash Course · 12 Chapters</div>
+  </div>
+</div>
+<script src="shared/mindmap.js"></script>
+</body>
+</html>

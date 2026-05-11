@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 12 — Sub-Agents & Capstone · Claude Code Crash Course</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#187A3A,transparent 70%);top:-80px;left:-90px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#6B3FD4,transparent 70%);top:40%;right:-130px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#1A52C8,transparent 70%);bottom:-70px;left:35%}
+.mm-badge{background:linear-gradient(135deg,var(--gr-bg),#EFFFF4);border-color:var(--gr-b);color:var(--gr)}
+.mm-dot{background:var(--gr)}.mm-dot::after{border-color:var(--gr)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--gr) 0%,var(--vi) 40%,var(--bl) 100%)}
+.mm-kpi:nth-child(1){--kpi-accent:var(--gr)}.mm-kpi:nth-child(2){--kpi-accent:var(--vi)}.mm-kpi:nth-child(3){--kpi-accent:var(--bl)}.mm-kpi:nth-child(4){--kpi-accent:var(--am)}
+.mc-1{--chip-bg:var(--gr-bg);--chip-border:var(--gr-b);--chip-color:var(--gr)}.mc-1 .chip-label{color:var(--gr)}
+.mc-2{--chip-bg:var(--vi-bg);--chip-border:var(--vi-b);--chip-color:var(--vi)}.mc-2 .chip-label{color:var(--vi)}
+.mc-3{--chip-bg:var(--bl-bg);--chip-border:var(--bl-b);--chip-color:var(--bl)}.mc-3 .chip-label{color:var(--bl)}
+
+/* BEFORE/AFTER PANELS */
+.ba-panels{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch;margin-top:10px}
+.ba-p{border-radius:12px;padding:13px}
+.ba-p-bad{background:var(--ro-bg);border:2px solid var(--ro-b)}
+.ba-p-good{background:var(--gr-bg);border:2px solid var(--gr-b)}
+.ba-title{font-size:11px;font-weight:800;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.ba-p-bad .ba-title{color:var(--ro)}.ba-p-good .ba-title{color:var(--gr)}
+.ba-row{font-size:10.5px;color:var(--muted);margin-bottom:5px;display:flex;align-items:flex-start;gap:6px;line-height:1.4}
+.ba-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.ba-p-bad .ba-dot{background:var(--ro)}.ba-p-good .ba-dot{background:var(--gr)}
+.ba-mid{display:flex;align-items:center;justify-content:center;font-size:22px}
+@media(max-width:500px){.ba-panels{grid-template-columns:1fr}}
+
+/* SUB-AGENT ANATOMY */
+.agent-anatomy{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}
+.aa-item{border-radius:10px;padding:11px 12px;text-align:center;transition:transform .3s}
+.aa-item:hover{transform:translateY(-3px)}
+.aa-1{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.aa-1:hover{box-shadow:0 6px 16px rgba(107,63,212,.18)}
+.aa-2{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.aa-2:hover{box-shadow:0 6px 16px rgba(26,82,200,.18)}
+.aa-3{background:var(--te-bg);border:1.5px solid var(--te-b)}.aa-3:hover{box-shadow:0 6px 16px rgba(10,122,106,.18)}
+.aa-4{background:var(--am-bg);border:1.5px solid var(--am-b)}.aa-4:hover{box-shadow:0 6px 16px rgba(192,123,0,.18)}
+.aa-5{background:var(--gr-bg);border:1.5px solid var(--gr-b)}.aa-5:hover{box-shadow:0 6px 16px rgba(24,122,58,.18)}
+.aa-6{background:var(--or-bg);border:1.5px solid var(--or-b)}.aa-6:hover{box-shadow:0 6px 16px rgba(232,98,10,.18)}
+.aa-ico{font-size:20px;margin-bottom:5px;display:block;transition:transform .3s}.aa-item:hover .aa-ico{transform:scale(1.2) rotate(-8deg)}
+.aa-title{font-size:10.5px;font-weight:800;margin-bottom:3px}
+.aa-1 .aa-title{color:var(--vi)}.aa-2 .aa-title{color:var(--bl)}.aa-3 .aa-title{color:var(--te)}.aa-4 .aa-title{color:var(--am)}.aa-5 .aa-title{color:var(--gr)}.aa-6 .aa-title{color:var(--or)}
+.aa-desc{font-size:9.5px;color:var(--muted);line-height:1.4}
+
+/* AGENT TEAM DIAGRAM */
+.team-diagram{margin-top:12px}
+.team-parent{background:var(--gr-bg);border:2px solid var(--gr-b);border-radius:12px;padding:12px 16px;text-align:center;margin-bottom:14px;position:relative}
+.team-parent::after{content:'';position:absolute;left:50%;bottom:-14px;width:2px;height:14px;background:var(--gr-b)}
+.tp-title{font-size:12px;font-weight:800;color:var(--gr);margin-bottom:2px}
+.tp-sub{font-size:10px;color:var(--muted)}
+.team-agents{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;position:relative}
+.team-agents::before{content:'';position:absolute;top:-1px;left:16.5%;right:16.5%;height:2px;background:var(--s3)}
+.ta-card{border-radius:11px;padding:11px 13px;text-align:center}
+.ta-1{background:var(--vi-bg);border:1.5px solid var(--vi-b)}
+.ta-2{background:var(--bl-bg);border:1.5px solid var(--bl-b)}
+.ta-3{background:var(--am-bg);border:1.5px solid var(--am-b)}
+.ta-ico{font-size:18px;display:block;margin-bottom:4px}
+.ta-name{font-size:10px;font-weight:800;margin-bottom:2px}
+.ta-1 .ta-name{color:var(--vi)}.ta-2 .ta-name{color:var(--bl)}.ta-3 .ta-name{color:var(--am)}
+.ta-model{font-family:var(--fm);font-size:8.5px;font-weight:700;padding:1px 6px;border-radius:10px;display:inline-block;margin-bottom:4px}
+.ta-1 .ta-model{background:var(--vi);color:#fff}.ta-2 .ta-model{background:var(--bl);color:#fff}.ta-3 .ta-model{background:var(--am);color:#fff}
+.ta-task{font-size:9.5px;color:var(--muted);line-height:1.35}
+
+/* CAPSTONE PHASES */
+.phases-wrap{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.phase-item{border-radius:10px;padding:10px 13px;transition:transform .3s}
+.phase-item:hover{transform:translateX(4px)}
+.ph-1{background:var(--gr-bg);border-left:3px solid var(--gr)}.ph-1:hover{box-shadow:0 5px 14px rgba(24,122,58,.16)}
+.ph-2{background:var(--bl-bg);border-left:3px solid var(--bl)}.ph-2:hover{box-shadow:0 5px 14px rgba(26,82,200,.16)}
+.ph-3{background:var(--vi-bg);border-left:3px solid var(--vi)}.ph-3:hover{box-shadow:0 5px 14px rgba(107,63,212,.16)}
+.ph-4{background:var(--am-bg);border-left:3px solid var(--am)}.ph-4:hover{box-shadow:0 5px 14px rgba(192,123,0,.16)}
+.ph-5{background:var(--te-bg);border-left:3px solid var(--te)}.ph-5:hover{box-shadow:0 5px 14px rgba(10,122,106,.16)}
+.ph-6{background:var(--or-bg);border-left:3px solid var(--or)}.ph-6:hover{box-shadow:0 5px 14px rgba(232,98,10,.16)}
+.ph-7{background:var(--ro-bg);border-left:3px solid var(--ro)}.ph-7:hover{box-shadow:0 5px 14px rgba(184,24,54,.16)}
+.ph-8{background:var(--gr-bg);border-left:3px solid var(--gr);grid-column:1/-1}
+.ph-num{font-family:var(--fm);font-size:9px;font-weight:900;margin-bottom:3px}
+.ph-1 .ph-num{color:var(--gr)}.ph-2 .ph-num{color:var(--bl)}.ph-3 .ph-num{color:var(--vi)}.ph-4 .ph-num{color:var(--am)}.ph-5 .ph-num{color:var(--te)}.ph-6 .ph-num{color:var(--or)}.ph-7 .ph-num{color:var(--ro)}.ph-8 .ph-num{color:var(--gr)}
+.ph-title{font-size:10.5px;font-weight:800;margin-bottom:2px;color:var(--fg)}
+.ph-desc{font-size:9.5px;color:var(--muted);line-height:1.35}
+
+/* TECH STACK */
+.stack-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.stk{padding:5px 11px;border-radius:20px;font-size:10px;font-weight:700;font-family:var(--fm)}
+.stk-re{background:var(--bl-bg);border:1.5px solid var(--bl-b);color:var(--bl)}
+.stk-ts{background:var(--bl-bg);border:1.5px solid var(--bl-b);color:var(--bl)}
+.stk-sq{background:var(--gr-bg);border:1.5px solid var(--gr-b);color:var(--gr)}
+.stk-pr{background:var(--vi-bg);border:1.5px solid var(--vi-b);color:var(--vi)}
+.stk-no{background:var(--te-bg);border:1.5px solid var(--te-b);color:var(--te)}
+.stk-ta{background:var(--am-bg);border:1.5px solid var(--am-b);color:var(--am)}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+<div class="noise"></div><canvas id="mm-canvas"></canvas>
+<div class="mm-page">
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude Code Crash Course · Chapter 12 of 12</div>
+    <h1>Sub-Agents, Teams<br>& Capstone Project</h1>
+    <p>Sub-agent analogy · Context isolation · Parallel agents · Scheduling · Job Tracker app built live</p>
+  </div>
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">∞</div><div class="mm-kpi-label">Sub-agents you can<br>spawn in parallel</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">Haiku</div><div class="mm-kpi-label">Best model for<br>most sub-agents</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="8">0</div><div class="mm-kpi-label">Phases in the live<br>capstone project</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">3000</div><div class="mm-kpi-label">Prompt. Full-stack app<br>from scratch</div></div>
+  </div>
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">👥</span><div class="chip-label">Interns with Separate Desks</div><div class="chip-desc">A sub-agent is like hiring an intern who works at their own desk, with their own computer. They don't share your RAM. You hand them a task, they return a summary. Your main session stays clean.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">⚡</span><div class="chip-label">Parallel = Multiplied Speed</div><div class="chip-desc">Three sub-agents working simultaneously on code review, test writing, and documentation generation. All three complete in the time one would take. True parallelism for AI work.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">💰</span><div class="chip-label">Use Haiku for Sub-Agents</div><div class="chip-desc">Sub-agents do focused, well-defined tasks. They don't need Opus-level reasoning. Haiku is 10× cheaper, just as good for structured tasks. Opus for orchestrating, Haiku for executing.</div></div>
+  </div>
+  <div class="mm-grid">
+
+    <div class="mm-card c-ro">
+      <div class="mm-card-head"><div class="mm-card-ico">🧠</div><div><div class="mm-card-title">Why Sub-Agents? The Problem They Solve</div><div class="mm-card-subtitle">One big session vs. specialized mini-sessions</div></div></div>
+      <div class="ba-panels">
+        <div class="ba-p ba-p-bad">
+          <div class="ba-title">❌ Single Session Problems</div>
+          <div class="ba-row"><div class="ba-dot"></div><span>Context fills up — 200k tokens exhausted</span></div>
+          <div class="ba-row"><div class="ba-dot"></div><span>Using Opus for simple code scanning — overkill</span></div>
+          <div class="ba-row"><div class="ba-dot"></div><span>Each message re-sends 100k+ token history</span></div>
+          <div class="ba-row"><div class="ba-dot"></div><span>Can't multitask — waits for each task</span></div>
+          <div class="ba-row"><div class="ba-dot"></div><span>Recency bias → forgets earlier context</span></div>
+        </div>
+        <div class="ba-mid">→</div>
+        <div class="ba-p ba-p-good">
+          <div class="ba-title">✅ With Sub-Agents</div>
+          <div class="ba-row"><div class="ba-dot"></div><span>Own context window — never pollutes yours</span></div>
+          <div class="ba-row"><div class="ba-dot"></div><span>Use Haiku for sub-tasks — 10× cheaper</span></div>
+          <div class="ba-row"><div class="ba-dot"></div><span>Returns only a compact summary, not full context</span></div>
+          <div class="ba-row"><div class="ba-dot"></div><span>Run 3 agents in parallel simultaneously</span></div>
+          <div class="ba-row"><div class="ba-dot"></div><span>Focused context = sharper, more accurate results</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mm-card c-vi">
+      <div class="mm-card-head"><div class="mm-card-ico">🧩</div><div><div class="mm-card-title">Sub-Agent Anatomy — What It Has</div><div class="mm-card-subtitle">A mini Claude with its own everything</div></div></div>
+      <div class="agent-anatomy">
+        <div class="aa-item aa-1"><span class="aa-ico">🧠</span><div class="aa-title">Own Model</div><div class="aa-desc">Can use Haiku or Sonnet — doesn't have to match the parent. Pick the cheapest model that does the job well.</div></div>
+        <div class="aa-item aa-2"><span class="aa-ico">📋</span><div class="aa-title">Own Context</div><div class="aa-desc">Fully isolated context window. When it's done, only the summary returns to you. No context leak.</div></div>
+        <div class="aa-item aa-3"><span class="aa-ico">🔧</span><div class="aa-title">Own Tools</div><div class="aa-desc">Can have different tool access. Give file-scanner agent only read tools — no write. Controlled access.</div></div>
+        <div class="aa-item aa-4"><span class="aa-ico">📚</span><div class="aa-title">Inherit Skills</div><div class="aa-desc">Can inherit parent's skills or have its own specialized skillset. Bring only what it needs.</div></div>
+        <div class="aa-item aa-5"><span class="aa-ico">🪝</span><div class="aa-title">Own Hooks</div><div class="aa-desc">Can have custom hooks for its specialized context. Different guardrails from the parent session.</div></div>
+        <div class="aa-item aa-6"><span class="aa-ico">🗑️</span><div class="aa-title">Terminated by Parent</div><div class="aa-desc">Parent spawns it, parent terminates it. Not a persistent process — born for a task, dies after.</div></div>
+      </div>
+    </div>
+
+    <div class="mm-card c-gr mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🏢</div><div><div class="mm-card-title">Agent Teams — Parallel Specialist Architecture</div><div class="mm-card-subtitle">Manager orchestrates, specialists execute — just like a real team</div></div></div>
+      <div class="team-diagram">
+        <div class="team-parent">
+          <div class="tp-title">👑 Parent Claude (Opus) — The Orchestrator</div>
+          <div class="tp-sub">Plans the work · Assigns tasks · Collects summaries · Makes final decisions</div>
+        </div>
+        <div class="team-agents">
+          <div class="ta-card ta-1">
+            <span class="ta-ico">🔍</span>
+            <div class="ta-name">Code Reviewer</div>
+            <div class="ta-model">Haiku</div>
+            <div class="ta-task">Scans every file for bugs, anti-patterns, security issues. Returns: list of findings.</div>
+          </div>
+          <div class="ta-card ta-2">
+            <span class="ta-ico">🧪</span>
+            <div class="ta-name">Test Writer</div>
+            <div class="ta-model">Sonnet</div>
+            <div class="ta-task">Generates unit tests with edge cases for every function. Returns: test files with coverage summary.</div>
+          </div>
+          <div class="ta-card ta-3">
+            <span class="ta-ico">📝</span>
+            <div class="ta-name">Doc Generator</div>
+            <div class="ta-model">Haiku</div>
+            <div class="ta-task">Reads code, writes JSDoc / docstrings, updates README. Returns: documentation summary.</div>
+          </div>
+        </div>
+      </div>
+      <div class="mm-rule" style="margin-top:14px">
+        <div class="mm-rule-icon">⚠️</div>
+        <div><div class="mm-rule-title">CRITICAL: Parallel agents must work on mutually exclusive files</div><div class="mm-rule-body">If two sub-agents edit the same file at the same time, you get conflicts. Design your agent tasks to operate on <strong>different parts of the codebase</strong>. Agent 1 handles auth/, Agent 2 handles api/, Agent 3 handles UI/.</div></div>
+      </div>
+    </div>
+
+    <div class="mm-card c-bl">
+      <div class="mm-card-head"><div class="mm-card-ico">⏰</div><div><div class="mm-card-title">Scheduling — Claude Runs on Its Own</div><div class="mm-card-subtitle">Cron jobs + Claude Code = fully automated AI agent</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">⚙️</div><span><b>Claude has a built-in cron tool</b> — you can schedule Claude tasks to run automatically using cron syntax without any external setup</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">🌅</div><span><b>Morning briefing at 8am</b> — reads Gmail, Calendar, Slack overnight messages, generates your daily plan automatically</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">🔄</div><span><b>Nightly code review</b> — schedules an agent every night at 11pm to review the day's commits and post a report to Slack</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">📊</div><span><b>Weekly reports</b> — auto-generates performance summaries, usage analytics, or project status updates on a schedule</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">🖥️</div><span><b>Background server mode</b> — run Claude on a remote AWS/cloud machine so it operates 24/7 without your laptop being open</span></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-bl">⏰ Cron scheduling</span><span class="mm-tag mm-tag-te">🖥️ Remote server</span><span class="mm-tag mm-tag-gr">🤖 Fully autonomous</span></div>
+    </div>
+
+    <div class="mm-card c-am mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🚀</div><div><div class="mm-card-title">Capstone Project — Job Application Tracker · Built Live</div><div class="mm-card-subtitle">Full-stack productivity app from scratch with Claude Code — 8 phases, zero manual coding</div></div></div>
+      <div style="display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 14px">
+        <span style="font-size:11px;font-weight:700;color:var(--muted)">Stack used:</span>
+        <span class="stk stk-re">React</span>
+        <span class="stk stk-ts">TypeScript</span>
+        <span class="stk stk-sq">SQLite</span>
+        <span class="stk stk-pr">Prisma ORM</span>
+        <span class="stk stk-no">Node.js API</span>
+        <span class="stk stk-ta">Tailwind CSS</span>
+      </div>
+      <div class="phases-wrap">
+        <div class="phase-item ph-1"><div class="ph-num">PHASE 01</div><div class="ph-title">Project Structure</div><div class="ph-desc">Scaffolds React + Node.js monorepo, tsconfig, package.json, Prisma init, folder structure.</div></div>
+        <div class="phase-item ph-2"><div class="ph-num">PHASE 02</div><div class="ph-title">Database Schema</div><div class="ph-desc">Designs Job model with status, company, role, date applied, notes fields. Runs migrations.</div></div>
+        <div class="phase-item ph-3"><div class="ph-num">PHASE 03</div><div class="ph-title">REST API</div><div class="ph-desc">Creates CRUD endpoints: GET/POST/PUT/DELETE /jobs. JSON responses, error handling, validation.</div></div>
+        <div class="phase-item ph-4"><div class="ph-num">PHASE 04</div><div class="ph-title">Kanban Board UI</div><div class="ph-desc">React Kanban with columns: Applied → Interview → Offer → Rejected. Drag-and-drop between columns.</div></div>
+        <div class="phase-item ph-5"><div class="ph-num">PHASE 05</div><div class="ph-title">Add Job Form</div><div class="ph-desc">Modal form to add new job applications. Company, role, link, date, notes. Validates and saves.</div></div>
+        <div class="phase-item ph-6"><div class="ph-num">PHASE 06</div><div class="ph-title">Status Updates</div><div class="ph-desc">Drag card to new column → auto-updates status in SQLite via API. Real-time UI refresh.</div></div>
+        <div class="phase-item ph-7"><div class="ph-num">PHASE 07</div><div class="ph-title">Search & Filter</div><div class="ph-desc">Live search by company or role. Filter by status column. Sorted by date applied.</div></div>
+        <div class="phase-item ph-8"><div class="ph-num">PHASE 08 ✓</div><div class="ph-title">npm run dev — It's Running!</div><div class="ph-desc">App runs at localhost:3000. Full drag-and-drop Kanban. Persistent SQLite data. Sub-agents used for code review and test generation in parallel.</div></div>
+      </div>
+    </div>
+
+    <div class="mm-card c-gr mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🎓</div><div><div class="mm-card-title">Complete Crash Course Journey — All 12 Chapters</div><div class="mm-card-subtitle">From "what is Claude Code?" to building a full-stack app with agent teams</div></div></div>
+      <div class="mm-flow mm-flow-gr">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">🌱</div><div class="mm-step-lbl">Intro & Setup</div><div class="mm-step-sub">Why Claude Code?</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#cj1"/></animateMotion></circle><path id="cj1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">🧠</div><div class="mm-step-lbl">Claude & LLMs</div><div class="mm-step-sub">Models explained</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#cj2"/></animateMotion></circle><path id="cj2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">⌨️</div><div class="mm-step-lbl">Basics</div><div class="mm-step-sub">Brain with hands</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#cj3"/></animateMotion></circle><path id="cj3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">🔄</div><div class="mm-step-lbl">Agentic Loop</div><div class="mm-step-sub">How it reasons</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#cj4"/></animateMotion></circle><path id="cj4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">⚙️</div><div class="mm-step-lbl">Installation</div><div class="mm-step-sub">Mac, Win, Linux</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#cj5"/></animateMotion></circle><path id="cj5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">⚡</div><div class="mm-step-lbl">Slash Commands</div><div class="mm-step-sub">70+ commands</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.7s"><mpath href="#cj6"/></animateMotion></circle><path id="cj6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07-12</div><div class="mm-step-ico">🚀</div><div class="mm-step-lbl">Context→Agents</div><div class="mm-step-sub">Pro mastery</div></div>
+      </div>
+      <div class="mm-rule" style="margin-top:16px">
+        <div class="mm-rule-icon">🏆</div>
+        <div><div class="mm-rule-title">YOU'VE COMPLETED THE CRASH COURSE</div><div class="mm-rule-body">You now understand Claude Code at a professional level — from the agentic loop to sub-agents, CLAUDE.md to MCP, hooks to full-stack development. The people who actually master these things are rare. <strong>You're in that group now.</strong></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="shared/mindmap.js"></script>
+<script>
+MindMap.init(
+  ['agent', 'sub', 'Haiku', '→', 'spawn', '[]', 'context', 'cron', 'parallel', 'team'],
+  [130, 270, 165, 38, 210]
+);
+</script>
+</body>
+</html>

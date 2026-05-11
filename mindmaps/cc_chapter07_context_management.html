@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 7 — Context Management · Claude Code Crash Course</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#B81836,transparent 70%);top:-80px;left:-90px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#C07B00,transparent 70%);top:40%;right:-130px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#187A3A,transparent 70%);bottom:-70px;left:35%}
+.mm-badge{background:linear-gradient(135deg,var(--ro-bg),#FFF5F7);border-color:var(--ro-b);color:var(--ro)}
+.mm-dot{background:var(--ro)}.mm-dot::after{border-color:var(--ro)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--ro) 0%,var(--am) 30%,var(--gr) 65%,var(--te) 100%)}
+.mm-kpi:nth-child(1){--kpi-accent:var(--ro)}.mm-kpi:nth-child(2){--kpi-accent:var(--am)}.mm-kpi:nth-child(3){--kpi-accent:var(--gr)}.mm-kpi:nth-child(4){--kpi-accent:var(--bl)}
+.mc-1{--chip-bg:var(--ro-bg);--chip-border:var(--ro-b);--chip-color:var(--ro)}.mc-1 .chip-label{color:var(--ro)}
+.mc-2{--chip-bg:var(--am-bg);--chip-border:var(--am-b);--chip-color:var(--am)}.mc-2 .chip-label{color:var(--am)}
+.mc-3{--chip-bg:var(--gr-bg);--chip-border:var(--gr-b);--chip-color:var(--gr)}.mc-3 .chip-label{color:var(--gr)}
+/* CONTEXT BREAKDOWN BAR */
+.ctx-bar-wrap{margin-top:12px}
+.ctx-bar-row{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.ctx-label{font-size:10px;font-weight:700;font-family:var(--fm);width:130px;flex-shrink:0;color:var(--muted)}
+.ctx-track{flex:1;height:10px;background:var(--s2);border-radius:5px;overflow:hidden;position:relative}
+.ctx-fill{height:100%;border-radius:5px;animation:ctxFill 1.2s ease-out forwards;transform-origin:left;width:0}
+@keyframes ctxFill{to{width:var(--ctx-pct)}}
+.ctx-r1 .ctx-fill{background:var(--bl);--ctx-pct:34%}
+.ctx-r2 .ctx-fill{background:var(--or);--ctx-pct:26%}
+.ctx-r3 .ctx-fill{background:var(--vi);--ctx-pct:9%}
+.ctx-r4 .ctx-fill{background:var(--am);--ctx-pct:5%}
+.ctx-r5 .ctx-fill{background:var(--gr);--ctx-pct:26%}
+.ctx-val{font-size:10px;font-family:var(--fm);color:var(--muted);width:60px;text-align:right;flex-shrink:0}
+/* STRATEGIES GRID */
+.strat-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.strat-item{border-radius:11px;padding:12px;transition:transform .3s;cursor:default}
+.strat-item:hover{transform:translateX(4px)}
+.si-1{background:var(--te-bg);border:1.5px solid var(--te-b)}.si-1:hover{box-shadow:0 5px 14px rgba(10,122,106,.16)}
+.si-2{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.si-2:hover{box-shadow:0 5px 14px rgba(26,82,200,.16)}
+.si-3{background:var(--gr-bg);border:1.5px solid var(--gr-b)}.si-3:hover{box-shadow:0 5px 14px rgba(24,122,58,.16)}
+.si-4{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.si-4:hover{box-shadow:0 5px 14px rgba(107,63,212,.16)}
+.si-5{background:var(--am-bg);border:1.5px solid var(--am-b)}.si-5:hover{box-shadow:0 5px 14px rgba(192,123,0,.16)}
+.si-6{background:var(--or-bg);border:1.5px solid var(--or-b)}.si-6:hover{box-shadow:0 5px 14px rgba(232,98,10,.16)}
+.si-title{font-size:11px;font-weight:800;margin-bottom:3px}
+.si-1 .si-title{color:var(--te)}.si-2 .si-title{color:var(--bl)}.si-3 .si-title{color:var(--gr)}.si-4 .si-title{color:var(--vi)}.si-5 .si-title{color:var(--am)}.si-6 .si-title{color:var(--or)}
+.si-desc{font-size:10px;color:var(--muted);line-height:1.4}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+<div class="noise"></div><canvas id="mm-canvas"></canvas>
+<div class="mm-page">
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude Code Crash Course · Chapter 7 of 12</div>
+    <h1>Context Management<br>Your AI's RAM — Don't Waste It</h1>
+    <p>Context window · Token budgeting · /compact · Auto-compact · 6 strategies to keep Claude sharp</p>
+  </div>
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="200">0</div><div class="mm-kpi-label">k token context<br>window (Sonnet)</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="34">0</div><div class="mm-kpi-label">% of context used<br>before you type a word</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="80">0</div><div class="mm-kpi-label">% full triggers<br>auto-compact</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="6">0</div><div class="mm-kpi-label">Strategies to keep<br>context lean & fast</div></div>
+  </div>
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">🧠</span><div class="chip-label">Context = RAM</div><div class="chip-desc">Just like too many browser tabs slows your computer, a full context window makes Claude slower and less accurate. Manage it actively.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">📋</span><div class="chip-label">/compact = Meeting Minutes</div><div class="chip-desc">Compact takes your full conversation and summarizes it — like how meeting minutes condense 2 hours into 2 pages of key points.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">💡</span><div class="chip-label">Extended Thinking Saves Context</div><div class="chip-desc">Counterintuitive: extended thinking uses a separate tab and DOESN'T pollute your main context. Regular thinking fills context faster.</div></div>
+  </div>
+  <div class="mm-grid">
+
+    <div class="mm-card c-ro">
+      <div class="mm-card-head"><div class="mm-card-ico">📊</div><div><div class="mm-card-title">What's In Your Context Window</div><div class="mm-card-subtitle">200k tokens — here's how they're spent before you type a word</div></div></div>
+      <div class="ctx-bar-wrap">
+        <div class="ctx-bar-row ctx-r1"><div class="ctx-label">System Tools (~8k)</div><div class="ctx-track"><div class="ctx-fill"></div></div><div class="ctx-val">~34%</div></div>
+        <div class="ctx-bar-row ctx-r2"><div class="ctx-label">System Prompt (~6k)</div><div class="ctx-track"><div class="ctx-fill"></div></div><div class="ctx-val">~26%</div></div>
+        <div class="ctx-bar-row ctx-r3"><div class="ctx-label">MCP Tools (~2k)</div><div class="ctx-track"><div class="ctx-fill"></div></div><div class="ctx-val">~9%</div></div>
+        <div class="ctx-bar-row ctx-r4"><div class="ctx-label">Skills (~1k)</div><div class="ctx-track"><div class="ctx-fill"></div></div><div class="ctx-val">~5%</div></div>
+        <div class="ctx-bar-row ctx-r5"><div class="ctx-label">YOUR MESSAGES</div><div class="ctx-track"><div class="ctx-fill"></div></div><div class="ctx-val">~26%</div></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-ro">🔴 Fixed overhead</span><span class="mm-tag mm-tag-gr">✅ Messages = compactable</span></div>
+    </div>
+
+    <div class="mm-card c-am">
+      <div class="mm-card-head"><div class="mm-card-ico">🗜️</div><div><div class="mm-card-title">/compact — How It Works</div><div class="mm-card-subtitle">Freeing up 100k+ tokens in one command</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">1</div><span><b>Claude reads everything</b> — scans your entire conversation history: questions, code, errors, fixes</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">2</div><span><b>Creates a digest</b> — writes a condensed summary: "User built a Kanban board with drag-and-drop, current state: working"</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">3</div><span><b>Replaces history</b> — the long conversation is replaced by the compact summary. You keep the understanding, shed the tokens.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">★</div><span><b>Custom compact</b> — use <span class="mm-pill">/compact just remember my requests</span> to control what's preserved</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Auto-compact</b> — enabled by default: when context reaches ~80%, Claude compacts automatically so you can keep working</span></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-am">🗜️ /compact</span><span class="mm-tag mm-tag-am">⚡ Auto-compact</span><span class="mm-tag mm-tag-gr">✅ Custom options</span></div>
+    </div>
+
+    <div class="mm-card c-gr mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🧠</div><div><div class="mm-card-title">6 Token Budgeting Strategies — Keep Claude Sharp & Cheap</div><div class="mm-card-subtitle">What the pros do that most users don't — save thousands of tokens per session</div></div></div>
+      <div class="strat-grid">
+        <div class="strat-item si-1"><div class="si-title">📄 Keep CLAUDE.md Lean</div><div class="si-desc">CLAUDE.md loads every session. Every line costs tokens. Keep it concise — move details to skills and agent docs.</div></div>
+        <div class="strat-item si-2"><div class="si-title">🔌 Disable Unused MCPs</div><div class="si-desc">Each MCP server sends tool definitions. 10 MCPs = 15k+ tokens wasted every request. Disable what you're not using now.</div></div>
+        <div class="strat-item si-3"><div class="si-title">🎯 Pinpoint Your Code</div><div class="si-desc">Select specific lines before asking Claude to fix. It then reads only those files. Vague "fix this" makes it scan everything.</div></div>
+        <div class="strat-item si-4"><div class="si-title">🧩 Use Extended Thinking</div><div class="si-desc">Counterintuitively, extended thinking saves context. It reasons in a separate tab, not in your conversation history.</div></div>
+        <div class="strat-item si-5"><div class="si-title">📋 Plan Before Building</div><div class="si-desc">Use /model opus + plan mode to create a full plan first. Then switch to Sonnet for building with a clear roadmap.</div></div>
+        <div class="strat-item si-6"><div class="si-title">🔍 Review V1 Before V2</div><div class="si-desc">Check Claude's first draft before adding more. Bad code in v1 propagates through v2, v3. Fix bad foundations early.</div></div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">💰</div>
+        <div><div class="mm-rule-title">⭐ THE COST REALITY</div><div class="mm-rule-body">People spending $400/month of company Claude credits in 15 days all have the same problem: <strong>they don't manage context</strong>. Run /compact regularly, disable unused MCPs, and your credits will last the month.</div></div>
+      </div>
+    </div>
+
+    <div class="mm-card c-bl mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">Context Lifecycle — From Fresh Start to Auto-Compact</div><div class="mm-card-subtitle">How a real development session fills and manages its context window</div></div></div>
+      <div class="mm-flow mm-flow-bl">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">🌱</div><div class="mm-step-lbl">Fresh Session</div><div class="mm-step-sub">~34% base overhead</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#cm1"/></animateMotion></circle><path id="cm1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">💬</div><div class="mm-step-lbl">Build Context</div><div class="mm-step-sub">Messages grow</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#cm2"/></animateMotion></circle><path id="cm2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">📈</div><div class="mm-step-lbl">Filling Up</div><div class="mm-step-sub">50%+ used</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#cm3"/></animateMotion></circle><path id="cm3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">⚠️</div><div class="mm-step-lbl">80% Warning</div><div class="mm-step-sub">Auto-compact soon</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#cm4"/></animateMotion></circle><path id="cm4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">🗜️</div><div class="mm-step-lbl">/compact</div><div class="mm-step-sub">Summarize all</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#cm5"/></animateMotion></circle><path id="cm5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">🌱</div><div class="mm-step-lbl">Fresh Again</div><div class="mm-step-sub">Context freed</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.7s"><mpath href="#cm6"/></animateMotion></circle><path id="cm6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">🔁</div><div class="mm-step-lbl">Continue Work</div><div class="mm-step-sub">Sharp & efficient</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="shared/mindmap.js"></script>
+<script>MindMap.init(['ctx','token','compact','→','RAM','200k','[]','free','budget','trim'],[350,38,210,165,130]);</script>
+</body>
+</html>

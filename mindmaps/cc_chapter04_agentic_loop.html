@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 4 — The Agentic Loop · Claude Code Crash Course</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#1A52C8,transparent 70%);top:-80px;left:-90px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#6B3FD4,transparent 70%);top:40%;right:-130px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#E8620A,transparent 70%);bottom:-70px;left:35%}
+.mm-badge{background:linear-gradient(135deg,var(--bl-bg),#EEF3FE);border-color:var(--bl-b);color:var(--bl)}
+.mm-dot{background:var(--bl)}.mm-dot::after{border-color:var(--bl)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--bl) 0%,var(--vi) 30%,var(--or) 65%,var(--am) 100%)}
+.mm-kpi:nth-child(1){--kpi-accent:var(--bl)}.mm-kpi:nth-child(2){--kpi-accent:var(--vi)}.mm-kpi:nth-child(3){--kpi-accent:var(--or)}.mm-kpi:nth-child(4){--kpi-accent:var(--am)}
+.mc-1{--chip-bg:var(--bl-bg);--chip-border:var(--bl-b);--chip-color:var(--bl)}.mc-1 .chip-label{color:var(--bl)}
+.mc-2{--chip-bg:var(--vi-bg);--chip-border:var(--vi-b);--chip-color:var(--vi)}.mc-2 .chip-label{color:var(--vi)}
+.mc-3{--chip-bg:var(--or-bg);--chip-border:var(--or-b);--chip-color:var(--or)}.mc-3 .chip-label{color:var(--or)}
+/* TOOLS GRID */
+.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:10px}
+@media(max-width:500px){.tools-grid{grid-template-columns:1fr 1fr}}
+.tool-card{border-radius:11px;padding:12px;text-align:center;transition:transform .3s,box-shadow .3s}
+.tool-card:hover{transform:translateY(-3px)}
+.tc-1{background:var(--te-bg);border:1.5px solid var(--te-b)}.tc-1:hover{box-shadow:0 6px 16px rgba(10,122,106,.18)}
+.tc-2{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.tc-2:hover{box-shadow:0 6px 16px rgba(26,82,200,.18)}
+.tc-3{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.tc-3:hover{box-shadow:0 6px 16px rgba(107,63,212,.18)}
+.tc-4{background:var(--am-bg);border:1.5px solid var(--am-b)}.tc-4:hover{box-shadow:0 6px 16px rgba(192,123,0,.18)}
+.tc-5{background:var(--or-bg);border:1.5px solid var(--or-b)}.tc-5:hover{box-shadow:0 6px 16px rgba(232,98,10,.18)}
+.tc-6{background:var(--gr-bg);border:1.5px solid var(--gr-b)}.tc-6:hover{box-shadow:0 6px 16px rgba(24,122,58,.18)}
+.tool-ico{font-size:20px;display:block;margin-bottom:4px;transition:transform .3s}.tool-card:hover .tool-ico{transform:rotate(-8deg) scale(1.18)}
+.tool-name{font-size:10px;font-weight:800;margin-bottom:2px}
+.tc-1 .tool-name{color:var(--te)}.tc-2 .tool-name{color:var(--bl)}.tc-3 .tool-name{color:var(--vi)}.tc-4 .tool-name{color:var(--am)}.tc-5 .tool-name{color:var(--or)}.tc-6 .tool-name{color:var(--gr)}
+.tool-desc{font-size:9.5px;color:var(--muted);line-height:1.35}
+/* TOKEN BREAKDOWN */
+.token-bar{margin-top:10px}
+.tb-row{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.tb-label{font-size:10px;font-weight:700;font-family:var(--fm);color:var(--muted);width:110px;flex-shrink:0}
+.tb-track{flex:1;height:8px;background:var(--s2);border-radius:4px;overflow:hidden;position:relative}
+.tb-fill{height:100%;border-radius:4px;animation:fillBar 1.5s ease-out forwards;transform-origin:left}
+@keyframes fillBar{from{width:0}to{width:var(--fill-pct)}}
+.tb-1 .tb-fill{background:var(--or);--fill-pct:50%}
+.tb-2 .tb-fill{background:var(--bl);--fill-pct:27%}
+.tb-3 .tb-fill{background:var(--vi);--fill-pct:13%}
+.tb-4 .tb-fill{background:var(--am);--fill-pct:10%}
+.tb-val{font-size:10px;font-family:var(--fm);color:var(--muted);width:45px;text-align:right;flex-shrink:0}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+<div class="noise"></div><canvas id="mm-canvas"></canvas>
+<div class="mm-page">
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude Code Crash Course · Chapter 4 of 12</div>
+    <h1>The Agentic Loop<br>How Claude Code Actually Thinks</h1>
+    <p>Plan → Act → Observe → Verify · Built-in tools · Token cost explained · Why it's agentic</p>
+  </div>
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="7">0</div><div class="mm-kpi-label">Core built-in tools<br>Claude Code has</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="16">0</div><div class="mm-kpi-label">k+ tokens for even<br>a simple Hello.py</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="200">0</div><div class="mm-kpi-label">k token context<br>window (Sonnet)</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">Plan→Act</div><div class="mm-kpi-label">The core agentic<br>loop at a glance</div></div>
+  </div>
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">🔄</span><div class="chip-label">Plan → Act → Observe</div><div class="chip-desc">Claude doesn't just answer — it plans steps, executes them, observes results, and corrects course. That's what "agentic" means.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">🛠️</span><div class="chip-label">Tools Are the Hands</div><div class="chip-desc">Claude knows it has tools: Read, Write, Bash, WebSearch, Ask. It selects the right tool for each step automatically.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">💰</span><div class="chip-label">Every Action Costs Tokens</div><div class="chip-desc">System prompt, tool definitions, conversation history — all sent with each request. That's why even simple tasks cost 16k tokens.</div></div>
+  </div>
+  <div class="mm-grid">
+
+    <div class="mm-card c-bl">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">What "Agentic" Actually Means</div><div class="mm-card-subtitle">The loop that separates an AI agent from a chatbot</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">1</div><span><b>Plan</b> — Claude reads your request, then creates a step-by-step internal plan before doing anything</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">2</div><span><b>Act</b> — picks a tool and executes: creates a file, runs bash, reads a file, fetches the web</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">3</div><span><b>Observe</b> — reads the output of that action: was it correct? Did it fail? What happened?</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">4</div><span><b>Adapt</b> — if there's an error, it fixes it and tries again. If it worked, moves to the next step.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">5</div><span><b>Complete</b> — only reports "done" when it has verified the output actually works</span></div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">⭐</div>
+        <div><div class="mm-rule-title">THE AGENTIC INSIGHT</div><div class="mm-rule-body">Unlike a chatbot that answers in one shot, Claude Code <strong>loops through actions</strong> — thinking, doing, observing, correcting — until the task is genuinely complete.</div></div>
+      </div>
+    </div>
+
+    <div class="mm-card c-vi">
+      <div class="mm-card-head"><div class="mm-card-ico">🛠️</div><div><div class="mm-card-title">Claude Code's Built-In Tools</div><div class="mm-card-subtitle">The 6 categories of actions Claude can take on your machine</div></div></div>
+      <div class="tools-grid">
+        <div class="tool-card tc-1"><span class="tool-ico">📖</span><div class="tool-name">Read</div><div class="tool-desc">Reads files, folders, code</div></div>
+        <div class="tool-card tc-2"><span class="tool-ico">✍️</span><div class="tool-name">Write</div><div class="tool-desc">Creates & edits files</div></div>
+        <div class="tool-card tc-3"><span class="tool-ico">⚡</span><div class="tool-name">Bash</div><div class="tool-desc">Runs terminal commands</div></div>
+        <div class="tool-card tc-4"><span class="tool-ico">🌐</span><div class="tool-name">Web Search</div><div class="tool-desc">Fetches live web data</div></div>
+        <div class="tool-card tc-5"><span class="tool-ico">❓</span><div class="tool-name">Ask User</div><div class="tool-desc">Requests confirmation</div></div>
+        <div class="tool-card tc-6"><span class="tool-ico">📋</span><div class="tool-name">Plan Mode</div><div class="tool-desc">Enter/exit plan-only mode</div></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-vi">🛠️ 6 Core Tools</span><span class="mm-tag mm-tag-vi">🔧 Auto-selected</span><span class="mm-tag mm-tag-bl">🌐 Web access built-in</span></div>
+    </div>
+
+    <div class="mm-card c-am">
+      <div class="mm-card-head"><div class="mm-card-ico">💰</div><div><div class="mm-card-title">Why Tokens Cost So Much</div><div class="mm-card-subtitle">16k tokens for a simple Hello.py — here's why</div></div></div>
+      <div class="token-bar">
+        <div class="tb-row tb-1"><div class="tb-label">System Tools</div><div class="tb-track"><div class="tb-fill"></div></div><div class="tb-val">~8k tok</div></div>
+        <div class="tb-row tb-2"><div class="tb-label">System Prompt</div><div class="tb-track"><div class="tb-fill"></div></div><div class="tb-val">~6k tok</div></div>
+        <div class="tb-row tb-3"><div class="tb-label">MCP Tools</div><div class="tb-track"><div class="tb-fill"></div></div><div class="tb-val">~1.5k tok</div></div>
+        <div class="tb-row tb-4"><div class="tb-label">Your Message</div><div class="tb-track"><div class="tb-fill"></div></div><div class="tb-val">~0.5k tok</div></div>
+      </div>
+      <div class="mm-items" style="margin-top:10px">
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Tool definitions sent every request</b> — Claude needs to know its full capabilities each time. No memory between calls.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>System prompt overhead</b> — instructions on how Claude Code should behave: safety, structure, format = ~6k tokens</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>MCP overhead</b> — every connected MCP server adds tool descriptions. 10 MCPs = massive overhead. Disable unused ones!</span></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-am">💰 Token = Currency</span><span class="mm-tag mm-tag-ro">❌ Disable unused MCP</span><span class="mm-tag mm-tag-gr">✅ Understand the cost</span></div>
+    </div>
+
+    <div class="mm-card c-or">
+      <div class="mm-card-head"><div class="mm-card-ico">📊</div><div><div class="mm-card-title">Token Cost Reality Check</div><div class="mm-card-subtitle">Understanding pricing to avoid surprise bills</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">$</div><span><b>Token = 3/4 of a word</b> — every word in and out costs tokens. Both input AND output are charged.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">$</div><span><b>Sonnet pricing</b> — $3 per million input tokens, $15 per million output tokens. 1M ≈ 750,000 words.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">$</div><span><b>Haiku is cheapest</b> — $1/million input, $5/million output. Use for simple tasks to save significantly.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">$</div><span><b>Opus is premium</b> — $15/million input, $75/million output. Reserve for planning and complex reasoning only.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Company credits run out</b> — many employees burn their $400/month credits by the 15th because they don't understand cost.</span></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-or">💵 Haiku = Cheapest</span><span class="mm-tag mm-tag-am">💰 Sonnet = Balanced</span><span class="mm-tag mm-tag-ro">💎 Opus = Premium</span></div>
+    </div>
+
+    <div class="mm-card c-bl mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">The Complete Agentic Loop — From Request to Verified Result</div><div class="mm-card-subtitle">Every Claude Code task goes through this cycle — understanding it unlocks mastery</div></div></div>
+      <div class="mm-flow mm-flow-bl">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">📝</div><div class="mm-step-lbl">User Request</div><div class="mm-step-sub">Natural language</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#al1"/></animateMotion></circle><path id="al1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">🧠</div><div class="mm-step-lbl">Plan Steps</div><div class="mm-step-sub">Which tools, order</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#al2"/></animateMotion></circle><path id="al2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">🛠️</div><div class="mm-step-lbl">Select Tool</div><div class="mm-step-sub">Read/Write/Bash/Web</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#al3"/></animateMotion></circle><path id="al3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">⚡</div><div class="mm-step-lbl">Execute Action</div><div class="mm-step-sub">On your machine</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#al4"/></animateMotion></circle><path id="al4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">🔍</div><div class="mm-step-lbl">Observe Output</div><div class="mm-step-sub">Did it work?</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#al5"/></animateMotion></circle><path id="al5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">🔧</div><div class="mm-step-lbl">Fix or Next</div><div class="mm-step-sub">Self-corrects</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.7s"><mpath href="#al6"/></animateMotion></circle><path id="al6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">📤</div><div class="mm-step-lbl">Report Done</div><div class="mm-step-sub">Verified result</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="shared/mindmap.js"></script>
+<script>MindMap.init(['Plan','Act','tool','bash','→','token','loop','ctx','observe','fix'],[210,270,22,38,165]);</script>
+</body>
+</html>

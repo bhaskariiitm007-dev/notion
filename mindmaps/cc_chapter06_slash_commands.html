@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 6 — Slash Commands & Modes · Claude Code Crash Course</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#C07B00,transparent 70%);top:-80px;left:-90px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#E8620A,transparent 70%);top:38%;right:-130px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#1A52C8,transparent 70%);bottom:-70px;left:38%}
+.mm-badge{background:linear-gradient(135deg,var(--am-bg),#FFFBF0);border-color:var(--am-b);color:var(--am)}
+.mm-dot{background:var(--am)}.mm-dot::after{border-color:var(--am)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--am) 0%,var(--or) 30%,var(--bl) 65%,var(--vi) 100%)}
+.mm-kpi:nth-child(1){--kpi-accent:var(--am)}.mm-kpi:nth-child(2){--kpi-accent:var(--or)}.mm-kpi:nth-child(3){--kpi-accent:var(--bl)}.mm-kpi:nth-child(4){--kpi-accent:var(--vi)}
+.mc-1{--chip-bg:var(--am-bg);--chip-border:var(--am-b);--chip-color:var(--am)}.mc-1 .chip-label{color:var(--am)}
+.mc-2{--chip-bg:var(--or-bg);--chip-border:var(--or-b);--chip-color:var(--or)}.mc-2 .chip-label{color:var(--or)}
+.mc-3{--chip-bg:var(--bl-bg);--chip-border:var(--bl-b);--chip-color:var(--bl)}.mc-3 .chip-label{color:var(--bl)}
+/* COMMAND GRID */
+.cmd-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:10px}
+.cmd-item{border-radius:10px;padding:11px;transition:transform .3s;cursor:default}
+.cmd-item:hover{transform:translateX(4px)}
+.ci-or{background:var(--or-bg);border:1.5px solid var(--or-b)}.ci-bl{background:var(--bl-bg);border:1.5px solid var(--bl-b)}
+.ci-vi{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.ci-gr{background:var(--gr-bg);border:1.5px solid var(--gr-b)}
+.ci-am{background:var(--am-bg);border:1.5px solid var(--am-b)}.ci-te{background:var(--te-bg);border:1.5px solid var(--te-b)}
+.cmd-name{font-size:11px;font-weight:800;font-family:var(--fm);margin-bottom:3px}
+.ci-or .cmd-name{color:var(--or)}.ci-bl .cmd-name{color:var(--bl)}.ci-vi .cmd-name{color:var(--vi)}
+.ci-gr .cmd-name{color:var(--gr)}.ci-am .cmd-name{color:var(--am)}.ci-te .cmd-name{color:var(--te)}
+.cmd-desc{font-size:10px;color:var(--muted);line-height:1.4}
+/* EFFORT SLIDER */
+.effort-wrap{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.effort-card{border-radius:10px;padding:11px;flex:1;min-width:80px;text-align:center;transition:transform .3s}
+.effort-card:hover{transform:translateY(-3px)}
+.eff-low{background:var(--gr-bg);border:1.5px solid var(--gr-b)}.eff-med{background:var(--am-bg);border:1.5px solid var(--am-b)}.eff-high{background:var(--or-bg);border:1.5px solid var(--or-b)}.eff-max{background:var(--ro-bg);border:1.5px solid var(--ro-b)}
+.eff-ico{font-size:18px;display:block;margin-bottom:3px}
+.eff-name{font-size:10px;font-weight:800}
+.eff-low .eff-name{color:var(--gr)}.eff-med .eff-name{color:var(--am)}.eff-high .eff-name{color:var(--or)}.eff-max .eff-name{color:var(--ro)}
+.eff-desc{font-size:9px;color:var(--muted);line-height:1.3;margin-top:2px}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+<div class="noise"></div><canvas id="mm-canvas"></canvas>
+<div class="mm-page">
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude Code Crash Course · Chapter 6 of 12</div>
+    <h1>Slash Commands<br>& Session Modes</h1>
+    <p>/model · /effort · /cost · /context · /compact · /rewind · 70+ commands mastered</p>
+  </div>
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="70">0</div><div class="mm-kpi-label">Slash commands in<br>9 categories</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="3">0</div><div class="mm-kpi-label">Model tiers<br>switchable live</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="4">0</div><div class="mm-kpi-label">Effort levels:<br>Low/Medium/High/Max</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="0">0</div><div class="mm-kpi-label">Tokens used by<br>slash commands</div></div>
+  </div>
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">⌨️</span><div class="chip-label">Slash = Keyboard Shortcuts</div><div class="chip-desc">Slash commands are like Ctrl+C/Ctrl+V — instant control over Claude Code capabilities without wasting context tokens.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">🎛️</span><div class="chip-label">Control Every Session</div><div class="chip-desc">Switch models mid-session, check costs in real-time, rewind your entire codebase — all without leaving the terminal.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">🔄</span><div class="chip-label">Rewind Is a Superpower</div><div class="chip-desc">Like a save state in a video game — jump back to any point in your session including reverting all file changes made since then.</div></div>
+  </div>
+  <div class="mm-grid">
+
+    <div class="mm-card c-am mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">⌨️</div><div><div class="mm-card-title">Essential Slash Commands — The Pro's Toolkit</div><div class="mm-card-subtitle">Master these and you'll operate at a completely different level</div></div></div>
+      <div class="cmd-grid">
+        <div class="cmd-item ci-or"><div class="cmd-name">/model</div><div class="cmd-desc">Switch between Haiku, Sonnet, Opus. History sent to new model on switch. No tokens wasted.</div></div>
+        <div class="cmd-item ci-bl"><div class="cmd-name">/effort</div><div class="cmd-desc">Set reasoning depth: Low → Max. High effort means deeper agentic loop, more planning time per step.</div></div>
+        <div class="cmd-item ci-vi"><div class="cmd-name">/cost or /usage</div><div class="cmd-desc">See exact token spend this session and weekly. Current session %, week %, days until reset.</div></div>
+        <div class="cmd-item ci-gr"><div class="cmd-name">/context</div><div class="cmd-desc">Shows live breakdown: system prompt, tools, skills, messages, free space. Your RAM usage dashboard.</div></div>
+        <div class="cmd-item ci-am"><div class="cmd-name">/compact</div><div class="cmd-desc">Summarizes the entire conversation into a digest. Frees up context. Like "minutes of meeting" for Claude.</div></div>
+        <div class="cmd-item ci-te"><div class="cmd-name">/rewind</div><div class="cmd-desc">Time-travel back to any previous chat state — reverting both conversation AND all file changes made since.</div></div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">💡</div>
+        <div><div class="mm-rule-title">⭐ PRO WORKFLOW</div><div class="mm-rule-body">Start sessions with <strong>Opus + High effort</strong> for planning. Switch to <strong>Sonnet</strong> for building. Use <strong>Haiku</strong> for maintenance. Check <strong>/cost</strong> and <strong>/context</strong> regularly to stay efficient.</div></div>
+      </div>
+    </div>
+
+    <div class="mm-card c-or">
+      <div class="mm-card-head"><div class="mm-card-ico">🎚️</div><div><div class="mm-card-title">Effort Levels — The Reasoning Slider</div><div class="mm-card-subtitle">Control how hard Claude thinks before each action</div></div></div>
+      <div class="effort-wrap">
+        <div class="effort-card eff-low"><span class="eff-ico">⚡</span><div class="eff-name">Low</div><div class="eff-desc">Quick stop, minimal planning</div></div>
+        <div class="effort-card eff-med"><span class="eff-ico">⚖️</span><div class="eff-name">Medium</div><div class="eff-desc">Balanced, standard implementation</div></div>
+        <div class="effort-card eff-high"><span class="eff-ico">🔬</span><div class="eff-name">High</div><div class="eff-desc">Thorough analysis, testing included</div></div>
+        <div class="effort-card eff-max"><span class="eff-ico">👑</span><div class="eff-name">Max</div><div class="eff-desc">Deep dive, exhaustive reasoning</div></div>
+      </div>
+      <div class="mm-items" style="margin-top:10px">
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Use High for complex tasks</b> — architecture, planning, debugging tricky logic</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Use Low for simple ones</b> — formatting fixes, simple edits, quick summaries</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Higher effort ≠ always better</b> — it costs more tokens and time. Match to task complexity.</span></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-or">🎚️ Effort Slider</span><span class="mm-tag mm-tag-gr">✅ Match to Task</span></div>
+    </div>
+
+    <div class="mm-card c-vi">
+      <div class="mm-card-head"><div class="mm-card-ico">⏪</div><div><div class="mm-card-title">Rewind — Your Time Machine</div><div class="mm-card-subtitle">The most underused power feature in Claude Code</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">→</div><span><b>What it does</b> — takes you back to any previous chat message AND reverts all file changes made since that point</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">→</div><span><b>Like a save state</b> — exactly like dying in a video game and respawning from your last checkpoint</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">★</div><span><b>When to use</b> — Claude went in the wrong direction, renamed a file you didn't want renamed, created wrong structure</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">→</div><span><b>How to use</b> — type /rewind, select the checkpoint message to return to, confirm. All file changes since that point undo.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Safe to use</b> — reverted files stay accessible via git history. Rewind is always recoverable.</span></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-vi">⏪ Rewind</span><span class="mm-tag mm-tag-vi">💾 Checkpoint</span><span class="mm-tag mm-tag-gr">✅ Always safe</span></div>
+    </div>
+
+    <div class="mm-card c-bl">
+      <div class="mm-card-head"><div class="mm-card-ico">📊</div><div><div class="mm-card-title">/context — Your Usage Dashboard</div><div class="mm-card-subtitle">See exactly what's eating your context window</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">→</div><span><b>System Prompt</b> — ~6k tokens: Claude Code's core instructions on how to behave and operate</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">→</div><span><b>System Tools</b> — ~8k tokens: definitions of every tool Claude has (Read, Write, Bash, etc.)</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">→</div><span><b>MCP Tools</b> — varies: each connected MCP server sends its tool list. 10 MCPs = massive overhead</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">→</div><span><b>Skills</b> — minimal: only loaded when invoked, not always present</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">→</div><span><b>Messages</b> — grows: your conversation history, biggest target for /compact</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">★</div><span><b>Free space</b> — what's left. When this gets low, quality drops and costs spike. Watch this number.</span></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-bl">📊 /context</span><span class="mm-tag mm-tag-ro">🔴 MCP overhead</span><span class="mm-tag mm-tag-gr">✅ Monitor free space</span></div>
+    </div>
+
+    <div class="mm-card c-te mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">Mastering Commands — Your Session Workflow</div><div class="mm-card-subtitle">How a pro uses slash commands throughout a real development session</div></div></div>
+      <div class="mm-flow mm-flow-te">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">🚀</div><div class="mm-step-lbl">Start Session</div><div class="mm-step-sub">Run claude</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#sc1"/></animateMotion></circle><path id="sc1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">👑</div><div class="mm-step-lbl">/model opus</div><div class="mm-step-sub">Planning phase</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#sc2"/></animateMotion></circle><path id="sc2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">⚖️</div><div class="mm-step-lbl">/model sonnet</div><div class="mm-step-sub">Building phase</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#sc3"/></animateMotion></circle><path id="sc3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">📊</div><div class="mm-step-lbl">/context</div><div class="mm-step-sub">Monitor usage</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#sc4"/></animateMotion></circle><path id="sc4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">🗜️</div><div class="mm-step-lbl">/compact</div><div class="mm-step-sub">Free up space</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#sc5"/></animateMotion></circle><path id="sc5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">💰</div><div class="mm-step-lbl">/cost</div><div class="mm-step-sub">Check spend</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.7s"><mpath href="#sc6"/></animateMotion></circle><path id="sc6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">⚡</div><div class="mm-step-lbl">/model haiku</div><div class="mm-step-sub">Maintenance mode</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="shared/mindmap.js"></script>
+<script>MindMap.init(['/model','/cost','/ctx','→','opus','haiku','sonnet','[]','/compact','/rewind'],[38,22,210,270,165]);</script>
+</body>
+</html>

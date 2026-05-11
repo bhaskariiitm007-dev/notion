@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 1 — Introduction & Course Overview · Claude Code Crash Course</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#E8620A,transparent 70%);top:-80px;left:-100px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#6B3FD4,transparent 70%);top:38%;right:-130px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#0A7A6A,transparent 70%);bottom:-70px;left:38%}
+.mm-badge{background:linear-gradient(135deg,var(--or-bg),#FFFAF5);border-color:var(--or-b);color:var(--or)}
+.mm-dot{background:var(--or)}.mm-dot::after{border-color:var(--or)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--or) 0%,var(--am) 30%,var(--vi) 65%,var(--te) 100%)}
+.mm-kpi:nth-child(1){--kpi-accent:var(--or)}.mm-kpi:nth-child(2){--kpi-accent:var(--vi)}.mm-kpi:nth-child(3){--kpi-accent:var(--te)}.mm-kpi:nth-child(4){--kpi-accent:var(--am)}
+.mc-1{--chip-bg:var(--or-bg);--chip-border:var(--or-b);--chip-color:var(--or)}.mc-1:hover{box-shadow:0 10px 26px rgba(232,98,10,.18);border-color:var(--or)!important}
+.mc-2{--chip-bg:var(--vi-bg);--chip-border:var(--vi-b);--chip-color:var(--vi)}.mc-2:hover{box-shadow:0 10px 26px rgba(107,63,212,.18);border-color:var(--vi)!important}
+.mc-3{--chip-bg:var(--te-bg);--chip-border:var(--te-b);--chip-color:var(--te)}.mc-3:hover{box-shadow:0 10px 26px rgba(10,122,106,.18);border-color:var(--te)!important}
+.mc-1 .chip-label{color:var(--or)}.mc-2 .chip-label{color:var(--vi)}.mc-3 .chip-label{color:var(--te)}
+/* BEFORE/AFTER */
+.ba-wrap{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-top:10px}
+.ba-panel{border-radius:13px;padding:15px;transition:transform .3s,box-shadow .3s}
+.ba-panel:hover{transform:translateY(-4px)}
+.ba-before{background:var(--ro-bg);border:2px solid var(--ro-b)}.ba-before:hover{box-shadow:0 8px 24px rgba(184,24,54,.2)}
+.ba-after{background:var(--gr-bg);border:2px solid var(--gr-b)}.ba-after:hover{box-shadow:0 8px 24px rgba(24,122,58,.2)}
+.ba-label{font-size:11.5px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.ba-before .ba-label{color:var(--ro)}.ba-after .ba-label{color:var(--gr)}
+.ba-item{display:flex;gap:7px;font-size:11px;margin-bottom:5px;line-height:1.5;align-items:flex-start;color:var(--muted)}
+.ba-dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0;margin-top:4px}
+.ba-before .ba-dot{background:var(--ro)}.ba-after .ba-dot{background:var(--gr)}
+.ba-arrow{display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--or);animation:arrowPulse 1.6s ease-in-out infinite}
+@keyframes arrowPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.3) translateX(3px)}}
+@media(max-width:500px){.ba-wrap{grid-template-columns:1fr}.ba-arrow{display:none}}
+/* 13 MODULES GRID */
+.modules-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+@media(max-width:520px){.modules-grid{grid-template-columns:1fr 1fr}}
+.mod-card{border-radius:11px;padding:11px;text-align:center;transition:transform .3s,box-shadow .3s;cursor:default;position:relative}
+.mod-card:hover{transform:translateY(-3px)}
+.mod-num{font-size:8px;font-weight:800;font-family:var(--fm);letter-spacing:.5px;display:block;margin-bottom:3px}
+.mod-ico{font-size:18px;display:block;margin-bottom:3px;transition:transform .3s}.mod-card:hover .mod-ico{transform:rotate(-8deg) scale(1.18)}
+.mod-name{font-size:9.5px;font-weight:700;line-height:1.3}
+.m1{background:var(--or-bg);border:1.5px solid var(--or-b)}.m1 .mod-num,.m1 .mod-name{color:var(--or)}
+.m2{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.m2 .mod-num,.m2 .mod-name{color:var(--bl)}
+.m3{background:var(--te-bg);border:1.5px solid var(--te-b)}.m3 .mod-num,.m3 .mod-name{color:var(--te)}
+.m4{background:var(--am-bg);border:1.5px solid var(--am-b)}.m4 .mod-num,.m4 .mod-name{color:var(--am)}
+.m5{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.m5 .mod-num,.m5 .mod-name{color:var(--vi)}
+.m6{background:var(--gr-bg);border:1.5px solid var(--gr-b)}.m6 .mod-num,.m6 .mod-name{color:var(--gr)}
+.m7{background:var(--ro-bg);border:1.5px solid var(--ro-b)}.m7 .mod-num,.m7 .mod-name{color:var(--ro)}
+.m8{background:var(--sk-bg);border:1.5px solid var(--sk-b)}.m8 .mod-num,.m8 .mod-name{color:var(--sk)}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+<div class="noise"></div>
+<canvas id="mm-canvas"></canvas>
+<div class="mm-page">
+
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude Code Crash Course · Chapter 1 of 12</div>
+    <h1>Introduction &<br>Course Overview</h1>
+    <p>The AI divide · 13 modules · Beginner to advanced · No coding background required</p>
+  </div>
+
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="13">0</div><div class="mm-kpi-label">Course modules<br>covered end-to-end</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="200">0</div><div class="mm-kpi-label">Hours of research<br>by the instructor</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="100">0</div><div class="mm-kpi-label">k+ professionals<br>already trained</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="2026">0</div><div class="mm-kpi-label">The year the AI<br>divide is forming</div></div>
+  </div>
+
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">⚡</span><div class="chip-label">The Great AI Divide</div><div class="chip-desc">Two sides are forming: those building with Claude Code and shipping in hours, and those still doing everything manually.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">🎯</span><div class="chip-label">Complete & Practical</div><div class="chip-desc">Every feature, every concept with real working examples. No surface-level content — depth is the promise.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">🚀</span><div class="chip-label">From Zero to Builder</div><div class="chip-desc">By the end, you won't just understand Claude Code — you will have built a full-stack productivity app with it.</div></div>
+  </div>
+
+  <div class="mm-grid">
+
+    <div class="mm-card c-ro mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">⚖️</div><div><div class="mm-card-title">The Two Sides of the AI Divide</div><div class="mm-card-subtitle">Which side are you on right now — and which will you be on after this course?</div></div></div>
+      <div class="ba-wrap">
+        <div class="ba-panel ba-before">
+          <div class="ba-label">❌ Without Claude Code</div>
+          <div class="ba-item"><div class="ba-dot"></div>Doing everything manually, one step at a time</div>
+          <div class="ba-item"><div class="ba-dot"></div>Limited by what you can do alone</div>
+          <div class="ba-item"><div class="ba-dot"></div>Weeks or hours for things that should take minutes</div>
+          <div class="ba-item"><div class="ba-dot"></div>Watching others ship faster and wondering how</div>
+          <div class="ba-item"><div class="ba-dot"></div>Using AI as a chatbot, not as a builder</div>
+        </div>
+        <div class="ba-arrow">→</div>
+        <div class="ba-panel ba-after">
+          <div class="ba-label">✅ With Claude Code</div>
+          <div class="ba-item"><div class="ba-dot"></div>Building applications with agentic AI as your co-pilot</div>
+          <div class="ba-item"><div class="ba-dot"></div>Automating entire workflows end-to-end</div>
+          <div class="ba-item"><div class="ba-dot"></div>Shipping in hours what used to take weeks</div>
+          <div class="ba-item"><div class="ba-dot"></div>Having a personal AI that acts, not just answers</div>
+          <div class="ba-item"><div class="ba-dot"></div>On the right side of the divide permanently</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mm-card c-or mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🗺️</div><div><div class="mm-card-title">The 13 Course Modules at a Glance</div><div class="mm-card-subtitle">A systematic journey from fundamentals to a full-stack capstone project</div></div></div>
+      <div class="modules-grid">
+        <div class="mod-card m1"><span class="mod-num">MODULE 01</span><span class="mod-ico">🧠</span><div class="mod-name">Understanding Claude & Setup</div></div>
+        <div class="mod-card m2"><span class="mod-num">MODULE 02</span><span class="mod-ico">💻</span><div class="mod-name">Installation & First Run</div></div>
+        <div class="mod-card m3"><span class="mod-num">MODULE 03</span><span class="mod-ico">⌨️</span><div class="mod-name">Slash Commands & Modes</div></div>
+        <div class="mod-card m4"><span class="mod-num">MODULE 04</span><span class="mod-ico">📄</span><div class="mod-name">Claude.md — Project Brain</div></div>
+        <div class="mod-card m5"><span class="mod-num">MODULE 05</span><span class="mod-ico">🔧</span><div class="mod-name">Context Management</div></div>
+        <div class="mod-card m6"><span class="mod-num">MODULE 06</span><span class="mod-ico">🎯</span><div class="mod-name">Skills — Reusable Playbooks</div></div>
+        <div class="mod-card m7"><span class="mod-num">MODULE 07</span><span class="mod-ico">🔗</span><div class="mod-name">Hooks — Auto-Background Scripts</div></div>
+        <div class="mod-card m8"><span class="mod-num">MODULE 08</span><span class="mod-ico">🌐</span><div class="mod-name">MCP — Connect Everything</div></div>
+      </div>
+      <div class="modules-grid" style="margin-top:8px">
+        <div class="mod-card m1"><span class="mod-num">MODULE 09</span><span class="mod-ico">🤖</span><div class="mod-name">Sub-Agents Specialist Teams</div></div>
+        <div class="mod-card m2"><span class="mod-num">MODULE 10</span><span class="mod-ico">👥</span><div class="mod-name">Agent Teams — Parallel Work</div></div>
+        <div class="mod-card m3"><span class="mod-num">MODULE 11</span><span class="mod-ico">🔌</span><div class="mod-name">Plugins & Marketplace</div></div>
+        <div class="mod-card m4"><span class="mod-num">MODULE 12</span><span class="mod-ico">⏰</span><div class="mod-name">Scheduling & Automation Loops</div></div>
+        <div class="mod-card m5" style="grid-column:span 4"><span class="mod-num">MODULE 13 — CAPSTONE</span><span class="mod-ico">🏗️</span><div class="mod-name">Full-Stack Productivity App — React Frontend + FastAPI Backend</div></div>
+      </div>
+    </div>
+
+    <div class="mm-card c-te">
+      <div class="mm-card-head"><div class="mm-card-ico">👤</div><div><div class="mm-card-title">Who This Course Is For</div><div class="mm-card-subtitle">Designed for depth — regardless of your background</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Non-technical professionals</b> — product managers, marketers, operators who want AI superpowers without code</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Developers & engineers</b> — those who want to use Claude Code at a professional level, not just as autocomplete</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Students & researchers</b> — learning to build, automate, and create using the most capable agentic AI available</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Company AI champions</b> — people given Claude credits who need to actually drive value, not just demo features</span></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-te">🧑 Non-tech</span><span class="mm-tag mm-tag-te">💻 Developers</span><span class="mm-tag mm-tag-te">🎓 Students</span><span class="mm-tag mm-tag-te">🏢 Companies</span></div>
+    </div>
+
+    <div class="mm-card c-vi">
+      <div class="mm-card-head"><div class="mm-card-ico">🏆</div><div><div class="mm-card-title">What You'll Have After This Course</div><div class="mm-card-subtitle">Real capabilities, not just theoretical knowledge</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">★</div><span><b>Full understanding</b> — how Claude Code works under the hood: the agentic loop, tools, context, and why it behaves as it does</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">★</div><span><b>Your system toolkit</b> — skills, hooks, CLAUDE.md, MCP connections ready to apply to your next project</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">★</div><span><b>A built project</b> — a full-stack productivity app created live during the capstone, proving these concepts actually work</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">★</div><span><b>Competitive edge</b> — the ability to operate at a level most Claude Code users never reach because they skipped fundamentals</span></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-vi">🧠 Deep Understanding</span><span class="mm-tag mm-tag-vi">🛠️ Real Toolkit</span><span class="mm-tag mm-tag-gr">🏗️ Built Project</span></div>
+    </div>
+
+    <div class="mm-card c-am">
+      <div class="mm-card-head"><div class="mm-card-ico">⚠️</div><div><div class="mm-card-title">Why Most Claude Code Tutorials Fail You</div><div class="mm-card-subtitle">The traps that leave people frustrated and stuck</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>One feature at a time</b> — tutorials show a single trick but never teach the system. You learn a magic trick, not magic.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Skipping fundamentals</b> — jump straight to demos and you'll always be confused when something breaks</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>No real examples</b> — surface-level walkthroughs that don't work when you apply them to your actual project</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>FOMO-driven content</b> — you watch videos for 2 hours but only the creator learns something; you just feel left behind</span></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-am">⚠️ Surface Level</span><span class="mm-tag mm-tag-ro">❌ No Fundamentals</span><span class="mm-tag mm-tag-gr">✅ This Course Fixes It</span></div>
+    </div>
+
+    <div class="mm-card c-sk">
+      <div class="mm-card-head"><div class="mm-card-ico">📌</div><div><div class="mm-card-title">How to Use This Course</div><div class="mm-card-subtitle">Get maximum value from every chapter</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">1</div><span><b>Download all materials</b> — PDFs, diagrams, notebooks, and GitHub resources are shared for every module</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">2</div><span><b>Install as you go</b> — set up Claude Code on your machine during the setup chapter and follow along live</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">3</div><span><b>Understand, don't memorize</b> — the diagrams are the shortcut; understand the system and commands become intuitive</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">4</div><span><b>Comment your questions</b> — every comment is read; doubts get cleared; the community makes the learning faster</span></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-sk">📥 Download Resources</span><span class="mm-tag mm-tag-sk">💻 Follow Along</span><span class="mm-tag mm-tag-am">💬 Ask Questions</span></div>
+    </div>
+
+    <div class="mm-card c-bl mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">Your Learning Journey — Chapter by Chapter</div><div class="mm-card-subtitle">From understanding what Claude is to building a production-ready full-stack app</div></div></div>
+      <div class="mm-flow mm-flow-bl">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">🧠</div><div class="mm-step-lbl">Claude & LLMs</div><div class="mm-step-sub">Foundation first</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#j1"/></animateMotion></circle><path id="j1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">💻</div><div class="mm-step-lbl">Install & Run</div><div class="mm-step-sub">Mac/Win/Linux</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#j2"/></animateMotion></circle><path id="j2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">⌨️</div><div class="mm-step-lbl">Commands</div><div class="mm-step-sub">70+ slash cmds</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#j3"/></animateMotion></circle><path id="j3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">📄</div><div class="mm-step-lbl">CLAUDE.md</div><div class="mm-step-sub">Project brain</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#j4"/></animateMotion></circle><path id="j4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">🎯</div><div class="mm-step-lbl">Skills+Hooks</div><div class="mm-step-sub">Automate work</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#j5"/></animateMotion></circle><path id="j5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">🌐</div><div class="mm-step-lbl">MCP+Agents</div><div class="mm-step-sub">Connect the world</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.7s"><mpath href="#j6"/></animateMotion></circle><path id="j6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">🏗️</div><div class="mm-step-lbl">Capstone App</div><div class="mm-step-sub">Build it live</div></div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">⭐</div>
+        <div><div class="mm-rule-title">THE COURSE PROMISE</div><div class="mm-rule-body">This is not another surface-level tutorial. It's a system for understanding Claude Code so deeply that <strong>future updates and new features make immediate sense</strong> — because you understand the architecture, not just the commands.</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="shared/mindmap.js"></script>
+<script>MindMap.init(['Claude','Code','⚡','→','AI','build','ship','[]','ctx','2026'],[22,38,270,165,210]);</script>
+</body>
+</html>

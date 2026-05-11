@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 11 — MCP · Claude Code Crash Course</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#1A52C8,transparent 70%);top:-80px;left:-90px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#0A7A6A,transparent 70%);top:40%;right:-130px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#C07B00,transparent 70%);bottom:-70px;left:35%}
+.mm-badge{background:linear-gradient(135deg,var(--bl-bg),#EEF5FF);border-color:var(--bl-b);color:var(--bl)}
+.mm-dot{background:var(--bl)}.mm-dot::after{border-color:var(--bl)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--bl) 0%,var(--te) 40%,var(--am) 100%)}
+.mm-kpi:nth-child(1){--kpi-accent:var(--bl)}.mm-kpi:nth-child(2){--kpi-accent:var(--te)}.mm-kpi:nth-child(3){--kpi-accent:var(--am)}.mm-kpi:nth-child(4){--kpi-accent:var(--ro)}
+.mc-1{--chip-bg:var(--bl-bg);--chip-border:var(--bl-b);--chip-color:var(--bl)}.mc-1 .chip-label{color:var(--bl)}
+.mc-2{--chip-bg:var(--te-bg);--chip-border:var(--te-b);--chip-color:var(--te)}.mc-2 .chip-label{color:var(--te)}
+.mc-3{--chip-bg:var(--am-bg);--chip-border:var(--am-b);--chip-color:var(--am)}.mc-3 .chip-label{color:var(--am)}
+
+/* TOOLBOX DIAGRAM */
+.toolbox-wrap{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-top:12px}
+.tb-app{border-radius:12px;padding:13px;text-align:center}
+.tb-claude{background:var(--bl-bg);border:2px solid var(--bl-b)}.tb-claude:hover{transform:translateY(-4px);box-shadow:0 8px 22px rgba(26,82,200,.2)}
+.tb-servers{background:var(--te-bg);border:2px solid var(--te-b)}.tb-servers:hover{transform:translateY(-4px);box-shadow:0 8px 22px rgba(10,122,106,.2)}
+.tb-app{transition:transform .3s,box-shadow .3s}
+.tb-title{font-size:11px;font-weight:800;margin-bottom:6px}
+.tb-claude .tb-title{color:var(--bl)}.tb-servers .tb-title{color:var(--te)}
+.tb-ico{font-size:24px;display:block;margin-bottom:5px;transition:transform .3s}.tb-app:hover .tb-ico{transform:scale(1.2) rotate(-8deg)}
+.tb-desc{font-size:10px;color:var(--muted);line-height:1.4}
+.tb-mid{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px}
+.tb-mid-label{font-size:9px;font-weight:800;font-family:var(--fm);color:var(--muted);text-align:center}
+.tb-mid-icon{font-size:28px;animation:arrowPulse 1.8s ease-in-out infinite}
+@keyframes arrowPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}
+@media(max-width:500px){.toolbox-wrap{grid-template-columns:1fr}}
+
+/* SERVER TYPES */
+.server-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.srv-item{border-radius:10px;padding:12px 13px;transition:transform .3s}
+.srv-item:hover{transform:translateX(4px)}
+.sv-local{background:var(--te-bg);border:1.5px solid var(--te-b)}.sv-local:hover{box-shadow:0 5px 14px rgba(10,122,106,.16)}
+.sv-hosted{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.sv-hosted:hover{box-shadow:0 5px 14px rgba(26,82,200,.16)}
+.srv-title{font-size:11px;font-weight:800;margin-bottom:4px}
+.sv-local .srv-title{color:var(--te)}.sv-hosted .srv-title{color:var(--bl)}
+.srv-desc{font-size:10px;color:var(--muted);line-height:1.4}
+
+/* TOOLS PER APP */
+.app-tools{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.at-item{border-radius:10px;padding:11px 13px}
+.at-gmail{background:var(--ro-bg);border:1.5px solid var(--ro-b)}
+.at-cal{background:var(--bl-bg);border:1.5px solid var(--bl-b)}
+.at-gh{background:var(--sl-bg,#E8EAF2);border:1.5px solid rgba(42,52,88,.22)}
+.at-tab{background:var(--am-bg);border:1.5px solid var(--am-b)}
+.at-head{font-size:10px;font-weight:800;margin-bottom:5px;display:flex;align-items:center;gap:5px}
+.at-gmail .at-head{color:var(--ro)}.at-cal .at-head{color:var(--bl)}.at-gh .at-head{color:#2A3458}.at-tab .at-head{color:var(--am)}
+.at-tag{font-family:var(--fm);font-size:8.5px;font-weight:700;padding:1px 6px;border-radius:10px;margin-bottom:4px;display:inline-block}
+.at-gmail .at-tag{background:var(--ro);color:#fff}.at-cal .at-tag{background:var(--bl);color:#fff}.at-gh .at-tag{background:#2A3458;color:#fff}.at-tab .at-tag{background:var(--am);color:#fff}
+.at-tool{font-size:9.5px;color:var(--muted);line-height:1.5}
+
+/* HOW FLOW */
+.how-flow{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.hf-row{display:flex;align-items:flex-start;gap:9px;padding:9px 12px;border-radius:9px;background:var(--s1);border:1px solid var(--s3)}
+.hf-step{font-family:var(--fm);font-size:9px;font-weight:900;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.hf-row:nth-child(1) .hf-step{background:var(--bl);color:#fff}
+.hf-row:nth-child(2) .hf-step{background:var(--te);color:#fff}
+.hf-row:nth-child(3) .hf-step{background:var(--vi);color:#fff}
+.hf-row:nth-child(4) .hf-step{background:var(--am);color:#fff}
+.hf-row:nth-child(5) .hf-step{background:var(--gr);color:#fff}
+.hf-text{font-size:10.5px;color:var(--muted);line-height:1.45}
+.hf-text b{color:var(--fg)}
+
+/* COST WARNING */
+.cost-warn{background:var(--ro-bg);border:1.5px solid var(--ro-b);border-radius:10px;padding:11px 14px;margin-top:10px;font-size:11px}
+.cw-head{font-weight:800;color:var(--ro);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.cw-body{color:var(--muted);font-size:10px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+<div class="noise"></div><canvas id="mm-canvas"></canvas>
+<div class="mm-page">
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude Code Crash Course · Chapter 11 of 12</div>
+    <h1>MCP — Model<br>Context Protocol</h1>
+    <p>USB-C for AI · Connect Gmail, GitHub, Slack · Local vs hosted servers · Tools as APIs · Token cost</p>
+  </div>
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="15">0</div><div class="mm-kpi-label">k tokens wasted per<br>unused MCP server</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="7">0</div><div class="mm-kpi-label">Gmail tools available<br>via MCP out of box</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="4">0</div><div class="mm-kpi-label">Tavily tools: search,<br>extract, crawl, map</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">1 line</div><div class="mm-kpi-label">To connect any<br>MCP-enabled app</div></div>
+  </div>
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">🔌</span><div class="chip-label">It's a Toolbox Standard</div><div class="chip-desc">MCP isn't a Claude thing — it's an open standard built by Anthropic for all AI. Any AI (GPT, Perplexity, Cursor) can use MCP servers. Like HTTP for the web, MCP is the protocol for AI tools.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">📦</span><div class="chip-label">Someone Else Maintains It</div><div class="chip-desc">Before MCP, you'd write and maintain each API integration yourself. With MCP, Gmail/GitHub/Slack maintain their own server. You just connect and use — no maintenance, no API key juggling per-tool.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">⚠️</span><div class="chip-label">Disable What You Don't Use</div><div class="chip-desc">Every connected MCP server sends its tool definitions to Claude — even if you don't use it. 10 MCPs = 15k+ tokens burned before you type a word. Disable aggressively. Enables on demand.</div></div>
+  </div>
+  <div class="mm-grid">
+
+    <div class="mm-card c-bl mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔗</div><div><div class="mm-card-title">How MCP Works — The Full Picture</div><div class="mm-card-subtitle">Your AI gets a toolbox. Apps maintain the tools. You just connect.</div></div></div>
+      <div class="toolbox-wrap">
+        <div class="tb-app tb-claude">
+          <span class="tb-ico">🤖</span>
+          <div class="tb-title">Claude Code</div>
+          <div class="tb-desc">Your AI agent. Knows what tools are available. Calls them when you ask. Receives results back.</div>
+        </div>
+        <div class="tb-mid">
+          <div class="tb-mid-icon">⇄</div>
+          <div class="tb-mid-label">MCP<br>Protocol</div>
+        </div>
+        <div class="tb-app tb-servers">
+          <span class="tb-ico">🗄️</span>
+          <div class="tb-title">MCP Servers</div>
+          <div class="tb-desc">Gmail MCP · GitHub MCP · Slack MCP · Notion MCP · Tavily MCP — each exposes its own tools.</div>
+        </div>
+      </div>
+      <div class="how-flow" style="margin-top:14px">
+        <div class="hf-row"><div class="hf-step">1</div><div class="hf-text">You say: <b>"Read my emails and summarize the urgent ones"</b></div></div>
+        <div class="hf-row"><div class="hf-step">2</div><div class="hf-text">Claude checks its toolbox — sees <b>Gmail MCP server</b> with read_threads, search_threads tools</div></div>
+        <div class="hf-row"><div class="hf-step">3</div><div class="hf-text">Claude calls <b>Gmail.search_threads</b> with query "is:unread label:important"</div></div>
+        <div class="hf-row"><div class="hf-step">4</div><div class="hf-text">Gmail MCP server <b>hits the Gmail API</b> and returns matching threads as JSON</div></div>
+        <div class="hf-row"><div class="hf-step">5</div><div class="hf-text">Claude reads the JSON and <b>gives you a plain English summary</b> — done. No code written by you.</div></div>
+      </div>
+    </div>
+
+    <div class="mm-card c-te">
+      <div class="mm-card-head"><div class="mm-card-ico">🧰</div><div><div class="mm-card-title">Tools Per App — What Claude Can Do</div><div class="mm-card-subtitle">Each MCP server exposes a list of callable tools</div></div></div>
+      <div class="app-tools">
+        <div class="at-item at-gmail">
+          <div class="at-head">📧 Gmail</div>
+          <div class="at-tag">7 tools</div>
+          <div class="at-tool">create_draft · send_email · list_threads · search_threads · get_thread · create_label · list_labels</div>
+        </div>
+        <div class="at-item at-cal">
+          <div class="at-head">📅 Google Calendar</div>
+          <div class="at-tag">6 tools</div>
+          <div class="at-tool">create_event · delete_event · get_event · list_events · update_event · find_free_time</div>
+        </div>
+        <div class="at-item at-gh">
+          <div class="at-head">🐙 GitHub</div>
+          <div class="at-tag">10+ tools</div>
+          <div class="at-tool">list_repos · create_issue · create_pr · get_file · push_file · list_commits · add_comment</div>
+        </div>
+        <div class="at-item at-tab">
+          <div class="at-head">🔍 Tavily (web)</div>
+          <div class="at-tag">4 tools</div>
+          <div class="at-tool">search · extract · crawl · map — live web search, page extraction, full site crawl, site mapping</div>
+        </div>
+      </div>
+      <div class="mm-tags" style="margin-top:10px"><span class="mm-tag mm-tag-bl">🔌 100s of MCP servers exist</span><span class="mm-tag mm-tag-te">📋 Notion, Slack, Linear…</span></div>
+    </div>
+
+    <div class="mm-card c-am">
+      <div class="mm-card-head"><div class="mm-card-ico">🗄️</div><div><div class="mm-card-title">Local vs Hosted Servers</div><div class="mm-card-subtitle">Two ways an MCP server can run</div></div></div>
+      <div class="server-grid">
+        <div class="srv-item sv-local">
+          <div class="srv-title">💻 Local Server</div>
+          <div class="srv-desc">Runs on your machine. A process Claude spawns locally. Talks to local files, databases, or APIs using your credentials. Perfect for personal data. Configured in settings.json or claude_desktop_config.json.</div>
+        </div>
+        <div class="srv-item sv-hosted">
+          <div class="srv-title">☁️ Hosted Server</div>
+          <div class="srv-desc">Runs on the service's cloud (Gmail, GitHub, Slack). You connect via OAuth or API key. More secure — your data never touches a third machine. Simply click "Connect" in Claude.ai settings.</div>
+        </div>
+      </div>
+      <div style="background:var(--am-bg);border:1.5px solid var(--am-b);border-radius:9px;padding:10px 13px;margin-top:10px;font-size:10.5px;color:var(--muted);line-height:1.5">
+        💡 <b>Connecting is 1 click</b> in Claude.ai → Settings → Integrations. For Claude Code terminal, add server config to <span style="font-family:var(--fm);color:var(--am)">.claude/mcp.json</span>. Server handles auth — you never write API code.
+      </div>
+    </div>
+
+    <div class="mm-card c-ro">
+      <div class="mm-card-head"><div class="mm-card-ico">⚠️</div><div><div class="mm-card-title">The Token Cost Warning</div><div class="mm-card-subtitle">Unused MCPs silently eat your context budget</div></div></div>
+      <div class="cost-warn">
+        <div class="cw-head">🚨 Each connected MCP sends tool definitions to Claude</div>
+        <div class="cw-body">Even if you never call it. Even if it's just connected. Each MCP server sends its full tool schema with every request. A single MCP can add 1-3k tokens. With 10 MCPs that's 15k+ tokens gone before you type "hi".</div>
+      </div>
+      <div class="mm-items" style="margin-top:12px">
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Only connect what you need today</b> — disconnect Gmail MCP when you're not doing email tasks</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Use /context to audit</b> — run /context in Claude Code to see exactly how many tokens each MCP is using</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Toggle in settings</b> — Claude.ai has quick enable/disable toggles. Turn off what you're not using.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Think of it like RAM</b> — each MCP is an open program. Close what you're not using right now.</span></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-ro">⚠️ 15k+ tokens per 10 MCPs</span><span class="mm-tag mm-tag-gr">✅ Disable unused</span></div>
+    </div>
+
+    <div class="mm-card c-bl mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">MCP Request Lifecycle — From You to API and Back</div><div class="mm-card-subtitle">What actually happens when Claude "reads your emails"</div></div></div>
+      <div class="mm-flow mm-flow-bl">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">💬</div><div class="mm-step-lbl">You ask</div><div class="mm-step-sub">"Summarize emails"</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#mp1"/></animateMotion></circle><path id="mp1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">🧠</div><div class="mm-step-lbl">Claude thinks</div><div class="mm-step-sub">Which tool to use?</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#mp2"/></animateMotion></circle><path id="mp2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">🔌</div><div class="mm-step-lbl">Calls MCP tool</div><div class="mm-step-sub">gmail.list_threads</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#mp3"/></animateMotion></circle><path id="mp3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">📡</div><div class="mm-step-lbl">MCP Server</div><div class="mm-step-sub">Hits Gmail API</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#mp4"/></animateMotion></circle><path id="mp4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">📊</div><div class="mm-step-lbl">Returns JSON</div><div class="mm-step-sub">Email thread data</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#mp5"/></animateMotion></circle><path id="mp5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">💡</div><div class="mm-step-lbl">Claude reads it</div><div class="mm-step-sub">Understands emails</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.7s"><mpath href="#mp6"/></animateMotion></circle><path id="mp6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">✅</div><div class="mm-step-lbl">Replies to you</div><div class="mm-step-sub">Plain English summary</div></div>
+      </div>
+    </div>
+
+  </div>
+  <div class="mm-footer">
+    <div class="mm-nav"><a class="mm-nav-btn" href="cc_chapter10_hooks.html">← Ch 10: Hooks</a><a class="mm-nav-btn mm-nav-next" href="cc_chapter12_agents_capstone.html">Ch 12: Agents →</a></div>
+    <div class="mm-footer-brand">Claude Code Crash Course · 12 Chapters</div>
+  </div>
+</div>
+<script src="shared/mindmap.js"></script>
+</body>
+</html>

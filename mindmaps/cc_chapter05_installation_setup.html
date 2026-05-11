@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 5 — Installation & Setup · Claude Code Crash Course</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#187A3A,transparent 70%);top:-80px;left:-90px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#E8620A,transparent 70%);top:40%;right:-120px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#0A6EAA,transparent 70%);bottom:-70px;left:36%}
+.mm-badge{background:linear-gradient(135deg,var(--gr-bg),#F0FFF4);border-color:var(--gr-b);color:var(--gr)}
+.mm-dot{background:var(--gr)}.mm-dot::after{border-color:var(--gr)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--gr) 0%,var(--te) 30%,var(--sk) 65%,var(--bl) 100%)}
+.mm-kpi:nth-child(1){--kpi-accent:var(--gr)}.mm-kpi:nth-child(2){--kpi-accent:var(--te)}.mm-kpi:nth-child(3){--kpi-accent:var(--sk)}.mm-kpi:nth-child(4){--kpi-accent:var(--or)}
+.mc-1{--chip-bg:var(--gr-bg);--chip-border:var(--gr-b);--chip-color:var(--gr)}.mc-1 .chip-label{color:var(--gr)}
+.mc-2{--chip-bg:var(--te-bg);--chip-border:var(--te-b);--chip-color:var(--te)}.mc-2 .chip-label{color:var(--te)}
+.mc-3{--chip-bg:var(--sk-bg);--chip-border:var(--sk-b);--chip-color:var(--sk)}.mc-3 .chip-label{color:var(--sk)}
+/* OS PANELS */
+.os-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+@media(max-width:500px){.os-grid{grid-template-columns:1fr}}
+.os-card{border-radius:13px;padding:14px;transition:transform .3s,box-shadow .3s}
+.os-card:hover{transform:translateY(-4px)}
+.os-mac{background:var(--gr-bg);border:2px solid var(--gr-b)}.os-mac:hover{box-shadow:0 8px 22px rgba(24,122,58,.2)}
+.os-win{background:var(--bl-bg);border:2px solid var(--bl-b)}.os-win:hover{box-shadow:0 8px 22px rgba(26,82,200,.2)}
+.os-lin{background:var(--am-bg);border:2px solid var(--am-b)}.os-lin:hover{box-shadow:0 8px 22px rgba(192,123,0,.2)}
+.os-ico{font-size:24px;display:block;margin-bottom:5px;transition:transform .3s}.os-card:hover .os-ico{transform:scale(1.2) rotate(-8deg)}
+.os-name{font-size:13px;font-weight:800;margin-bottom:5px}
+.os-mac .os-name{color:var(--gr)}.os-win .os-name{color:var(--bl)}.os-lin .os-name{color:var(--am)}
+.os-step{font-size:10px;color:var(--muted);margin-bottom:3px;display:flex;gap:5px;align-items:flex-start;line-height:1.4}
+.os-step::before{content:'→';flex-shrink:0}
+.os-mac .os-step::before{color:var(--gr)}.os-win .os-step::before{color:var(--bl)}.os-lin .os-step::before{color:var(--am)}
+.os-code{font-family:var(--fm);background:var(--s2);padding:3px 7px;border-radius:4px;font-size:9.5px;display:block;margin-top:5px;color:var(--text)}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+<div class="noise"></div><canvas id="mm-canvas"></canvas>
+<div class="mm-page">
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude Code Crash Course · Chapter 5 of 12</div>
+    <h1>Installation & Setup<br>Get Claude Code Running</h1>
+    <p>Mac · Windows · Linux · VS Code Extension · First run · Authentication</p>
+  </div>
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="3">0</div><div class="mm-kpi-label">Platforms supported:<br>Mac · Win · Linux</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">npm install</div><div class="mm-kpi-label">The single install<br>command (with Node)</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="5">0</div><div class="mm-kpi-label">Min. to first working<br>Claude Code session</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">VS Code ⭐</div><div class="mm-kpi-label">Recommended IDE<br>for development</div></div>
+  </div>
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">📦</span><div class="chip-label">npm install -g</div><div class="chip-desc">Claude Code is a Node.js package. One command installs it globally. Works identically across all three platforms once Node is ready.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">🔐</span><div class="chip-label">Two Auth Modes</div><div class="chip-desc">Login with your Claude.ai subscription (Sonnet access included) or use an API key (pay-per-token, any model). Pro subscription is simplest.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">💻</span><div class="chip-label">VS Code is Recommended</div><div class="chip-desc">See file changes as they happen, drag files into chat, full project view. The official Claude Code extension makes it seamless.</div></div>
+  </div>
+  <div class="mm-grid">
+
+    <div class="mm-card c-gr mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🖥️</div><div><div class="mm-card-title">Installation Guide — All Three Platforms</div><div class="mm-card-subtitle">Step-by-step for Mac, Windows, and Linux — follow the one for your system</div></div></div>
+      <div class="os-grid">
+        <div class="os-card os-mac">
+          <span class="os-ico">🍎</span>
+          <div class="os-name">macOS</div>
+          <div class="os-step">Install Node.js from nodejs.org (LTS version)</div>
+          <div class="os-step">Open Terminal app</div>
+          <div class="os-step">Run install command</div>
+          <div class="os-code">npm install -g @anthropic-ai/claude-code</div>
+          <div class="os-step">Verify with: claude --version</div>
+          <div class="os-step">Run claude to launch in any folder</div>
+        </div>
+        <div class="os-card os-win">
+          <span class="os-ico">🪟</span>
+          <div class="os-name">Windows</div>
+          <div class="os-step">Install Node.js from nodejs.org (LTS)</div>
+          <div class="os-step">Download Windows Terminal (from Microsoft Store)</div>
+          <div class="os-step">Set PATH if install complains about path</div>
+          <div class="os-code">npm install -g @anthropic-ai/claude-code</div>
+          <div class="os-step">If path error: add npm global to system PATH</div>
+          <div class="os-step">Run: claude --version to verify</div>
+        </div>
+        <div class="os-card os-lin">
+          <span class="os-ico">🐧</span>
+          <div class="os-name">Linux</div>
+          <div class="os-step">Install Node.js via package manager (nvm recommended)</div>
+          <div class="os-step">Use nvm for version management</div>
+          <div class="os-code">npm install -g @anthropic-ai/claude-code</div>
+          <div class="os-step">Add npm global to PATH in .bashrc/.zshrc</div>
+          <div class="os-step">Perfect for server deployments as well</div>
+          <div class="os-step">Works identically on remote Linux servers</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mm-card c-te">
+      <div class="mm-card-head"><div class="mm-card-ico">🔐</div><div><div class="mm-card-title">Authentication Methods</div><div class="mm-card-subtitle">Two ways to connect Claude Code to the Claude brain</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">1</div><span><b>Claude.ai Subscription (easiest)</b> — run <span class="mm-pill">claude</span>, login with your account. Pro plan includes Sonnet access. Most beginners should use this.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">2</div><span><b>API Key (pay-per-token)</b> — get a key from console.anthropic.com. Set as <span class="mm-pill">ANTHROPIC_API_KEY</span>. Full model access, charged per token.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Adding extra credits</b> — even on subscription, you can load $20 credit for extra API calls if you're building heavily. Prevents hard stops.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Check auth status</b> — <span class="mm-pill">claude doctor</span> checks your installation, auth, and connection. Run when something seems wrong.</span></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-te">🔑 Subscription</span><span class="mm-tag mm-tag-te">🗝️ API Key</span><span class="mm-tag mm-tag-sk">🩺 claude doctor</span></div>
+    </div>
+
+    <div class="mm-card c-sk">
+      <div class="mm-card-head"><div class="mm-card-ico">💻</div><div><div class="mm-card-title">Running in VS Code</div><div class="mm-card-subtitle">The best development experience — see changes as they happen</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">1</div><span><b>Open VS Code</b> — open your project folder in VS Code</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">2</div><span><b>Install extension</b> — search "Claude Code" in Extensions tab. Install the official Anthropic one (11M+ installs).</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">3</div><span><b>Open Claude panel</b> — click the Claude icon in the sidebar. Works just like the terminal version but shows file diffs.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">4</div><span><b>See changes live</b> — as Claude edits files, you see the diff right next to your code. Approve or reject each change.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Also works in terminal</b> — open the VS Code integrated terminal and type <span class="mm-pill">claude</span>. Same experience, no extension needed.</span></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-sk">💻 Official Extension</span><span class="mm-tag mm-tag-sk">👁️ Live Diffs</span><span class="mm-tag mm-tag-gr">✅ Best for Projects</span></div>
+    </div>
+
+    <div class="mm-card c-am">
+      <div class="mm-card-head"><div class="mm-card-ico">⚠️</div><div><div class="mm-card-title">Common Setup Issues & Fixes</div><div class="mm-card-subtitle">The problems most people hit — and how to solve them</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Windows PATH error</b> — "claude is not recognized" means the npm global folder is not in PATH. Add <span class="mm-pill">%AppData%\npm</span> to system PATH.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Node version too old</b> — Claude Code requires Node 18+. If it fails, update Node via nvm or the official installer.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Permission denied (Mac/Linux)</b> — don't use sudo for npm. Use nvm to install Node instead, which avoids permission issues.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Auth loop</b> — if login keeps redirecting, clear browser cookies, try incognito, or use the API key method instead.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Ultimate fix</b> — run <span class="mm-pill">claude doctor</span>. It checks installation health and tells you exactly what needs fixing.</span></div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag mm-tag-am">⚠️ PATH issues</span><span class="mm-tag mm-tag-am">⚠️ Node version</span><span class="mm-tag mm-tag-gr">✅ claude doctor</span></div>
+    </div>
+
+    <div class="mm-card c-bl mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">Complete Setup to First Build — Your First 30 Minutes</div><div class="mm-card-subtitle">From zero installation to creating working Python files with Claude Code</div></div></div>
+      <div class="mm-flow mm-flow-gr">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">📦</div><div class="mm-step-lbl">Install Node.js</div><div class="mm-step-sub">nodejs.org LTS</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#is1"/></animateMotion></circle><path id="is1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">⚡</div><div class="mm-step-lbl">npm install</div><div class="mm-step-sub">-g claude-code</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#is2"/></animateMotion></circle><path id="is2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">🔐</div><div class="mm-step-lbl">Authenticate</div><div class="mm-step-sub">Login or API key</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#is3"/></animateMotion></circle><path id="is3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">📁</div><div class="mm-step-lbl">Open Project</div><div class="mm-step-sub">cd your-folder</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#is4"/></animateMotion></circle><path id="is4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">🚀</div><div class="mm-step-lbl">Run claude</div><div class="mm-step-sub">Session starts</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#is5"/></animateMotion></circle><path id="is5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">💬</div><div class="mm-step-lbl">First Request</div><div class="mm-step-sub">"Create hello.py"</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.7s"><mpath href="#is6"/></animateMotion></circle><path id="is6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">🎉</div><div class="mm-step-lbl">It Works!</div><div class="mm-step-sub">File created & run</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="shared/mindmap.js"></script>
+<script>MindMap.init(['npm','install','claude','→','node','auth','setup','[]','VS','code'],[130,165,22,38,210]);</script>
+</body>
+</html>
