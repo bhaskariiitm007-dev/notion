@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Setup, Terminal & IDE</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#0A7A6A,transparent 70%);top:-80px;left:-100px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#1A52C8,transparent 70%);top:38%;right:-140px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#C07B00,transparent 70%);bottom:-80px;left:38%}
+
+.mm-badge{background:linear-gradient(135deg,var(--te-bg),#F0FBF9);border-color:var(--te-b);color:var(--te)}
+.mm-dot{background:var(--te)}.mm-dot::after{border-color:var(--te)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--te) 0%,var(--bl) 30%,var(--am) 60%,var(--gr) 100%)}
+
+.mm-kpi:nth-child(1){--kpi-accent:var(--te)}
+.mm-kpi:nth-child(2){--kpi-accent:var(--bl)}
+.mm-kpi:nth-child(3){--kpi-accent:var(--am)}
+.mm-kpi:nth-child(4){--kpi-accent:var(--gr)}
+
+.mc-1{--chip-bg:var(--te-bg);--chip-border:var(--te-b);--chip-color:var(--te)}.mc-1:hover{box-shadow:0 10px 26px rgba(10,122,106,.18);border-color:var(--te)!important}
+.mc-2{--chip-bg:var(--bl-bg);--chip-border:var(--bl-b);--chip-color:var(--bl)}.mc-2:hover{box-shadow:0 10px 26px rgba(26,82,200,.18);border-color:var(--bl)!important}
+.mc-3{--chip-bg:var(--am-bg);--chip-border:var(--am-b);--chip-color:var(--am)}.mc-3:hover{box-shadow:0 10px 26px rgba(192,123,0,.18);border-color:var(--am)!important}
+.mc-1 .chip-label{color:var(--te)}.mc-2 .chip-label{color:var(--bl)}.mc-3 .chip-label{color:var(--am)}
+
+.c-te{--c-accent:var(--te);--c-bg:var(--te-bg);--c-border:var(--te-b);--c-shadow:rgba(10,122,106,.18)}
+.c-bl{--c-accent:var(--bl);--c-bg:var(--bl-bg);--c-border:var(--bl-b);--c-shadow:rgba(26,82,200,.18)}
+.c-am{--c-accent:var(--am);--c-bg:var(--am-bg);--c-border:var(--am-b);--c-shadow:rgba(192,123,0,.18)}
+.c-gr{--c-accent:var(--gr);--c-bg:var(--gr-bg);--c-border:var(--gr-b);--c-shadow:rgba(24,122,58,.18)}
+.c-ro{--c-accent:var(--ro);--c-bg:var(--ro-bg);--c-border:var(--ro-b);--c-shadow:rgba(184,24,54,.18)}
+.c-vi{--c-accent:var(--vi);--c-bg:var(--vi-bg);--c-border:var(--vi-b);--c-shadow:rgba(107,63,212,.18)}
+.c-or{--c-accent:var(--or);--c-bg:var(--or-bg);--c-border:var(--or-b);--c-shadow:rgba(232,98,10,.18)}
+
+.mm-flow-te{--flow-color:var(--te);--flow-color2:var(--bl);--flow-border:var(--te-b);--flow-shadow:rgba(10,122,106,.15);--flow-num-bg:var(--te-bg);--flow-num-border:var(--te-b)}
+.mm-flow-te .mm-dash{stroke:var(--te)}.mm-flow-te .mm-arrowhead{fill:var(--te)}.mm-flow-te .mm-traveldot{fill:var(--te)}.mm-flow-te .mm-step-num{color:var(--te)}
+
+/* Auth option cards */
+.auth-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.auth-card{border-radius:12px;padding:14px;transition:transform .3s,box-shadow .3s}
+.auth-api{background:var(--te-bg);border:2px solid var(--te-b)}.auth-api:hover{transform:translateY(-3px);box-shadow:0 7px 20px rgba(10,122,106,.2)}
+.auth-sub{background:var(--am-bg);border:2px solid var(--am-b)}.auth-sub:hover{transform:translateY(-3px);box-shadow:0 7px 20px rgba(192,123,0,.2)}
+.auth-title{font-size:13px;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.auth-api .auth-title{color:var(--te)}.auth-sub .auth-title{color:var(--am)}
+.auth-item{font-size:11px;color:var(--muted);margin-bottom:4px;line-height:1.4}
+.auth-item b{color:var(--text)}
+
+/* Code terminal blocks */
+.code-block{background:#1E1C18;border-radius:10px;padding:12px 14px;font-family:var(--fm);font-size:11px;margin-top:10px;position:relative;overflow:hidden}
+.code-block::before{content:'●  ●  ●';position:absolute;top:7px;left:12px;font-size:8px;color:rgba(255,255,255,.3);letter-spacing:4px}
+.code-line{padding:1px 0;display:flex;gap:8px;margin-top:12px}
+.code-line:first-of-type{margin-top:20px}
+.cl-prompt{color:#0A7A6A;font-weight:700}
+.cl-cmd{color:#F0EEE8}
+.cl-comment{color:rgba(255,255,255,.4);font-style:italic}
+
+/* LLM vs Code comparison 3-col */
+.llm-vs-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:start;margin-top:12px}
+.lv-panel{border-radius:12px;padding:14px}
+.lv-llm{background:var(--ro-bg);border:1.5px solid var(--ro-b)}
+.lv-code{background:var(--gr-bg);border:1.5px solid var(--gr-b)}
+.lv-mid{display:flex;align-items:center;justify-content:center;padding:0 8px}
+.lv-vs{width:36px;height:36px;border-radius:50%;background:#1E1C18;color:#F0EEE8;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900}
+.lv-title{font-size:12px;font-weight:800;margin-bottom:8px}
+.lv-llm .lv-title{color:var(--ro)}.lv-code .lv-title{color:var(--gr)}
+.lv-item{font-size:11px;color:var(--muted);margin-bottom:4px;line-height:1.4;display:flex;gap:6px;align-items:flex-start}
+.lv-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.lv-llm .lv-dot{background:var(--ro)}.lv-code .lv-dot{background:var(--gr)}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+<div class="noise"></div>
+<canvas id="mm-canvas"></canvas>
+
+<div class="mm-page">
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude Code Course · Chapter 5–8</div>
+    <h1>Setup, Terminal<br>& IDE Integration</h1>
+    <p>Install Claude Code · API vs Subscription · Terminal commands · VS Code extension · LLM vs Agentic mode</p>
+  </div>
+
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="2">0</div><div class="mm-kpi-label">Auth options:<br>API key or Subscription</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">npm</div><div class="mm-kpi-label">Install via npm<br>or Homebrew (Mac)</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">VS Code</div><div class="mm-kpi-label">Recommended IDE<br>with native extension</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">claude</div><div class="mm-kpi-label">Launch command<br>in any terminal</div></div>
+  </div>
+
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">🔑</span><div class="chip-label">API Key First</div><div class="chip-desc">Start with API-based billing — pay only for what you use. No upfront commitment. Best for learning.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">💻</span><div class="chip-label">Terminal Native</div><div class="chip-desc">Claude Code lives in your terminal. Open it through VS Code terminal — never raw command prompt.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">🆚</span><div class="chip-label">LLM ≠ Agent</div><div class="chip-desc">Making an LLM call returns text. Claude Code is an agent — it loops, uses tools, and takes actions autonomously.</div></div>
+  </div>
+
+  <div class="mm-grid">
+
+    <!-- Installation -->
+    <div class="mm-card c-te">
+      <div class="mm-card-head"><div class="mm-card-ico">📦</div><div><div class="mm-card-title">Installation Steps</div><div class="mm-card-subtitle">Get Claude Code running on your machine</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">1</div><span><b>Prerequisites</b> — Node.js (v18+) and npm installed on your system</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">2</div><span><b>Install globally</b> — <span class="mm-pill">npm install -g @anthropic-ai/claude-code</span></span></div>
+        <div class="mm-item"><div class="mm-dot-badge">3</div><span><b>Mac alternative</b> — <span class="mm-pill">brew install claude-code</span> via Homebrew</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">4</div><span><b>Verify install</b> — run <span class="mm-pill">claude --version</span> to confirm successful setup</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">5</div><span><b>Set API key</b> — set <span class="mm-pill">ANTHROPIC_API_KEY</span> in your environment variables</span></div>
+      </div>
+      <div class="code-block">
+        <div class="code-line"><span class="cl-prompt">$</span><span class="cl-cmd">npm install -g @anthropic-ai/claude-code</span></div>
+        <div class="code-line"><span class="cl-prompt">$</span><span class="cl-cmd">claude --version</span></div>
+        <div class="code-line"><span class="cl-prompt">$</span><span class="cl-cmd">claude</span><span class="cl-comment">&nbsp;# launches in current dir</span></div>
+      </div>
+    </div>
+
+    <!-- Auth Options -->
+    <div class="mm-card c-am">
+      <div class="mm-card-head"><div class="mm-card-ico">🔐</div><div><div class="mm-card-title">Authentication Options</div><div class="mm-card-subtitle">Two ways to power Claude Code</div></div></div>
+      <div class="auth-grid">
+        <div class="auth-card auth-api">
+          <div class="auth-title">🔑 API Key (Recommended)</div>
+          <div class="auth-item">Pay per token consumed</div>
+          <div class="auth-item">Best for <b>learning & exploring</b></div>
+          <div class="auth-item">No monthly commitment</div>
+          <div class="auth-item">Create key at console.anthropic.com</div>
+          <div class="auth-item"><b>Haiku</b> for sub-tasks = very cheap</div>
+        </div>
+        <div class="auth-card auth-sub">
+          <div class="auth-title">💳 Subscription</div>
+          <div class="auth-item">Fixed monthly cost (~$24 CAD)</div>
+          <div class="auth-item">Best for <b>heavy daily usage</b></div>
+          <div class="auth-item">Upgrade from Claude Desktop account</div>
+          <div class="auth-item">Pro or Max tier options</div>
+          <div class="auth-item">Only if you're <b>convinced</b> you need it</div>
+        </div>
+      </div>
+      <div class="mm-rule" style="margin-top:12px">
+        <div class="mm-rule-icon">💡</div>
+        <div><div class="mm-rule-title">Pro Tip: Start with API billing</div><div class="mm-rule-body">You only pay for what you use. <strong>Haiku model</strong> is extremely cheap for sub-tasks. Subscription only makes sense at heavy usage volumes.</div></div>
+      </div>
+    </div>
+
+    <!-- Setup Flow full width -->
+    <div class="mm-card c-bl mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">Complete Setup Workflow — First Time</div><div class="mm-card-subtitle">From zero to running Claude Code in your project</div></div></div>
+      <div class="mm-flow mm-flow-te">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">📥</div><div class="mm-step-lbl">Install Node.js</div><div class="mm-step-sub">v18+ required</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#s1"/></animateMotion></circle><path id="s1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">📦</div><div class="mm-step-lbl">npm install -g</div><div class="mm-step-sub">Global install</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#s2"/></animateMotion></circle><path id="s2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">🔑</div><div class="mm-step-lbl">Get API Key</div><div class="mm-step-sub">console.anthropic.com</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#s3"/></animateMotion></circle><path id="s3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">🖥️</div><div class="mm-step-lbl">Open VS Code</div><div class="mm-step-sub">Open project folder</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#s4"/></animateMotion></circle><path id="s4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">💻</div><div class="mm-step-lbl">Open Terminal</div><div class="mm-step-sub">Inside VS Code</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#s5"/></animateMotion></circle><path id="s5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">⚡</div><div class="mm-step-lbl">Run: claude</div><div class="mm-step-sub">Launch agent</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.7s"><mpath href="#s6"/></animateMotion></circle><path id="s6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">🎯</div><div class="mm-step-lbl">Give a Task</div><div class="mm-step-sub">Watch it work</div></div>
+      </div>
+    </div>
+
+    <!-- VS Code IDE Integration -->
+    <div class="mm-card c-gr">
+      <div class="mm-card-head"><div class="mm-card-ico">🖥️</div><div><div class="mm-card-title">IDE Integration — VS Code</div><div class="mm-card-subtitle">The recommended development environment</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">★</div><span><b>Never raw terminal</b> — always open terminal THROUGH VS Code for proper context</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Claude Code extension</b> — install from VS Code marketplace for enhanced integration</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Python extension</b> — needed for Python tasks and proper interpreter selection</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>See diffs</b> — VS Code shows exactly what Claude modified, added, or deleted</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>uv package manager</b> — ultra-fast Python package manager, preferred over pip in Claude Code</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-gr">💻 VS Code</span>
+        <span class="mm-tag mm-tag-gr">🔌 Native Extension</span>
+        <span class="mm-tag mm-tag-te">🐍 Python + uv</span>
+      </div>
+    </div>
+
+    <!-- LLM vs Claude Code -->
+    <div class="mm-card c-vi mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">⚖️</div><div><div class="mm-card-title">LLM Call vs Claude Code — Understanding the Difference</div><div class="mm-card-subtitle">Why Claude Code is fundamentally different from making API calls</div></div></div>
+      <div class="llm-vs-grid">
+        <div class="lv-panel lv-llm">
+          <div class="lv-title">📞 Direct LLM Call (langchain etc.)</div>
+          <div class="lv-item"><div class="lv-dot"></div><span>You write Python code using ChatAnthropic/langchain</span></div>
+          <div class="lv-item"><div class="lv-dot"></div><span>Send a prompt → receive text response</span></div>
+          <div class="lv-item"><div class="lv-dot"></div><span>Single-turn: no loop, no tools, no execution</span></div>
+          <div class="lv-item"><div class="lv-dot"></div><span>You manually handle what to do with the response</span></div>
+          <div class="lv-item"><div class="lv-dot"></div><span>Code: <span class="mm-pill">from langchain_anthropic import ChatAnthropic</span></span></div>
+        </div>
+        <div class="lv-mid"><div class="lv-vs">VS</div></div>
+        <div class="lv-panel lv-code">
+          <div class="lv-title">⚡ Claude Code (Agentic)</div>
+          <div class="lv-item"><div class="lv-dot"></div><span>You give a task in natural language</span></div>
+          <div class="lv-item"><div class="lv-dot"></div><span>Agent thinks, plans, uses tools, iterates</span></div>
+          <div class="lv-item"><div class="lv-dot"></div><span>Multi-turn agentic loop: Think → Act → Observe → Repeat</span></div>
+          <div class="lv-item"><div class="lv-dot"></div><span>Automatically creates files, runs commands, fixes errors</span></div>
+          <div class="lv-item"><div class="lv-dot"></div><span>No extra code needed — it IS the development environment</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key commands -->
+    <div class="mm-card c-or">
+      <div class="mm-card-head"><div class="mm-card-ico">⌨️</div><div><div class="mm-card-title">Essential Commands & Tips</div><div class="mm-card-subtitle">Master these to work efficiently</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">$</div><span><b>claude</b> — launch in current project directory</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">$</div><span><b>claude --model sonnet</b> — specify model explicitly</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">$</div><span><b>Ctrl+C</b> — interrupt Claude mid-execution (safe)</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Environment variables</b> — handle with care. Follow steps precisely when setting PATH vars.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Project directory matters</b> — always run <span class="mm-pill">claude</span> from inside your project folder</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-or">⌨️ CLI First</span>
+        <span class="mm-tag mm-tag-or">📁 Directory Context</span>
+        <span class="mm-tag mm-tag-ro">⚠️ Env Var Care</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="shared/mindmap.js"></script>
+<script>
+MindMap.init(
+  ['npm','claude','API','→','uv','pip','bash()','key','sonnet','IDE'],
+  [165,210,38,22,270]
+);
+</script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Architecture — How It Works</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#6B3FD4,transparent 70%);top:-80px;left:-100px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#0A7A6A,transparent 70%);top:38%;right:-140px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#E8620A,transparent 70%);bottom:-80px;left:38%}
+
+.mm-badge{background:linear-gradient(135deg,var(--vi-bg),#F5F3FF);border-color:var(--vi-b);color:var(--vi)}
+.mm-dot{background:var(--vi)}.mm-dot::after{border-color:var(--vi)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--vi) 0%,var(--te) 30%,var(--or) 60%,var(--bl) 100%)}
+
+.mm-kpi:nth-child(1){--kpi-accent:var(--vi)}
+.mm-kpi:nth-child(2){--kpi-accent:var(--te)}
+.mm-kpi:nth-child(3){--kpi-accent:var(--or)}
+.mm-kpi:nth-child(4){--kpi-accent:var(--bl)}
+
+.mc-1{--chip-bg:var(--vi-bg);--chip-border:var(--vi-b);--chip-color:var(--vi)}.mc-1:hover{box-shadow:0 10px 26px rgba(107,63,212,.18);border-color:var(--vi)!important}
+.mc-2{--chip-bg:var(--te-bg);--chip-border:var(--te-b);--chip-color:var(--te)}.mc-2:hover{box-shadow:0 10px 26px rgba(10,122,106,.18);border-color:var(--te)!important}
+.mc-3{--chip-bg:var(--or-bg);--chip-border:var(--or-b);--chip-color:var(--or)}.mc-3:hover{box-shadow:0 10px 26px rgba(232,98,10,.18);border-color:var(--or)!important}
+.mc-1 .chip-label{color:var(--vi)}.mc-2 .chip-label{color:var(--te)}.mc-3 .chip-label{color:var(--or)}
+
+.c-vi{--c-accent:var(--vi);--c-bg:var(--vi-bg);--c-border:var(--vi-b);--c-shadow:rgba(107,63,212,.18)}
+.c-te{--c-accent:var(--te);--c-bg:var(--te-bg);--c-border:var(--te-b);--c-shadow:rgba(10,122,106,.18)}
+.c-or{--c-accent:var(--or);--c-bg:var(--or-bg);--c-border:var(--or-b);--c-shadow:rgba(232,98,10,.18)}
+.c-bl{--c-accent:var(--bl);--c-bg:var(--bl-bg);--c-border:var(--bl-b);--c-shadow:rgba(26,82,200,.18)}
+.c-ro{--c-accent:var(--ro);--c-bg:var(--ro-bg);--c-border:var(--ro-b);--c-shadow:rgba(184,24,54,.18)}
+.c-am{--c-accent:var(--am);--c-bg:var(--am-bg);--c-border:var(--am-b);--c-shadow:rgba(192,123,0,.18)}
+.c-gr{--c-accent:var(--gr);--c-bg:var(--gr-bg);--c-border:var(--gr-b);--c-shadow:rgba(24,122,58,.18)}
+
+.mm-flow-vi{--flow-color:var(--vi);--flow-color2:var(--te);--flow-border:var(--vi-b);--flow-shadow:rgba(107,63,212,.15);--flow-num-bg:var(--vi-bg);--flow-num-border:var(--vi-b)}
+.mm-flow-vi .mm-dash{stroke:var(--vi)}.mm-flow-vi .mm-arrowhead{fill:var(--vi)}.mm-flow-vi .mm-traveldot{fill:var(--vi)}.mm-flow-vi .mm-step-num{color:var(--vi)}
+
+/* Built-in tools grid */
+.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.tool-card{background:var(--s2);border:1.5px solid var(--border);border-radius:10px;padding:11px;text-align:center;transition:transform .3s,box-shadow .3s,border-color .3s;cursor:default}
+.tool-card:hover{transform:translateY(-3px) scale(1.03);border-color:var(--vi-b);box-shadow:0 6px 16px rgba(107,63,212,.14)}
+.tool-ico{font-size:18px;margin-bottom:5px;display:block;transition:transform .3s}.tool-card:hover .tool-ico{transform:rotate(-12deg) scale(1.2)}
+.tool-name{font-size:10px;font-weight:800;color:var(--vi);font-family:var(--fm);margin-bottom:3px}
+.tool-desc{font-size:9.5px;color:var(--muted);line-height:1.35}
+
+/* Agentic loop SVG */
+.loop-container{display:flex;justify-content:center;align-items:center;padding:20px 0;position:relative}
+.loop-svg{width:100%;max-width:560px;height:200px}
+
+/* Agentic loop boxes */
+.loop-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.loop-node{border-radius:12px;padding:13px;text-align:center;transition:transform .3s,box-shadow .3s;position:relative}
+.loop-node::after{content:'→';position:absolute;right:-14px;top:50%;transform:translateY(-50%);color:var(--vi);font-weight:900;font-size:16px;z-index:1}
+.loop-node:last-child::after{content:'↺';right:-12px;color:var(--or)}
+.ln-1{background:var(--vi-bg);border:2px solid var(--vi-b)}.ln-1:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(107,63,212,.2)}
+.ln-2{background:var(--te-bg);border:2px solid var(--te-b)}.ln-2:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(10,122,106,.2)}
+.ln-3{background:var(--or-bg);border:2px solid var(--or-b)}.ln-3:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(232,98,10,.2)}
+.ln-4{background:var(--am-bg);border:2px solid var(--am-b)}.ln-4:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(192,123,0,.2)}
+.ln-ico{font-size:22px;margin-bottom:6px;display:block;animation:iconBob 3s ease-in-out infinite}
+.ln-name{font-size:12px;font-weight:800;margin-bottom:3px}
+.ln-1 .ln-name{color:var(--vi)}.ln-2 .ln-name{color:var(--te)}.ln-3 .ln-name{color:var(--or)}.ln-4 .ln-name{color:var(--am)}
+.ln-sub{font-size:10px;color:var(--muted);line-height:1.35}
+
+/* LangGraph mini diagram */
+.lg-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.lg-card{background:var(--s2);border:1.5px solid var(--border);border-radius:10px;padding:13px;transition:transform .3s}
+.lg-card:hover{transform:translateY(-3px);border-color:var(--vi-b)}
+.lg-title{font-size:11px;font-weight:700;color:var(--vi);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.lg-item{font-size:10.5px;color:var(--muted);margin-bottom:4px;line-height:1.4}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+<div class="noise"></div>
+<canvas id="mm-canvas"></canvas>
+
+<div class="mm-page">
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude Code Course · Chapter 9–10</div>
+    <h1>Claude Code Architecture<br>How It Really Works</h1>
+    <p>LLM + Tools = Agent · Agentic loop · Built-in tools · Build your own Claude Code with LangGraph</p>
+  </div>
+
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">LLM + Tools</div><div class="mm-kpi-label">The formula that<br>makes Claude Code</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="4">0</div><div class="mm-kpi-label">Agentic loop phases:<br>Think→Act→Observe→Repeat</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">∞</div><div class="mm-kpi-label">Tool calls possible<br>in one task</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">LangGraph</div><div class="mm-kpi-label">Framework used<br>to simulate Claude Code</div></div>
+  </div>
+
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">🧠</span><div class="chip-label">LLM is the Brain</div><div class="chip-desc">The LLM doesn't just respond — it decides which tool to call, with what inputs, and interprets the result to decide next steps.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">🔧</span><div class="chip-label">Tools are the Hands</div><div class="chip-desc">Built-in tools do the actual work: read files, write files, run bash commands, search code. LLM orchestrates, tools execute.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">🔄</span><div class="chip-label">The Loop Never Stops</div><div class="chip-desc">After each tool result, the LLM re-evaluates and decides: is the task done? If not, call another tool. This loop is the agent.</div></div>
+  </div>
+
+  <div class="mm-grid">
+
+    <!-- Architecture Overview flow -->
+    <div class="mm-card c-vi mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🏗️</div><div><div class="mm-card-title">Claude Code Architecture — End to End</div><div class="mm-card-subtitle">From your prompt to files on disk</div></div></div>
+      <div class="mm-flow mm-flow-vi">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">💬</div><div class="mm-step-lbl">User Prompt</div><div class="mm-step-sub">"Create a PySpark script"</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#a1"/></animateMotion></circle><path id="a1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">🧠</div><div class="mm-step-lbl">LLM Thinks</div><div class="mm-step-sub">Decides what to do</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#a2"/></animateMotion></circle><path id="a2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">📞</div><div class="mm-step-lbl">Tool Call</div><div class="mm-step-sub">e.g. write_file()</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#a3"/></animateMotion></circle><path id="a3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">⚙️</div><div class="mm-step-lbl">Tool Executes</div><div class="mm-step-sub">Actually creates file</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#a4"/></animateMotion></circle><path id="a4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">👁️</div><div class="mm-step-lbl">LLM Observes</div><div class="mm-step-sub">Reads tool result</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#a5"/></animateMotion></circle><path id="a5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">🔁</div><div class="mm-step-lbl">Done or Loop?</div><div class="mm-step-sub">Next tool or finish</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.7s"><mpath href="#a6"/></animateMotion></circle><path id="a6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">✅</div><div class="mm-step-lbl">Task Complete</div><div class="mm-step-sub">Files exist on disk</div></div>
+      </div>
+    </div>
+
+    <!-- Built-in tools -->
+    <div class="mm-card c-te">
+      <div class="mm-card-head"><div class="mm-card-ico">🔧</div><div><div class="mm-card-title">Built-in Tools</div><div class="mm-card-subtitle">Claude Code's hands — what it can actually do</div></div></div>
+      <div class="tools-grid">
+        <div class="tool-card"><span class="tool-ico">📖</span><div class="tool-name">read_file</div><div class="tool-desc">Read any file in codebase</div></div>
+        <div class="tool-card"><span class="tool-ico">✍️</span><div class="tool-name">write_file</div><div class="tool-desc">Create or overwrite files</div></div>
+        <div class="tool-card"><span class="tool-ico">💻</span><div class="tool-name">bash</div><div class="tool-desc">Run any shell command</div></div>
+        <div class="tool-card"><span class="tool-ico">🔍</span><div class="tool-name">search_files</div><div class="tool-desc">Search across codebase</div></div>
+        <div class="tool-card"><span class="tool-ico">📁</span><div class="tool-name">list_dir</div><div class="tool-desc">Explore directory tree</div></div>
+        <div class="tool-card"><span class="tool-ico">✏️</span><div class="tool-name">edit_file</div><div class="tool-desc">Targeted file edits</div></div>
+        <div class="tool-card"><span class="tool-ico">📦</span><div class="tool-name">install pkg</div><div class="tool-desc">Install packages via uv/pip</div></div>
+        <div class="tool-card"><span class="tool-ico">🌐</span><div class="tool-name">web_fetch</div><div class="tool-desc">Fetch web content/docs</div></div>
+        <div class="tool-card"><span class="tool-ico">🔀</span><div class="tool-name">git ops</div><div class="tool-desc">Commit, branch, diff</div></div>
+      </div>
+    </div>
+
+    <!-- Agentic Loop -->
+    <div class="mm-card c-or">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">The Agentic Loop</div><div class="mm-card-subtitle">The 4-phase cycle that runs until done</div></div></div>
+      <div class="loop-grid">
+        <div class="loop-node ln-1"><span class="ln-ico">🧠</span><div class="ln-name">THINK</div><div class="ln-sub">LLM reasons about the task, current state</div></div>
+        <div class="loop-node ln-2"><span class="ln-ico">📞</span><div class="ln-name">ACT</div><div class="ln-sub">Call a tool with specific parameters</div></div>
+        <div class="loop-node ln-3"><span class="ln-ico">👁️</span><div class="ln-name">OBSERVE</div><div class="ln-sub">Read tool result, check if successful</div></div>
+        <div class="loop-node ln-4"><span class="ln-ico">🔁</span><div class="ln-name">REPEAT</div><div class="ln-sub">Back to Think or exit if done</div></div>
+      </div>
+      <div class="mm-rule" style="margin-top:12px">
+        <div class="mm-rule-icon">💡</div>
+        <div><div class="mm-rule-title">This IS the Claude Code agent</div><div class="mm-rule-body">The entire power of Claude Code is this loop. Each cycle can call <strong>different tools</strong> based on what was observed. It's autonomous problem-solving.</div></div>
+      </div>
+    </div>
+
+    <!-- Build your own -->
+    <div class="mm-card c-bl">
+      <div class="mm-card-head"><div class="mm-card-ico">🏗️</div><div><div class="mm-card-title">Build Your Own Claude Code</div><div class="mm-card-subtitle">Under the hood — it's just tool calling with LangGraph</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">★</div><span><b>Core insight</b> — Claude Code = LLM + Tool calling loop. Nothing magical.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>LangGraph</b> — framework for building agentic graphs (instructor's preferred tool)</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Custom tools created</b> — <span class="mm-pill">write_file</span>, <span class="mm-pill">create_dir</span>, <span class="mm-pill">install_package</span></span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>ChatAnthropic class</b> — from langchain_anthropic to connect to models</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Don't waste time</b> — build your own just to understand. Then go back to real Claude Code.</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-bl">🤖 LangGraph</span>
+        <span class="mm-tag mm-tag-bl">🔧 Tool Calling</span>
+        <span class="mm-tag mm-tag-vi">🧩 Agentic Graph</span>
+      </div>
+    </div>
+
+    <!-- Model selection -->
+    <div class="mm-card c-gr mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🎯</div><div><div class="mm-card-title">Smart Model Selection Strategy</div><div class="mm-card-subtitle">Use the right model tier for each type of task to control costs</div></div></div>
+      <div class="mm-compare">
+        <div class="cbox" style="border-color:var(--te-b)"><div class="cbox-ico">🌿</div><div class="cbox-title" style="color:var(--te)">Haiku — Sub-tasks</div><div class="cbox-desc">Use for documentation writing, simple transformations, repetitive operations. Ultra cheap per token. Sub-agent tasks.</div></div>
+        <div class="cbox" style="border-color:var(--vi-b)"><div class="cbox-ico">🎵</div><div class="cbox-title" style="color:var(--vi)">Sonnet — Main Agent</div><div class="cbox-desc">Use for complex reasoning, architecture decisions, multi-step planning. The parent agent runs Sonnet 4.6 (latest).</div></div>
+      </div>
+      <div class="mm-rule" style="margin-top:13px">
+        <div class="mm-rule-icon">💰</div>
+        <div><div class="mm-rule-title">Cost Optimization Strategy</div><div class="mm-rule-body">Parent agent uses <strong>Sonnet</strong> for reasoning. Spawned sub-agents use <strong>Haiku</strong> for simple tasks. This dramatically reduces total cost without sacrificing output quality.</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="shared/mindmap.js"></script>
+<script>
+MindMap.init(
+  ['tool()','LLM','→','bash','write()','read()','agent','loop','ctx','∞'],
+  [270,165,22,210,38]
+);
+</script>
+</body>
+</html>
