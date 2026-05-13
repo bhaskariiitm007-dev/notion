@@ -1,638 +1,743 @@
-# ══════════════════════════════════════════════════════════════════════════
-#  CAMPUSX ANIMATED MIND MAP GENERATOR — COMPLETE SYSTEM PROMPT
-#  Drop this prompt + your content (transcript / notes / summary) and get
-#  a production-ready animated HTML mind map file in the same style.
-# ══════════════════════════════════════════════════════════════════════════
+usability - Transcription
 
----
+Time:  13 May 2026 13:10:02
+Topic:  usability
 
-## ROLE
+00:23
+Three to two, try to move on.
 
-Act as an expert visual content designer specialising in animated HTML infographics
-and mind maps built for memorisation and quick revision.
+00:30
+There was this one called the upcoming center.
 
----
+00:35
+Something was decided that we will I mean, we will try to go ahead with the strategic approach and we will see if intellemas doesn't have capacity, then only we can go for tactical things. Okay? That's what I think was this capacity. I did not. But and actually I joined.
 
-## INPUT
+00:58
+I mean, I did not get the invite. No, we we were on call on a call. Now that was the final call.
 
-[PASTE YOUR CONTENT HERE — YouTube transcript, lecture notes, article summary,
-concept explanation, or any educational material you want visualised]
+01:13
+I.
 
----
+01:21
+Okay, so, um, so basically,
 
-## YOUR TASK — 3 STEPS
+01:27
+Anyways, whatever was discussion? So I was listing down all the tasks from etl perspective and usability perspective. So as you mentioned that to onboard any of the asset classes, there there is already ah agents sub level,
 
-### STEP 1 — Extract Keywords & Concepts
+01:43
+ ah we can use that. And that requires two laps. Day, you mean two, two last day? You mean four days, right? Yeah, four days.
 
-From the input, extract:
-- Major ideas & core thesis
-- Subtopics & frameworks
-- Step-by-step processes or workflows
-- Tools, technologies, or commands mentioned
-- Pitfalls / common mistakes
-- Metrics / KPIs / key numbers
-- Actionable recommendations
-- Any other significant data points
+01:53
+Okay, yeah, four days.
 
-Keep extractions concise — 1 to 5 words each.
+01:55
+And one was one another was like some kind of investment on usability side.
 
----
+02:06
+I'm not sure you mentioned that you will check in richmond.
 
-### STEP 2 — Build the Animated HTML Mind Map
+02:11
+Yes. So we already have like similar thing have happening for other things. We just need to figure out like what we will join keys and everything.
 
-Generate a single self-contained HTML file with the following exact specifications.
+02:22
+So there is an investment.
 
----
+02:24
+Yes. Yes, there is an enrichment which we can extend to sftr. The data is already there for sftr because we are using it for pairing and matching.
 
-#### 🎨 DESIGN SYSTEM — EXACT TOKENS
+02:31
+So that enrichment should happen in new gen control. Yes. So usability pipeline?
 
-**Background & Surfaces:**
-```
---bg:      #F7F6F2   (page background — warm cream, never cold white)
---surface: #FFFFFF   (card surface)
---s2:      #F0EEE8   (secondary surface — used for flow steps, anatomy cells)
---border:  rgba(0,0,0,.07)
---text:    #1E1C18
---muted:   #7A7568
-```
+02:36
+Yes. In your safety pipeline. Cp.
 
-**10 Accent Colours — each has three tokens: full / border / background:**
-```
---or  #E8620A  --or-b  rgba(232,98,10,.22)   --or-bg  #FEF0E3   (Orange)
---am  #C07B00  --am-b  rgba(192,123,0,.22)   --am-bg  #FEF5DC   (Amber)
---te  #0A7A6A  --te-b  rgba(10,122,106,.22)  --te-bg  #E3F5F2   (Teal)
---bl  #1A52C8  --bl-b  rgba(26,82,200,.22)   --bl-bg  #E8EFFE   (Blue)
---vi  #6B3FD4  --vi-b  rgba(107,63,212,.22)  --vi-bg  #EDEAFC   (Violet)
---ro  #B81836  --ro-b  rgba(184,24,54,.22)   --ro-bg  #FEE5EB   (Rose)
---gr  #187A3A  --gr-b  rgba(24,122,58,.22)   --gr-bg  #E5F6EC   (Green)
---sk  #0A6EAA  --sk-b  rgba(10,110,170,.22)  --sk-bg  #E3F2FB   (Sky)
---li  #5A7A00  --li-b  rgba(90,122,0,.22)    --li-bg  #F0F7DC   (Lime)
---sl  #2A3458  --sl-b  rgba(42,52,88,.22)    --sl-bg  #E8EAF2   (Slate)
-```
+02:38
+Um okay. See, see. Ah so ah what do you think? How much efforts?
 
-**Fonts — load from Google Fonts:**
-```html
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-```
-- `'Outfit'` for all display text (body, headings, labels)
-- `'JetBrains Mono'` for KPI values, code pills, data-count fields, mono subtitles
+02:44
+Not much Pro.
 
-**Light theme only.** No dark mode anywhere.
+02:48
+There is a nuclear fish here that's with.
 
----
+02:53
+You you know this recipe. Yeah pairing and matching now stuff. Now you see that request. Yeah,
 
-#### 🏗️ LAYOUT RULES
+02:59
+I heard that. That is moving to usability.
 
-- `max-width: 960px`, centered, `padding: 28px 18px 56px`
-- Main content grid: `display: grid; grid-template-columns: 1fr 1fr; gap: 16px`
-- Full-width cards: `grid-column: 1 / -1`
-- **Zero horizontal scroll** — flow diagrams use `flex: 1 1 0` (not fixed widths)
-- **Mobile responsive breakpoints:**
-  - ≤700px: flow diagrams → `grid-template-columns: 1fr 1fr`, arrows `display:none`
-  - ≤640px: main grid & chips → `grid-template-columns: 1fr`; KPIs → `repeat(2,1fr)`
-  - ≤380px: flow → `grid-template-columns: 1fr`
+03:02
+It is sounds really interesting taking maybe one, one, one that piece actually.
 
----
+03:09
+So if you see sftr here, you see an option padding matching. Okay. So so this is we are see purely, okay. So here, like we already have the data populating in the same tr enrichment table. Like but so stable.
 
-#### ✨ MANDATORY ANIMATION TECHNIQUES — IMPLEMENT ALL
+03:22
+ So we just need to figure out like what will be the joint keys for that particular say from intellectual or you to use a uti mandate, then material join keys for missing gtx breaks and field plates and we should join. That's it.
 
-**Background Layer (3 fixed layers):**
+03:36
+ Not a big task.
 
-1. **Aurora Background** — 3 `<div class="aurora-blob">` inside `<div class="aurora">`:
-   - `position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden`
-   - Each blob: `position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.14`
-   - Blob 1: `width:600px; height:400px; animation-duration:17s`
-   - Blob 2: `width:500px; height:360px; animation-duration:21s; animation-delay:-8s`
-   - Blob 3: `width:440px; height:320px; animation-duration:19s; animation-delay:-12s`
-   - Keyframe: `blobFloat` — translate(0,0) scale(1) → translate(28px,-18px) scale(1.05) → translate(-12px,14px) scale(.97), `infinite alternate`
-   - Colours: choose 3 accent colours relevant to the topic (e.g., blue + violet + teal)
+03:38
+Missing in fields. A missing in fields.
 
-2. **SVG Noise Grain** — `<div class="noise">`:
-   - `position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.025`
-   - Background: inline SVG `feTurbulence` fractal noise base64 URI, `300px 300px` repeat
+03:41
+Why missing in fields? We have trade ref, right? Okay. But missing in gtrs is not present in gts system. So joining with trader will not be useful. Will not have trade ref missing in gtrs.
 
-3. **Floating Token Particles** — `<canvas id="mm-canvas">`:
-   - `position: fixed; inset: 0; z-index: 2; pointer-events: none`
-   - JS: 20 particles — domain-relevant text tokens (e.g. `'AI'`, `'ML'`, `'→'`, `'ŷ'`)
-   - Each particle: random x/y, drifts upward (`vy` negative), wraps at top
-   - Draw with `requestAnimationFrame`; font `'JetBrains Mono'`; `hsla(hue, 58%, 40%, alpha)`
+03:51
+Do you receive such breaks as well?
 
-4. **Parallax Aurora** — `scroll` event (passive): shift each blob at different `translateY` rates `[0.10, -0.07, 0.05]`
+03:53
+If there is a C two D reconciliation will receive like a that will be seat. If it is C two d, you'll have like um ccd. Thirty percent of these area there could be population break. Yeah population breaks in the other side. So if it is missing in the gta system,
 
-5. **Scroll Color Shift** — `scroll` event (passive): `document.documentElement.style.filter = hue-rotate(${progress * 16}deg)` based on scroll depth
+04:07
+Then usually whatever file we send except the D side file,
 
-**Page wrapper sits above all layers:** `position: relative; z-index: 3`
+04:14
+We ah send the same number of rows on both all the files. Like if you send AAC files, then the number of records will be same on both a and c. Yeah, our dt AD side file is like dtc. We don't do any kind of removal or enrichment
 
----
+04:35
+Or any series.
 
-**Header Animations:**
+04:35
+So there could be chances of population break on when while comparing with reconciling with the dtcc or D files, but it should not happen for other files like a to c. Why upstream? Because what um ah what is the
 
-6. **Chip Float Badge** — `.mm-badge`:
-   - `animation: chipFloat 3s ease-in-out infinite` — bobs `translateY(0) ↔ translateY(-5px)`
-   - Also plays `heroIn` once on load: slide in from `translateY(-18px) scale(.9)`
-   - Styling: `border-radius: 30px; padding: 6px 18px; font-size: 11px; font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase`
-   - Tint the badge with a page accent colour (gradient background + matching border + colour text)
+04:54
+A to Z break growth if there is any I
 
-7. **Pulsing Status Dot** — `.mm-dot` inside badge:
-   - `width: 8px; height: 8px; border-radius: 50%`
-   - `animation: dotBlink 1.4s ease infinite` — fades opacity 1 → 0.3
-   - `::after` ring: `position: absolute; inset: -3px; border-radius: 50%; border: 1.5px solid [accent]`
-   - Ring animation: `dotRing 1.4s ease infinite` — `scale(1) opacity(0.7)` → `scale(2.4) opacity(0)`
+04:57
+Am saying in perspective of not for sft. Yeah.
 
-8. **Gradient-Shift H1**:
-   - `background: linear-gradient(135deg, colour1, colour2, colour3, colour4)`
-   - `background-size: 300% 300%`
-   - `-webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text`
-   - `animation: gradShift 6s ease infinite` — cycles `background-position: 0% 50%` → `100% 50%`
-   - Font: `font-size: clamp(24px, 4vw, 46px); font-weight: 900; letter-spacing: -1.5px; line-height: 1.08`
+05:00
+I'm saying it it for in general,
 
-9. **Hero Stagger** — badge, H1, subtitle each have increasing `animation-delay` (0s, 0.15s, 0.3s)
+05:02
+For India and the jfsa, a two C files are built in such a way that both will have same number of records.
 
----
+05:12
+Then you will not get into population breaks, right?
 
-**KPI Row (`display: grid; grid-template-columns: repeat(4,1fr); gap: 10px`):**
+05:14
+We will never see any population break for A
 
-10. **Card Bar (Top Stripe)** — `::before`: `height: 3px; border-radius: 14px 14px 0 0; background: var(--kpi-accent)`
+05:17
+To c. But we do have.
 
-11. **Scan Line Continuous** — `::after` sweeps top→bottom every 4s:
-    - `background: linear-gradient(180deg, transparent, rgba(255,255,255,.6), transparent); height: 45%`
-    - `animation: scanLine 4s ease infinite` with 1s stagger per card (delays: 0s, 1s, 2s, 3s)
+05:19
+We do have.
 
-12. **Lift on KPI Hover** — `transform: translateY(-6px) rotate(1.2deg) scale(1.03)`
+05:24
+Ah so there is an apps difference in the upstream and there is a difference in the unique identifiers of gtr system. So we but we get like missing in upstream and missing in gts. Okay.
 
-13. **Counter Animation** — for `[data-count]` elements:
-    - If `data-count="skip"` → leave text unchanged (use for labels like "∞", "Plan", "/cmd")
-    - If numeric → `requestAnimationFrame` counts from 0 to target with ease-out-cubic over 1100ms
-    - Stagger each counter by `200ms + index * 120ms`
+05:42
+Because whenever we send files for a and c, we do internal join and then we create two separate files, one for a and one one for she.
 
-14. **Click Ripple** — inject `<div class="mm-ripple">` at click coordinates, animate `scale(0) → scale(12) + opacity(0)`, then remove
+05:55
+I don't know. God like how you you can sell it. But we get a file which has like, but like yeah how you compare. Now here to see like a file and see so how we are comparing, like engagement, how they compare, and what is there in the files? We don't have accessibility, but the file we are getting now, it is having population, okay?
 
----
+06:15
+So yeah, yeah, the missing in primary, this will not have to address in it. Right?
 
-**Cards (`.mm-card`):**
+06:18
+And this is for sftr.
 
-15. **Card Tint** — `background: linear-gradient(145deg, var(--surface) 55%, var(--c-bg, transparent))`
-    - Each card has CSS custom props: `--c-accent`, `--c-bg`, `--c-border`, `--c-shadow`
-    - Set via utility classes: `.c-te`, `.c-bl`, `.c-vi`, `.c-ro`, `.c-am`, `.c-gr`, `.c-or`, `.c-sk`
+06:20
+Yeah sftr ST three sftr. it is the population as many as the same. We have it. So here this one the known unknown function, this will be.
 
-16. **Card Bar (Top Stripe)** — `::before`: `height: 3px; background: var(--c-accent); border-radius: 16px 16px 0 0`
+06:33
+Like this is they have written rules. So if the field is this value,
 
-17. **Top-Border Hover Sweep** — `::after` sheen sweeps left→right across the 3px stripe on hover:
-    ```css
-    .mm-card::after {
-      content: ''; position: absolute; top: 0; left: 0;
-      width: 55%; height: 3px;
-      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.85) 50%, transparent 100%);
-      transform: translateX(-110%); z-index: 3; pointer-events: none;
-    }
-    .mm-card:hover::after { animation: topSweep .55s ease forwards; }
-    @keyframes topSweep { from { transform: translateX(-110%); } to { transform: translateX(230%); } }
-    ```
-
-18. **Scroll Reveal Entrance** — `IntersectionObserver` adds `.mm-visible` class:
-    - Default: `opacity: 0`
-    - Odd cards: `animation: cardInL` — slides from `translateX(-22px)`
-    - Even cards: `animation: cardInR` — slides from `translateX(+22px)`
-
-19. **Card Lift + Glow on Hover** — `transform: translateY(-4px); box-shadow: 0 14px 34px var(--c-shadow)`
-
-20. **Icon Rotate** — `.mm-card-ico` on card hover: `transform: rotate(-8deg) scale(1.12)`
-    - Icon badge: `width: 40px; height: 40px; border-radius: 10px; background: var(--c-bg); border: 1.5px solid var(--c-border)`
-
----
-
-**List Items (`.mm-item`):**
-
-21. **Item Slide with Stagger** — each item: `opacity: 0; transform: translateX(-14px)`
-    - `animation: itemIn .4s ease both` with delays: .04s, .10s, .16s, .22s, .28s, .34s
-
-22. **Item Hover Shift** — `transform: translateX(4px)` on hover
-
-23. **Dot Badge Pop** — indicator square springs in:
-    - `animation: dotPop .45s cubic-bezier(.34,1.56,.64,1) both`
-    - From: `scale(.3) rotate(-30deg)` → to: `scale(1) rotate(0)`
-    - On item hover: badge `rotate(10deg) scale(1.2)`
-
----
-
-**Tags (`.mm-tag`):**
-
-24. **Tag Bounce** — spring entrance:
-    - `animation: tagBounce .5s cubic-bezier(.34,1.56,.64,1) both`
-    - From `scale(.4) translateY(8px)` → `scale(1)`, staggered delays
-
-25. **Fill Sweep on Hover** — `::before` scaleX 0→1 from left
-
-26. **Tag Colour Classes:**
-    ```css
-    .mm-tag-or { --t-bg:var(--or-bg); --t-border:var(--or-b); --t-color:var(--or); }
-    /* repeat for -am -te -bl -vi -ro -gr -sk -li -sl */
-    ```
-
----
-
-**Rule / Highlight Box (`.mm-rule`):**
-
-27. **Border Flow** — `box-shadow` cycles through 4 accent colours every 4s:
-    ```css
-    @keyframes borderFlow {
-      0%   { box-shadow: 0 0 0 2px rgba(232,98,10,.4); }
-      25%  { box-shadow: 0 0 0 2px rgba(192,123,0,.4); }
-      50%  { box-shadow: 0 0 0 2px rgba(10,122,106,.4); }
-      75%  { box-shadow: 0 0 0 2px rgba(26,82,200,.4); }
-      100% { box-shadow: 0 0 0 2px rgba(232,98,10,.4); }
-    }
-    ```
-
-28. **Bounce Icon** — rule box icon: `animation: bounceIcon 1.8s ease-in-out infinite`
-    - `translateY(0) rotate(0)` → `translateY(-6px) rotate(-10deg)`
-
----
-
-**Flow Diagrams (`.mm-flow`):**
-
-`display: flex; align-items: flex-start; width: 100%` — each step `flex: 1 1 0; min-width: 0`
-
-29. **Flowing Dashed Arrows** — SVG between steps:
-    ```html
-    <div class="mm-arrow">
-      <svg viewBox="0 0 30 14">
-        <line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/>
-        <polygon points="20,3 30,7 20,11" class="mm-arrowhead"/>
-        <circle r="2.2" class="mm-traveldot">
-          <animateMotion dur="1s" repeatCount="indefinite" begin="Xs">
-            <mpath href="#pathID"/>
-          </animateMotion>
-        </circle>
-        <path id="pathID" d="M0,7 L20,7" fill="none"/>
-      </svg>
-    </div>
-    ```
-    - `stroke-dasharray: 4 3; animation: dashFlow .8s linear infinite` → `stroke-dashoffset: -14`
-    - Moving dot `begin` is staggered per arrow: `0s, 0.14s, 0.28s, 0.42s...`
-
-30. **Step Highlight Underline** — `::before` on `.mm-step`: `scaleX(0) → scaleX(1)` on hover
-
-31. **Numbered Badge** — ByteByteGo style:
-    ```css
-    .mm-step-num {
-      width: 17px; height: 17px; border-radius: 5px;
-      font-size: 8px; font-weight: 800; font-family: var(--fm);
-      background: var(--flow-num-bg); border: 1.5px solid var(--flow-num-border);
-      color: var(--flow-color);
-    }
-    ```
-
-32. **Sequential Auto-Cycle Step Highlight** — JS cycles `.mm-step-active` class across all steps every 1200ms:
-    ```js
-    function initFlowCycle(interval = 1200) {
-      document.querySelectorAll('.mm-flow').forEach(flow => {
-        const steps = Array.from(flow.querySelectorAll('.mm-step'));
-        if (steps.length < 2) return;
-        let current = 0;
-        function advance() {
-          steps.forEach(s => s.classList.remove('mm-step-active'));
-          steps[current].classList.add('mm-step-active');
-          current = (current + 1) % steps.length;
-        }
-        advance();
-        setInterval(advance, interval);
-      });
-    }
-    ```
-    Active state CSS:
-    ```css
-    .mm-step.mm-step-active {
-      transform: translateY(-6px);
-      border-color: var(--flow-border);
-      box-shadow: 0 8px 20px var(--flow-shadow);
-      background: linear-gradient(145deg, var(--surface), var(--flow-num-bg));
-    }
-    .mm-step.mm-step-active::before { transform: scaleX(1); }
-    .mm-step.mm-step-active .mm-step-ico { transform: scale(1.18) rotate(-8deg); }
-    ```
-
-33. **Flow colour theming** — per-flow CSS vars via utility class (e.g. `.mm-flow-te`):
-    ```css
-    .mm-flow-te {
-      --flow-color: var(--te);
-      --flow-color2: var(--bl);
-      --flow-border: var(--te-b);
-      --flow-shadow: rgba(10,122,106,.15);
-      --flow-num-bg: var(--te-bg);
-      --flow-num-border: var(--te-b);
-    }
-    .mm-flow-te .mm-dash      { stroke: var(--te); }
-    .mm-flow-te .mm-arrowhead { fill: var(--te); }
-    .mm-flow-te .mm-traveldot { fill: var(--te); }
-    .mm-flow-te .mm-step-num  { color: var(--te); }
-    ```
-    Define a theme for each accent: `-or`, `-am`, `-te`, `-bl`, `-vi`, `-gr`, `-sk`
-
----
-
-#### 🚫 NEVER INCLUDE THESE (cause laggy/stuck feel):
-- Custom cursor (orange dot + trailing ring following mouse)
-- Spotlight / radial glow tracking mouse X/Y inside cards
-- Magnetic cursor (element scaling near mouse)
-- Shockwave hover expanding from cursor position
-- 3D card tilt based on mouse X/Y coordinates
-
-All five require continuous `mousemove` polling — breaks on mobile and causes sluggishness.
-
----
-
-#### 📐 HTML STRUCTURE (in this exact order)
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>[Topic Name]</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap">
-  <style>
-    /* ALL CSS HERE — self-contained, no external stylesheets */
-    /* Include every token, animation keyframe, and component style */
-  </style>
-</head>
-<body>
-
-  <!-- LAYER 1: Fixed aurora blobs -->
-  <div class="aurora">
-    <div class="aurora-blob"></div>
-    <div class="aurora-blob"></div>
-    <div class="aurora-blob"></div>
-  </div>
-
-  <!-- LAYER 2: Noise grain -->
-  <div class="noise"></div>
-
-  <!-- LAYER 3: Token particle canvas -->
-  <canvas id="mm-canvas"></canvas>
-
-  <!-- LAYER 4: Page content (z-index: 3) -->
-  <div class="mm-page">
-
-    <!-- 1. HEADER -->
-    <div class="mm-header">
-      <div class="mm-badge"><span class="mm-dot"></span>[Badge Text]</div>
-      <h1>[Line 1]<br>[Line 2]</h1>
-      <p>[Mono subtitle — 3 core concepts separated by ·]</p>
-    </div>
-
-    <!-- 2. KPI ROW — always 4 cards -->
-    <div class="mm-kpi-row">
-      <div class="mm-kpi"><div class="mm-kpi-val" data-count="42">0</div><div class="mm-kpi-label">Label line 1<br>label line 2</div></div>
-      <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">∞</div><div class="mm-kpi-label">Label line 1<br>label line 2</div></div>
-      <!-- 2 more KPIs -->
-    </div>
-
-    <!-- 3. CONCEPT CHIPS — always 3 columns -->
-    <div class="mm-chips">
-      <div class="mm-chip [cc-1]"><span class="chip-icon">[emoji]</span><div class="chip-label">Chip Title</div><div class="chip-desc">One sentence description.</div></div>
-      <!-- 2 more chips -->
-    </div>
-
-    <!-- 4. MAIN GRID — 2-column -->
-    <div class="mm-grid">
-
-      <!-- Problem/limitations card (use rose/red) -->
-      <div class="mm-card c-ro">...</div>
-
-      <!-- Core concept card A (use teal/blue) with rule box inside -->
-      <div class="mm-card c-te">...</div>
-
-      <!-- Core concept card B (violet/blue) -->
-      <div class="mm-card c-vi">...</div>
-
-      <!-- Comparison card (green/amber) -->
-      <div class="mm-card c-gr">...</div>
-
-      <!-- FULL-WIDTH: 7-step flow diagram -->
-      <div class="mm-card c-bl mm-full">
-        <div class="mm-flow mm-flow-bl">
-          <!-- 7 steps with arrows between them -->
-        </div>
-      </div>
-
-      <!-- Deep-dive card (amber/sky) -->
-      <div class="mm-card c-am">...</div>
-
-      <!-- Pitfalls card (orange/rose) -->
-      <div class="mm-card c-or">...</div>
-
-      <!-- Metrics/benefits card (sky/green) -->
-      <div class="mm-card c-sk">...</div>
-
-    </div><!-- /mm-grid -->
-  </div><!-- /mm-page -->
-
-  <script>
-    /* ALL JS HERE — inline, no external libraries */
-    /* Implement: particles, counters, scrollReveal, ripple,
-       parallax, colorShift, flowCycle */
-    /* Call all on window load */
-    window.addEventListener('load', () => {
-      initParticles([domain tokens], [hue array]);
-      initCounters();
-      initScrollReveal();
-      initRipple();
-      initParallax();
-      initColorShift();
-      initFlowCycle();
-    });
-  </script>
-</body>
-</html>
-```
-
----
-
-#### 📋 CONTENT STRUCTURE — Populate Each Section
-
-**Header:**
-- Badge: `[Topic Area · Subtopic · Context]` — 3-5 words, caps
-- H1: 2 lines, concise — the topic name
-- Subtitle (mono): 3 key concepts or principles separated by ` · `
-
-**4 KPIs** (choose quantities that are surprising, memorable, or define scope):
-- Mix `data-count="[number]"` (animates) with `data-count="skip"` (for acronyms, symbols, years)
-- Label: 2 short lines describing what the number means
-
-**3 Concept Chips** (the 3 most important mental models from the content):
-- Emoji + bold label + 1–2 sentence description
-
-**Card sequence in 2-column grid:**
-1. **Problem card** (`.c-ro` rose) — why the old way fails / limitations
-2. **Solution card A** (`.c-te` teal or `.c-bl` blue) — core concept with rule box
-3. **Solution card B** (`.c-vi` violet) — secondary concept, optional mini diagram
-4. **Comparison card** (`.c-gr` green or `.c-am` amber) — when/vs grid
-5. **Flow diagram card** (`.mm-full`, colour matches topic) — **7 steps**, one per stage
-6. **Deep-dive card** (optional, `.mm-full`) — sub-types, inner workings
-7. **Pitfalls card** (`.c-am` or `.c-or`) — common mistakes with `!` badges
-8. **Benefits/metrics card** (`.c-sk` or `.c-gr`) — outcomes with `✓` badges
-
-**Inside each card:**
-- Header: `.mm-card-head` with `.mm-card-ico` (emoji) + title + subtitle
-- Body: `.mm-items` list — each `.mm-item` has `.mm-dot-badge` (show ✓ ✕ ! 1 2 3 ★ →) + `<span>` with `<b>bold term</b> — description`
-- Optional rule box: `.mm-rule` with `mm-rule-icon` + `mm-rule-title` + `mm-rule-body` (use `<strong>` for key phrase)
-- Tags: `.mm-tags` with 3–5 `.mm-tag .mm-tag-[colour]`
-- Optional compare grid: `.mm-compare` → 2 `.cbox` divs (define these locally in `<style>`)
-
-**Flow diagram — always 7 steps:**
-- Each step: `mm-step-num` (01–07) + `mm-step-ico` (emoji) + `mm-step-lbl` (3 words max) + `mm-step-sub` (3 words max)
-- Arrows between each pair: animated SVG with moving dot
-- Stagger arrow dot `begin` attributes: `0s, 0.14s, 0.28s, 0.42s, 0.56s, 0.70s`
-
----
-
-#### 🏷️ PARTICLE TOKENS — Domain-Specific
-
-Choose 8–12 short strings relevant to the topic. Examples:
-- ML topic: `['ML', 'ŷ', 'X→Y', 'fit()', '∂L', 'cluster', 'label', '→', 'W', 'ε']`
-- Code topic: `['skill.md', '.claude', 'ctx', '[]', '//', '∞', '→', '{}', 'fn()']`
-- Concept topic: `['RAG', 'ctx', 'chunk', '→', 'embed', '[]', 'query', 'LLM']`
-
-Choose 5 HSL hue values matching the page accent colours:
-- Blue ≈ 210, Violet ≈ 270, Teal ≈ 165, Orange ≈ 22, Amber ≈ 38, Green ≈ 130, Rose ≈ 350
-
----
-
-### STEP 3 — Output Requirements
-
-- **Single self-contained `.html` file** — no external CSS files, no external JS libraries
-- Google Fonts loaded via `<link>` in `<head>` only
-- All animations CSS-only where possible; JS only for: canvas particles, scroll listeners (passive), IntersectionObserver, counter, click ripple, flow cycle
-- Valid, clean HTML5
-- Works offline (except Google Fonts)
-- Renders correctly on Chrome, Safari, Firefox
-- Mobile-first responsive at 360px / 640px / 960px widths
-- **No horizontal scroll at any viewport width**
-
----
-
-## STYLE RULES TO ENFORCE THROUGHOUT
-
-1. **No dark theme anywhere** — not even for code blocks or special sections
-2. **Warm light only** — background is always `#F7F6F2`, never pure white `#FFFFFF` at the page level
-3. **Font weights in content**: 400 body · 700 bold terms · 800 card titles/KPI values · 900 H1
-4. **Font weights in KPIs**: use `font-family: var(--fm)` (JetBrains Mono) for values + labels
-5. **All item badges** (`.mm-dot-badge`): match the card's `--c-bg` / `--c-accent` colours
-6. **Rule boxes** always placed at the bottom of a card, after items, before tags
-7. **Tags always last** inside a card — 3 to 5 tags, each labelled with an emoji prefix
-8. **Flow steps**: label ≤ 3 words, subtitle ≤ 3 words — brevity is critical at small sizes
-9. **One flow diagram per page** (full-width card) — always exactly 7 steps
-10. **Three concept chips** — always exactly 3 columns
-11. **Exactly 4 KPI cards** — two animating + two static (or mix)
-
----
-
-## QUICK REFERENCE — CSS PATTERN PER CARD TYPE
-
-```css
-/* Rose: limitations / problems / pitfalls */
-.c-ro { --c-accent:var(--ro); --c-bg:var(--ro-bg); --c-border:var(--ro-b); --c-shadow:rgba(184,24,54,.18); }
-
-/* Blue: core concept / main idea */
-.c-bl { --c-accent:var(--bl); --c-bg:var(--bl-bg); --c-border:var(--bl-b); --c-shadow:rgba(26,82,200,.18); }
-
-/* Teal: solution / what it is */
-.c-te { --c-accent:var(--te); --c-bg:var(--te-bg); --c-border:var(--te-b); --c-shadow:rgba(10,122,106,.18); }
-
-/* Violet: deep dive / secondary concept */
-.c-vi { --c-accent:var(--vi); --c-bg:var(--vi-bg); --c-border:var(--vi-b); --c-shadow:rgba(107,63,212,.18); }
-
-/* Amber: comparison / trade-offs */
-.c-am { --c-accent:var(--am); --c-bg:var(--am-bg); --c-border:var(--am-b); --c-shadow:rgba(192,123,0,.18); }
-
-/* Green: benefits / when to use */
-.c-gr { --c-accent:var(--gr); --c-bg:var(--gr-bg); --c-border:var(--gr-b); --c-shadow:rgba(24,122,58,.18); }
-
-/* Orange: workflow / process */
-.c-or { --c-accent:var(--or); --c-bg:var(--or-bg); --c-border:var(--or-b); --c-shadow:rgba(232,98,10,.18); }
-
-/* Sky: metrics / outputs */
-.c-sk { --c-accent:var(--sk); --c-bg:var(--sk-bg); --c-border:var(--sk-b); --c-shadow:rgba(10,110,170,.18); }
-```
-
----
-
-## EXAMPLE DOT BADGE VALUES BY CARD TYPE
-
-| Card type | Badge values |
-|-----------|-------------|
-| Limitations card | `✕` for each problem |
-| Core concept card | `★` for the main insight, `✓` for supporting points |
-| Steps / ordered list | `1` `2` `3` etc. |
-| Pitfalls card | `!` for each pitfall |
-| Benefits card | `✓` for each benefit; `↑` for improvements; `↓` for reductions |
-| Comparison items | `→` for implications |
-| Sub-type items (A/B/C) | Short label abbreviation (e.g. `DL` `ML` `SS`) with matching bg/color |
-
----
-
-## SELF-CHECK BEFORE FINALISING
-
-- [ ] All 33 animation techniques implemented?
-- [ ] Zero horizontal scroll at any viewport?
-- [ ] Flow diagram fits in one row (flex: 1 1 0)?
-- [ ] 4 KPI cards, 3 chips, 7 flow steps?
-- [ ] Top-border sweep on card hover?
-- [ ] Sequential step cycling active?
-- [ ] No mouse-tracking effects (cursor/tilt/spotlight)?
-- [ ] Single self-contained .html file?
-- [ ] Mobile responsive at 360px?
-- [ ] Domain-specific particle tokens?
-- [ ] Warm light theme only — no dark sections?
-
-
-Create a complete, production-ready VS Code extension named "prompt-enhancer" in TypeScript that reproduces the functionality and structure described below. Deliver a full repository: package.json, tsconfig.json, README.md, and the complete src folder with implementations and minimal tests. Provide instructions to run and debug locally.
-
-Requirements
-
-Node.js >= 18, VS Code >= 1.95.0.
-Use TypeScript, VS Code Extension API, and GitHub Copilot integration where applicable.
-
-
-Commands:
-Prompt Enhancer: Enhance Selected Text — enhance highlighted editor text and open enhanced prompt side-by-side.
-Prompt Enhancer: Enhance a Prompt (Input Box) — show input box and return enhanced prompt.
-Prompt Enhancer: Switch Mode (Long/Short) — toggle mode stored in workspace/user settings.
-Prompt Enhancer: Select Default Model — let user pick a default Copilot model (persist in settings).
-Modes:
-long mode: produce structured output with Role, Task, Context (Assumptions), Inputs, What to Produce, Constraints, Output Format, Quality Checks.
-short mode: produce ~150-word concise prompt with Role, Task, Assumptions (max 3), Deliverable, Format, Constraints (max 2).
-Gap detection: detect missing audience, tone, format, constraints; expose suggestions.
-Assumption filling: auto-fill missing fields with domain-aware defaults; label them as assumptions.
-Prompt linting: flag vague terms and suggest measurable replacements.
-Chat integration: implement chatParticipant that recognizes @prompt-enhancer messages and supports /enhance-long and /enhance-short inline commands.
-Model management: modelManager auto-selects best Copilot model but respects promptEnhancer.defaultModel if set.
-Settings (must expose these keys)
-
-promptEnhancer.mode (string, default "long")
-promptEnhancer.defaultModel (string, default "")
-promptEnhancer.domainHints (string, default "general")
-promptEnhancer.maxAssumptions (number, default 5)
-Implementation details & constraints
-
-Keep modules small and testable. Expose pure functions for gapDetector, assumptionFiller, and promptLinter.
-enhancerEngine should accept (prompt, mode, domainHint, maxAssumptions, model) and return a structured enhanced prompt plus an array of assumptions and lint warnings.
-Use VS Code window.showInputBox, commands.registerCommand, workspace.getConfiguration, TextEditorEdit APIs appropriately.
-Add minimal unit tests for core pure functions (gap detection, assumption filling, linting).
-Include helpful error handling and user notifications (window.showErrorMessage / showInformationMessage).
-Document how to run and debug: npm install, npm run compile, open in VS Code and press F5.
-Deliverables
-
-Full file contents for every file listed in the structure.
-A short README with usage and config (matching the original README features).
-A short dev checklist: how to install, build, run, and debug locally.
-Example inputs and expected enhanced outputs for both long and short modes.
-A minimal test run showing the tests succeed (or instructions to run them).
-Non-functional requirements
-
-Code must be well-formatted and idiomatic TypeScript.
-Avoid external services beyond GitHub Copilot (do not require paid APIs).
-Keep total lines reasonable — implement logic concisely but fully.
-If any behavior cannot be implemented exactly (e.g., private Copilot internals), clearly state the limitation and provide a best-effort alternative.
+06:40
+Is this is it the tag? Okay. That that feature is there in India?
+
+06:50
+But like how are we going to do that in new jersey? We may have to write for go for rules
+
+06:56
+With track system
+
+06:57
+Id. So that's an inbuilt feature we have in cpp, but rtp has to adapt to it.
+
+07:02
+Okay. So you mean whatever ah known issue tag feature is there in old end reconciliation framework that similar feature is in usability news? And like,
+
+07:12
+Yeah, we can create rules. Okay? So you know this if this particular field is this this particular value is this, then tag it to this particular media review.
+
+07:21
+Who who creates those rules? Ah okay. Ah rtb,
+
+07:25
+Ah rtb. Ah rtb creates those rules. Ah rtb creates those tracking system id. They enter it in one space. Like we have one dashboard just for that. Um so you need to educate them. So if you see here, no.
+
+07:36
+ So their rule is if asset classes in this, if a asset class is any one of this and a counterparty one reporting, what about this? Is is this one? Then tag it to this particular attack instrument. Okay. God, they do it.
+
+07:48
+ They see it here. So,
+
+07:49
+And that is one time configuration.
+
+07:52
+One time configuration, every day it will get reflected.
+
+07:54
+And that will reflect for all the users or only so
+
+07:57
+Users of this when the reorganization, and so so it picks up. So whatever you see in the UI, right? it will be tagged on,
+
+08:03
+And that's nice. Because known issue tag is something which is implemented on our side. Yes, that needs to be implemented in code. Then only it will flag. Yeah those known issutags. Yeah. But this is something from UI, then it's easy.
+
+08:17
+Yeah, they can. I can conquer. And like if they feel that like this is no more issue, they can just delete the rule.
+
+08:23
+This is for no need to tag any other ah things.
+
+08:25
+I think that we have a special check actually, but I don't. Yeah, sorry. The tableau. And I said, no aggregation. I'm still checking. I didn't get a reply. Like where they are using it.
+
+08:35
+Ah so the aggregation is happening in the old yeah pipeline. The old usability pipeline? Yes. Is it in code or is it that is also something detail.
+
+08:47
+We have a separate etl in our.
+
+08:50
+Okay.
+
+08:50
+You shouldn't be safe.
+
+08:55
+So we insert this data into the yearly MA. Yeah this one active break, aggregate euri. Okay. What it does is like that particular we will have like break closure and everything on a day to day basis now.
+
+09:06
+ So with this particular reconciliation type, how many breaks are there at the end of that particular day? it will just list that breaks in numbers like this many breaks, this many known issues, this many unknown issues.
+
+09:18
+ it just list that and we show it to the dashboard tab, dashboard. But now that'sAnother condition because we do not have breakClosure.
+
+09:26
+Number one and number two, the etl function, sorry, the aggregate function which we use is different. The table is different. So they may have to like create new dashboards or like integrate that into the nugen dashboard actually, as a tier one into the nugent dashboard.
+
+09:42
+Why are we not losing those ah rates now?
+
+09:45
+I don't.
+
+09:47
+And new pipeline.
+
+09:48
+We don't have that functional data. Okay. Like if we are receiving some breaks today, we are going to receive that breaks tomorrow. Also, if it is an open break, it is a live trade. So we just increase the age of the.
+
+10:00
+Like like if the age was yesterday, one, we exhausted two. Okay.
+
+10:03
+So you mean this aggregation is happening in older gen. Pipeline. Yeah, but that won't happen in new gen pipeline.
+
+10:13
+It just has a different flow. it happens. Aggregation is happening, but different flow of different table, different columns.
+
+10:20
+ So there that tablet dashboard which is built on this particular table now will not work for a subtr anymore. So then you have to like onboard assertia to nugen tricks, like where we have like a sigmas and everything now.
+
+10:33
+ So they have to onboard it to them. So that stuff, the tablet stuff they need to do because we will not be close to that. Right? A tableau developer should beAware of that iridium team. I have checked with one of the BA.
+
+10:47
+Bit. I haven't got a reply. I'll check if and anything else.
+
+10:53
+So this is related to investment that that aggregation.
+
+11:01
+And okay, in return, you will have a look and we have the data.
+
+11:06
+So you can just configure like whenever you are doing CV generation, you know you will have the opportunity to.
+
+11:16
+So I just add this similar to what we have for SFT usage.
+
+11:36
+Similar report. Like for scc, you created one, right? Ah yeah, ah C two D two. Okay. So based on the reconstruction type, you will be creating one JSON config file that is going to be the base of your code. Okay. Okay.
+
+11:49
+So that is something will be displayed on ui. Exactly.
+
+11:53
+So what you see as this is the reconciliation type. So what you see here at type, now that is this.
+
+12:04
+Otherwise. Yeah, I get confused because I am not.
+
+12:07
+What is the name going to be? I asked this question. So the name is gonna change. Like change. We have not decided if changing we are good. If not, then you have to like pour little bits of pieces actually. Okay,
+
+12:21
+Then we'll change it.
+
+12:29
+Ah so this
+
+12:30
+Is the current I am idle match format. This is how they give us the file name, IRCC. Okay. And and here you see that.
+
+12:39
+And that agent ah creates autosis jobs. That is for onboarding the.
+
+12:50
+A new agent creates this json. If we have three agents, one for creating this JSON, one for creating the autosis jobs with using this JSON, and one for the year, your ua configurations. Okay.
+
+13:04
+So three agents. First ah is jason. First of all, one will create json. Then second one will create. Um what was this based on this? Yeah. And then third one,
+
+13:20
+Third one will be the ua changes, UI changes. So these two things are in control visibility repo first and second control usability. And third one is in usability gateway.
+
+13:36
+So that the angular budget.
+
+13:40
+So these three events, then the second chance you mention the name.
+
+13:47
+So you have this name,
+
+13:48
+See this name,
+
+13:49
+Underscore the copy, this dot that this is the file format. So you should be also giving us in this particular format. I think everything is all okay.
+
+14:01
+ And the column names also should be matching this from here to this one right master key to and also from here to unique for a parent to play this till this match id. This should be this is a mandatory actually.
+
+14:20
+Master key and match key.
+
+14:23
+Match id. Match id.
+
+14:25
+Yeah this should match where starting
+
+14:28
+To master key and match id to item state. Yeah, this is mandatory. And apart from that, you will have like unique transaction identifier, unique step identifier, unique product identifier, right? Like whatever it is, but that is configurable. That can be anything remaining. Everything is your. So
+
+14:43
+This is mandatory to define where
+
+14:46
+This should be part of the output file, right?
+
+14:49
+But you give to yourself, okay? From intellemas,
+
+14:51
+From intellect side, okay? If they are doing the reconciliation they fall for sure will provide. If you're doing the integrity, you you should make sure that you give us this.
+
+15:01
+Taken. Ah so this is this is again output file.
+
+15:06
+Yeah anything else that in the jason file if you want like industry enrichment, right? So for example, if this is a CC two one, now what we have like exception enrichment, tier enrichment, dtcc enrichment all happening. Okay. If we wanted to extend that to sftr, we are good to go. If we don't want that,
+
+15:29
+We just keep all these
+
+15:30
+Things as empty if you don't pass this one. Okay? Okay, so whatever JSON you create here, right? This one, agent. So this will create with the default index resources, you just need to manually delete if you want. Don't want it.
+
+15:45
+Ah so we would like to manually delete those stuffs, which we do
+
+15:52
+Not want to do not want in the
+
+15:53
+Enrichment sources. Correct.
+
+15:54
+If you don't want enrichment at all, this is not just configuration, right? So there is this multiple stages. Three four, five, four is the enrichment stage, you can just skip that.
+
+16:11
+Okay? Yeah. So you you see one,
+
+16:14
+Two, three, four, this is the stages, okay? And what the stages means now.
+
+16:22
+Here you see. So number one is control metrics. Number three is im load, four is enrichment, five is auto tagging, which I mean like tag system arena. So if you don't want engagement happening, you can just remove this in the author's job.
+
+16:36
+Now you can pass one two three five,
+
+16:39
+Six seven eight instead of four.
+
+16:41
+It will work
+
+16:43
+Only
+
+16:44
+For investment
+
+16:45
+If
+
+16:46
+You
+
+16:46
+Don't want anything, or like keeping it empty, also perfectly fine.
+
+16:54
+And this in the this these stages are defined in visual. Yes,
+
+16:58
+I know. This is in your autosis profile profile which was created from here.
+
+17:08
+Yes. Otherwise we can keep it in empty,
+
+17:13
+Also in jason directly.
+
+17:20
+And that that take again like from BS. We need they want any new things on when we are going like if they want any enrichment, right? That should be decided with like
+
+17:32
+Ah rtb and bs should
+
+17:34
+Be discussing with them like whether they want anything new or like just they want like
+
+17:37
+What we have now. And the thing you mentioned is if they want to have a auto closure, then,
+
+17:50
+B is need to define.
+
+17:52
+Yeah we don't have provision for that now.
+
+17:57
+What rtb right now? Does it now with other rtb? Secondly, so they have like contracting system id defend and there's just if it is a known issue and it's no more issue, they just tag it to that particular tag system id. Okay. They don't do any investigation on that type of system id. They just investigate the remaining.
+
+18:18
+A very high level key. What is the responsibility of usability? What are all the things you guys cover?
+
+18:28
+One. And we have that.
+
+18:30
+What is under ah the wood's team. I mean,
+
+18:33
+Okay,
+
+18:33
+The books also utility matches. Okay? But we take care of the reconciliation. Or like you, I javasite. Okay. Angular java site. Anything on tableau and etl that goes to them, right?
+
+18:47
+Um tableau.
+
+18:49
+When does it comes in picture.
+
+18:51
+Ah higher management. They just look at the table dashboards for everything, right?
+
+18:55
+They don't want like detail data.
+
+18:57
+Yeah,
+
+18:57
+My that's a my management information.
+
+19:03
+High level, high level enforcement, just numbers. Okay.
+
+19:05
+High level. And what do you say?
+
+19:10
+ETS. If there is anything like etl, etl, like SQL, everything. Basically, they are a SQL sql. So you have your dtcc report, like how that we picked in usability, right?
+
+19:23
+Like all these things take care of. Okay.
+
+19:25
+And this UI and java side. Ah what are all the features there in usability? Which.
+
+19:38
+Which is for any of the reconciliation and which bas use, for example.
+
+19:48
+In the UI, you obviously saw all the results. So that is one kind of feature that you show. The the users can aggregate or all those stuff is.
+
+20:00
+Okay. But award from that, let's say you there is a feature to or auto close ibs can tag that. So that is one. But so like that. Is there any other feature which is specific to reconciliation and
+
+20:15
+Which user? Yes. Okay.
+
+20:17
+Like new journey. We have like commenting feature. They can just write, click the breaks. There is an option to comment. They can just comment it or like they can assign it to somebody. Investigation status,
+
+20:29
+Again, that is for if they don't close it, they can comment it.
+
+20:33
+And yeah there is that coming into reflecting there and it can be grouped by comment.
+
+20:37
+And that is only a specific when you do not close your group.
+
+20:41
+Now that depends to you. So like they they can do like whatever they want. Okay.
+
+20:45
+So that is independent of in demand. Yeah. Okay.
+
+20:49
+Investigation status. Commanding to like how? What is the investigation status of these breaks? Who is it assigned to those things we have. Okay.
+
+21:03
+And yeah pretty much that no other actions are there. Yes.
+
+21:11
+And commenting is there in origin as well. Ah but not like this. Something different process is different. So here the commanding carry forward as well. If your record key right, like the take your id for people in order.
+
+21:23
+ So if it is the same, we will propagate the comment to the next day, the next day, next day, if everything is, say, like, if the break is going on, carry forward it. The government is also going on going forward.
+
+21:37
+So auto closure coming feature investigation status, auto closure,
+
+21:42
+We're not doing that.
+
+21:43
+We need to have discussion. No, no. That we is doing, but that feature is from usability side. Now we once we will close, no,
+
+21:50
+Ah we don't have the auto closure feature for new gen.
+
+21:55
+So then how can be is like,
+
+21:58
+Okay,
+
+22:03
+Sorry,
+
+22:04
+I got confused. That is tagging.
+
+22:16
+So there is a auto tagging feature, comment feature and investigation. So yeah,
+
+22:22
+Okay. Like whenever you receive it, like whenever the record is received,
+
+22:27
+It automatically runs based on particular rules.
+
+22:30
+Yeah preconfigured rules. Yes, preconfigured rules. Yeah they need not do anything manually for this one for commanding. And this investigation status they have like manually do it after you see the brakes on your way, there is something before you see the brakes on UI.
+
+23:07
+The breaks. But there are so many features,
+
+23:09
+So many things. Like our team is doing these things here, like four teams actually five. So five different teams, different works on five different things, but we we just focus on drag on.
+
+23:20
+But the other teams are ah related to
+
+23:22
+Core or everything on dashboards. Everybody is working on dashboard. We have like exception manager one. We have like this. Like
+
+23:30
+That is not something related to our space and um but like controls the space it
+
+23:34
+Is. So like whenever there's a trade flowing, whenever there's a hack on that, where do you see that? I connect? Okay, so we listen. Dashboards for that. So if they wanted to override reprocess, all these capabilities,
+
+23:46
+ they built it. Ah for us, it's like user interaction is less. We just show the data, but they interact with the data. So they do reprocess, overrides everything except force. Like lot of things happening in the back. Okay.
+
+23:58
+ Core and controls are building the code and we are integrating theCode to I will toUsers,
+
+24:03
+That's it.
+
+24:08
+How did you find? Have have you started? Although new things using copilot AI, how did you Find X6seful? Is it useful personally? You are not a big fan. Why?
+
+24:30
+We had a joy of developing life. Now the joy is gone. No, it's easy. More easy. We didn't we don't have any difficulties, challenges, nothing, I feel personally I think, but it's really useful. Whoever does he know the code base? From the day one of his work, he can do starting commitments and nothing goes majorly wrong.
+
+24:50
+So what are all those features do you use mostly? I mean, which model do you use?
+
+24:58
+May mostly.
+
+25:00
+Personally, I mean copilot,
+
+25:05
+Copilot. Okay.
+
+25:06
+And yeah,
+
+25:08
+I think that's it. And sometimes I use this gpt as well.
+
+25:15
+Um so you never use opus models. Okay.
+
+25:21
+I haven't tried gpt one. I tried plots on for this one price park. And it's just not I mean, it was able to do deliver, but not to the standard. Actually, the best practices. I prefer click gpd for that. Others I have you know what I have found,
+
+25:40
+Man. Ah cloud and codex both are in different space. Like cloud can do a very complex
+
+25:51
+Task and
+
+25:54
+It won't do easier task very well. And codex will do the easier task. Very. That's what I have my experiences so far.
+
+26:11
+And will start implementing it. I have developed something.
+
+26:16
+Yes. You know.
+
+26:22
+It's there or not.
+
+26:23
+Ah like I have developed some games. This is using all cloudshire and this is on hosted on my personal.
+
+26:31
+This one we have. it's not it's not here.
+
+26:35
+So like if you want to play, so these are all memory games. Like select all this and submit. So if it's strong, then you won't get any points like that. Puzzle games or like this is to train your brain.
+
+26:54
+Like, so III mean, I am not EY guy, so I and I'm.
+
+27:04
+I never found. For me, it's little difficult for managing the wife. And yeah,
+
+27:11
+I mean, learning new technology is really good. Like that is. I mean, if if you are not a UI developer, then having to.
+
+27:25
+So these are all things done by this one. I did not do anything.
+
+27:33
+Yeah. So that's what that's why I was surprised he, even if I don't know, I can build so so many things.
+
+27:40
+You can build things. But the difference is how we are building. So is it the best code that you don't know without that without you knowing the code? Right? Even in java, like you'll have like just for loop or streams or anything.
+
+27:54
+ You decide like which one you want. But if if agent suggest you go go with for loop, we should be knowing like why is such into but.
+
+28:17
+Now what they are planning to do, one model will write code, another model will review the code. So we we won't be reviewing and the codes as well. And some company has already built their tools on these things and they are advertising that, no, no, things are moving very fast.
+
+28:49
+I mean, you remember now, like when we had this it's Mongolia. We were like pouring like you know but that you're not doing anymore.
+
+28:59
+So that's interesting.
+
+29:00
+This new gen framework. We built it from a scratch. We started from zero. And we built everything, all the framework, and using controls framework. Now it's easier to develop anything on board anything. Now we have built so many things. Now within two days you can onboard any again,
+
+29:23
+Same with you previously. Just use take like four or five minutes in the whole like in days. You can do.
+
+29:27
+Also when we started everything, like, every details, like how will we store the data? In which data structure we will use? Why not this one? Why that one? Why not this one like that? Everything we discussed in details and review
+
+29:47
+This one and things
+
+29:48
+From scratch. But now,
+
+29:59
+So if you are a good.
+
+30:19
+Um this one I am planning to.
+
+30:23
+Ah right now I have ah developed six games, so I have planned to develop around two hundred games.
+
+30:30
+Two hundred. Ah and
+
+30:33
+We'll plan to do it in within a month. Once that is complete,
+
+30:37
+Then maybe I'll post it in production for everyone.
+
+30:43
+Everyone can use it. But the link is like my personal github.
+
+31:05
+Their capacity, I will list out all the tasks first. Then we will analyze the how much effort is required from their side. We will discuss with them and if they are confident, then this will go ahead with strategic purpose, otherwise will go ahead with tactical solution.
+
+31:25
+So major reason for the slowness, I'm just setting that ACD stuff. That's my especially we are planning to do that. Like the monday we are gonna start in our project seventy one.
+
+31:47
+So now
+
+31:49
+People have started using ACC as well. So ah in opensbake, I think we will need to configure the tools. Like we need to connect ah all the tools, but in acc, I think we don't need to do that as well. it will automatically.
+
+32:08
+So.
+
+32:12
+And john is committing quotes like any twenty one, he will commit thousand lines of code and ping pr to me that.
+
+32:27
+And I need to review everything.
+
+32:34
+I think he has
+
+32:35
+Already put open his fake all the skills, bloody skills. He started using cloudy code as well.
+
+32:48
+Yeah.
+
