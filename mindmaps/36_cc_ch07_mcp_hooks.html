@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 7 — MCP Servers &amp; Hooks</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#B81836,transparent 70%);top:-80px;left:-90px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#6B3FD4,transparent 70%);top:40%;right:-130px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#0A6EAA,transparent 70%);bottom:-70px;left:38%}
+
+.mm-badge{background:linear-gradient(135deg,var(--ro-bg),#EDEAFC);border-color:var(--ro-b);color:var(--ro)}
+.mm-dot{background:var(--ro)}.mm-dot::after{border-color:var(--ro)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--ro) 0%,var(--vi) 40%,var(--sk) 75%,var(--ro) 100%)}
+
+.mm-kpi:nth-child(1){--kpi-accent:var(--ro)}
+.mm-kpi:nth-child(2){--kpi-accent:var(--vi)}
+.mm-kpi:nth-child(3){--kpi-accent:var(--sk)}
+.mm-kpi:nth-child(4){--kpi-accent:var(--am)}
+
+.mc-1{--chip-bg:var(--ro-bg);--chip-border:var(--ro-b);--chip-color:var(--ro)}.mc-1:hover{box-shadow:0 10px 26px rgba(184,24,54,.18);border-color:var(--ro)!important}.mc-1 .chip-label{color:var(--ro)}
+.mc-2{--chip-bg:var(--vi-bg);--chip-border:var(--vi-b);--chip-color:var(--vi)}.mc-2:hover{box-shadow:0 10px 26px rgba(107,63,212,.18);border-color:var(--vi)!important}.mc-2 .chip-label{color:var(--vi)}
+.mc-3{--chip-bg:var(--sk-bg);--chip-border:var(--sk-b);--chip-color:var(--sk)}.mc-3:hover{box-shadow:0 10px 26px rgba(10,110,170,.18);border-color:var(--sk)!important}.mc-3 .chip-label{color:var(--sk)}
+
+.c-ro{--c-accent:var(--ro);--c-bg:var(--ro-bg);--c-border:var(--ro-b);--c-shadow:rgba(184,24,54,.18)}
+.c-vi{--c-accent:var(--vi);--c-bg:var(--vi-bg);--c-border:var(--vi-b);--c-shadow:rgba(107,63,212,.18)}
+.c-sk{--c-accent:var(--sk);--c-bg:var(--sk-bg);--c-border:var(--sk-b);--c-shadow:rgba(10,110,170,.18)}
+.c-am{--c-accent:var(--am);--c-bg:var(--am-bg);--c-border:var(--am-b);--c-shadow:rgba(192,123,0,.18)}
+.c-gr{--c-accent:var(--gr);--c-bg:var(--gr-bg);--c-border:var(--gr-b);--c-shadow:rgba(24,122,58,.18)}
+.c-te{--c-accent:var(--te);--c-bg:var(--te-bg);--c-border:var(--te-b);--c-shadow:rgba(10,122,106,.18)}
+.c-bl{--c-accent:var(--bl);--c-bg:var(--bl-bg);--c-border:var(--bl-b);--c-shadow:rgba(26,82,200,.18)}
+.c-or{--c-accent:var(--or);--c-bg:var(--or-bg);--c-border:var(--or-b);--c-shadow:rgba(232,98,10,.18)}
+
+.mm-flow-vi{--flow-color:var(--vi);--flow-color2:var(--ro);--flow-border:var(--vi-b);--flow-shadow:rgba(107,63,212,.15);--flow-num-bg:var(--vi-bg);--flow-num-border:var(--vi-b)}
+.mm-flow-vi .mm-dash{stroke:var(--vi)}.mm-flow-vi .mm-arrowhead{fill:var(--vi)}.mm-flow-vi .mm-traveldot{fill:var(--vi)}.mm-flow-vi .mm-step-num{color:var(--vi)}
+
+/* MCP type duel */
+.mcp-duel{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:start;margin-top:12px}
+@media(max-width:500px){.mcp-duel{grid-template-columns:1fr}}
+.mcp-panel{border-radius:13px;padding:14px;transition:transform .3s,box-shadow .3s}
+.mcp-panel:hover{transform:translateY(-4px)}
+.mp-stdio{background:var(--vi-bg);border:2px solid var(--vi-b)}.mp-stdio:hover{box-shadow:0 8px 22px rgba(107,63,212,.2)}
+.mp-http{background:var(--sk-bg);border:2px solid var(--sk-b)}.mp-http:hover{box-shadow:0 8px 22px rgba(10,110,170,.2)}
+.mp-head{font-size:12px;font-weight:800;margin-bottom:9px;display:flex;align-items:center;gap:7px}
+.mp-stdio .mp-head{color:var(--vi)}.mp-http .mp-head{color:var(--sk)}
+.mp-item{font-size:11px;color:var(--muted);margin-bottom:4px;display:flex;align-items:flex-start;gap:6px;line-height:1.45}
+.mp-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.mp-stdio .mp-dot{background:var(--vi)}.mp-http .mp-dot{background:var(--sk)}
+.mcp-vs{display:flex;align-items:center;justify-content:center}
+.vs-circle{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--vi),var(--sk));color:#fff;font-size:10px;font-weight:900;font-family:var(--fm);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(107,63,212,.3);animation:vsG 2s ease-in-out infinite alternate}
+@keyframes vsG{0%{box-shadow:0 4px 14px rgba(107,63,212,.25)}100%{box-shadow:0 4px 24px rgba(107,63,212,.5)}}
+
+/* JSON config block */
+.json-block{background:#1E1C18;border-radius:12px;padding:16px;margin-top:12px;font-family:var(--fm);font-size:11px;line-height:1.7;overflow-x:auto}
+.j-key{color:#FFC66D}.j-str{color:#6A8759}.j-num{color:#6897BB}.j-brace{color:#CC7832}.j-comment{color:#808080;font-style:italic}
+
+/* Hook events grid */
+.hooks-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+@media(max-width:480px){.hooks-grid{grid-template-columns:1fr}}
+.hook-card{border-radius:11px;padding:13px;transition:transform .3s,box-shadow .3s;cursor:default}
+.hook-card:hover{transform:translateY(-3px)}
+.hc-1{background:var(--am-bg);border:1.5px solid var(--am-b)}.hc-1:hover{box-shadow:0 7px 18px rgba(192,123,0,.16)}
+.hc-2{background:var(--gr-bg);border:1.5px solid var(--gr-b)}.hc-2:hover{box-shadow:0 7px 18px rgba(24,122,58,.16)}
+.hc-3{background:var(--ro-bg);border:1.5px solid var(--ro-b)}.hc-3:hover{box-shadow:0 7px 18px rgba(184,24,54,.16)}
+.hc-4{background:var(--sk-bg);border:1.5px solid var(--sk-b)}.hc-4:hover{box-shadow:0 7px 18px rgba(10,110,170,.16)}
+.hook-event{font-family:var(--fm);font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;display:inline-block;margin-bottom:6px;color:#fff}
+.hc-1 .hook-event{background:var(--am)}.hc-2 .hook-event{background:var(--gr)}.hc-3 .hook-event{background:var(--ro)}.hc-4 .hook-event{background:var(--sk)}
+.hook-title{font-size:11px;font-weight:800;margin-bottom:4px}
+.hc-1 .hook-title{color:var(--am)}.hc-2 .hook-title{color:var(--gr)}.hc-3 .hook-title{color:var(--ro)}.hc-4 .hook-title{color:var(--sk)}
+.hook-desc{font-size:10.5px;color:var(--muted);line-height:1.4}
+.hook-scripts{font-size:9px;font-family:var(--fm);color:var(--muted);margin-top:5px}
+
+/* MCP server examples */
+.mcp-examples{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+@media(max-width:480px){.mcp-examples{grid-template-columns:1fr}}
+.mcp-ex{border-radius:11px;padding:13px;transition:transform .3s,box-shadow .3s}
+.mcp-ex:hover{transform:translateY(-3px)}
+.me-1{background:var(--or-bg);border:1.5px solid var(--or-b)}.me-1:hover{box-shadow:0 7px 18px rgba(232,98,10,.16)}
+.me-2{background:var(--te-bg);border:1.5px solid var(--te-b)}.me-2:hover{box-shadow:0 7px 18px rgba(10,122,106,.16)}
+.me-3{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.me-3:hover{box-shadow:0 7px 18px rgba(107,63,212,.16)}
+.me-4{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.me-4:hover{box-shadow:0 7px 18px rgba(26,82,200,.16)}
+.me-head{font-size:11px;font-weight:800;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.me-1 .me-head{color:var(--or)}.me-2 .me-head{color:var(--te)}.me-3 .me-head{color:var(--vi)}.me-4 .me-head{color:var(--bl)}
+.me-desc{font-size:10.5px;color:var(--muted);line-height:1.4}
+.me-type{font-size:9px;font-family:var(--fm);font-weight:700;padding:2px 6px;border-radius:4px;display:inline-block;margin-top:5px}
+.me-1 .me-type{background:var(--or-bg);color:var(--or)}.me-2 .me-type{background:var(--te-bg);color:var(--te)}.me-3 .me-type{background:var(--vi-bg);color:var(--vi)}.me-4 .me-type{background:var(--bl-bg);color:var(--bl)}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+<div class="noise"></div>
+<canvas id="mm-canvas"></canvas>
+<div class="mm-page">
+
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude Code Masterclass · Part 7 of 7</div>
+    <h1>MCP Servers<br>&amp; Hooks</h1>
+    <p>Model Context Protocol · stdio vs HTTP · JSON config · Hook events · Event automation</p>
+  </div>
+
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">MCP</div><div class="mm-kpi-label">Anthropic's open standard<br>for AI tool connections</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="2">0</div><div class="mm-kpi-label">MCP types:<br>stdio (local) &amp; HTTP</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="4">0</div><div class="mm-kpi-label">Hook events: pre/post<br>tool use, notify, stop</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="3">0</div><div class="mm-kpi-label">Hook languages:<br>Python, Bash, PowerShell</div></div>
+  </div>
+
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">🌐</span><div class="chip-label">MCP is Industry-Wide</div><div class="chip-desc">Not Claude-only. MCP is Anthropic's open standard adopted across the AI industry. Any agent, any model can connect via MCP — it's the USB-C of AI tools.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">🔌</span><div class="chip-label">Two Types, One Protocol</div><div class="chip-desc">stdio MCP runs locally on your machine. HTTP MCP is hosted remotely. Same JSON config format — only the URL and transport differ.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">🪝</span><div class="chip-label">Hooks = Event-Driven Control</div><div class="chip-desc">Run any script at key moments in the agent lifecycle: before a tool call, after it completes, on notification, or when the session stops.</div></div>
+  </div>
+
+  <div class="mm-grid">
+
+    <!-- What is MCP -->
+    <div class="mm-card c-ro mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🌐</div><div><div class="mm-card-title">What is MCP — Model Context Protocol</div><div class="mm-card-subtitle">The Anthropic open standard that lets any AI connect to any external tool or data source</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">★</div><span><b>Open standard, not Claude-only</b> — MCP is published by Anthropic but adopted across the AI industry. Any LLM or agent framework can use it.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>What it solves</b> — Claude's built-in tools are fixed. MCP lets you add unlimited custom tools: databases, APIs, browsers, proprietary systems.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>How it works</b> — you run an MCP server that exposes tools as functions. Claude calls those functions like any other tool. The server does the actual work.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Configuration</b> — a single JSON config file in your home directory registers all MCP servers. Claude loads them at startup automatically.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Security</b> — MCP servers run isolated from each other. Least-privilege: only expose the tools each agent actually needs.</span></div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">💡</div>
+        <div><div class="mm-rule-title">⭐ The Big Picture</div><div class="mm-rule-body">MCP is to AI agents what npm packages are to Node.js. <strong>A growing ecosystem</strong> of pre-built MCP servers for databases, browsers, APIs, SaaS tools — install and connect in minutes.</div></div>
+      </div>
+    </div>
+
+    <!-- stdio vs HTTP -->
+    <div class="mm-card c-vi mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">⚖️</div><div><div class="mm-card-title">stdio MCP vs HTTP MCP</div><div class="mm-card-subtitle">Same protocol, two deployment models — choose based on where your tools live</div></div></div>
+      <div class="mcp-duel">
+        <div class="mcp-panel mp-stdio">
+          <div class="mp-head">🖥️ stdio MCP (Local)</div>
+          <div class="mp-item"><div class="mp-dot"></div><span>Runs as a process on your machine</span></div>
+          <div class="mp-item"><div class="mp-dot"></div><span>Communicates via stdin/stdout pipes</span></div>
+          <div class="mp-item"><div class="mp-dot"></div><span>No network needed — ultra-low latency</span></div>
+          <div class="mp-item"><div class="mp-dot"></div><span>Great for: local files, databases, CLI tools</span></div>
+          <div class="mp-item"><div class="mp-dot"></div><span>Config: <span class="mm-pill">"command": "python mcp.py"</span></span></div>
+        </div>
+        <div class="mcp-vs"><div class="vs-circle">VS</div></div>
+        <div class="mcp-panel mp-http">
+          <div class="mp-head">☁️ HTTP MCP (Hosted)</div>
+          <div class="mp-item"><div class="mp-dot"></div><span>Runs on a remote server or cloud function</span></div>
+          <div class="mp-item"><div class="mp-dot"></div><span>Communicates via HTTP requests + SSE</span></div>
+          <div class="mp-item"><div class="mp-dot"></div><span>Sharable across a team — one URL for all</span></div>
+          <div class="mp-item"><div class="mp-dot"></div><span>Great for: shared APIs, SaaS integrations</span></div>
+          <div class="mp-item"><div class="mp-dot"></div><span>Config: <span class="mm-pill">"url": "https://mcp.example.com"</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JSON config -->
+    <div class="mm-card c-sk">
+      <div class="mm-card-head"><div class="mm-card-ico">📄</div><div><div class="mm-card-title">MCP Configuration File</div><div class="mm-card-subtitle">One JSON file, registered in ~/.claude/ — loaded automatically at startup</div></div></div>
+      <div class="json-block">
+        <span class="j-brace">{</span><br>
+        &nbsp;&nbsp;<span class="j-key">"mcpServers"</span>: <span class="j-brace">{</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="j-comment">// stdio — local Python server</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="j-key">"duckduckgo"</span>: <span class="j-brace">{</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="j-key">"command"</span>: <span class="j-str">"python"</span>,<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="j-key">"args"</span>: <span class="j-brace">[</span><span class="j-str">"mcp_ddg.py"</span><span class="j-brace">]</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="j-brace">}</span>,<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="j-comment">// HTTP — remote hosted server</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="j-key">"playwright"</span>: <span class="j-brace">{</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="j-key">"type"</span>: <span class="j-str">"http"</span>,<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="j-key">"url"</span>: <span class="j-str">"https://mcp.playwright.dev"</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="j-brace">}</span><br>
+        &nbsp;&nbsp;<span class="j-brace">}</span><br>
+        <span class="j-brace">}</span>
+      </div>
+      <div class="mm-tags" style="margin-top:12px">
+        <span class="mm-tag mm-tag-sk">📄 JSON Config</span>
+        <span class="mm-tag mm-tag-vi">🖥️ stdio</span>
+        <span class="mm-tag mm-tag-sk">☁️ HTTP</span>
+      </div>
+    </div>
+
+    <!-- Real MCP examples -->
+    <div class="mm-card c-am">
+      <div class="mm-card-head"><div class="mm-card-ico">🛠️</div><div><div class="mm-card-title">Real MCP Server Examples</div><div class="mm-card-subtitle">From the course — working MCP servers you can use today</div></div></div>
+      <div class="mcp-examples">
+        <div class="mcp-ex me-1">
+          <div class="me-head">🦆 DuckDuckGo Search</div>
+          <div class="me-desc">Adds live web search capability. Claude calls <span class="mm-pill">search(query)</span> and gets real-time results without using the built-in web tool.</div>
+          <div class="me-type">stdio · Python</div>
+        </div>
+        <div class="mcp-ex me-2">
+          <div class="me-head">🎭 Playwright Browser</div>
+          <div class="me-desc">Full browser automation. Claude can navigate pages, click elements, fill forms, screenshot — web scraping and testing built in.</div>
+          <div class="me-type">HTTP · Node.js</div>
+        </div>
+        <div class="mcp-ex me-3">
+          <div class="me-head">🗄️ Database MCP</div>
+          <div class="me-desc">Connect to Postgres, MySQL, BigQuery. Claude executes queries, reads schemas, generates SQL — all without touching credentials in code.</div>
+          <div class="me-type">stdio · Python</div>
+        </div>
+        <div class="mcp-ex me-4">
+          <div class="me-head">📊 Datadog MCP</div>
+          <div class="me-desc">Pull metrics, logs, APM traces. Claude diagnoses production incidents, queries dashboards, creates monitors automatically.</div>
+          <div class="me-type">HTTP · REST API</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hook events -->
+    <div class="mm-card c-or mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🪝</div><div><div class="mm-card-title">Hook Events — Event-Driven Agent Control</div><div class="mm-card-subtitle">Four lifecycle events you can intercept and run any script against — Python, Bash, or PowerShell</div></div></div>
+      <div class="hooks-grid">
+        <div class="hook-card hc-1">
+          <div class="hook-event">PreToolUse</div>
+          <div class="hook-title">Before Every Tool Call</div>
+          <div class="hook-desc">Runs before Claude executes any tool. Use to: validate inputs, log the intent, block disallowed operations, inject additional context.</div>
+          <div class="hook-scripts">Runs: .py · .sh · .ps1</div>
+        </div>
+        <div class="hook-card hc-2">
+          <div class="hook-event">PostToolUse</div>
+          <div class="hook-title">After Every Tool Call</div>
+          <div class="hook-desc">Runs after a tool completes. Use to: log results, trigger side effects, validate output quality, send metrics to Datadog or CloudWatch.</div>
+          <div class="hook-scripts">Runs: .py · .sh · .ps1</div>
+        </div>
+        <div class="hook-card hc-3">
+          <div class="hook-event">Notification</div>
+          <div class="hook-title">On Agent Notification</div>
+          <div class="hook-desc">Fires when Claude sends a notification (long task complete, error, needs input). Use to: send Slack/Teams alert, play a sound, send email.</div>
+          <div class="hook-scripts">Runs: .py · .sh · .ps1</div>
+        </div>
+        <div class="hook-card hc-4">
+          <div class="hook-event">Stop</div>
+          <div class="hook-title">On Session End</div>
+          <div class="hook-desc">Fires when the agent session ends. Use to: clean up temp files, commit changes to git, send a completion report, archive logs.</div>
+          <div class="hook-scripts">Runs: .py · .sh · .ps1</div>
+        </div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">🪝</div>
+        <div><div class="mm-rule-title">⭐ Hooks = Observability + Control</div><div class="mm-rule-body">Hooks turn Claude Code into an <strong>auditable, observable system</strong>. Every tool call can be logged, every result can be validated, every session can trigger downstream workflows — without changing your agent code.</div></div>
+      </div>
+    </div>
+
+    <!-- MCP + Hooks flow -->
+    <div class="mm-card c-vi mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">Full MCP + Hooks Lifecycle</div><div class="mm-card-subtitle">From Claude deciding to call a tool to the hook firing after execution</div></div></div>
+      <div class="mm-flow mm-flow-vi">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">🧠</div><div class="mm-step-lbl">Claude Plans</div><div class="mm-step-sub">Selects MCP tool</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#mc1"/></animateMotion></circle><path id="mc1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">🪝</div><div class="mm-step-lbl">PreToolUse</div><div class="mm-step-sub">Hook fires first</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#mc2"/></animateMotion></circle><path id="mc2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">🔌</div><div class="mm-step-lbl">MCP Server</div><div class="mm-step-sub">Executes tool call</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#mc3"/></animateMotion></circle><path id="mc3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">📤</div><div class="mm-step-lbl">Result Returned</div><div class="mm-step-sub">To Claude context</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#mc4"/></animateMotion></circle><path id="mc4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">🪝</div><div class="mm-step-lbl">PostToolUse</div><div class="mm-step-sub">Hook fires again</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#mc5"/></animateMotion></circle><path id="mc5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">🔁</div><div class="mm-step-lbl">Claude Loops</div><div class="mm-step-sub">Or session ends</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.70s"><mpath href="#mc6"/></animateMotion></circle><path id="mc6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">🪝</div><div class="mm-step-lbl">Stop Hook</div><div class="mm-step-sub">Cleanup + report</div></div>
+      </div>
+    </div>
+
+    <!-- Pitfalls -->
+    <div class="mm-card c-ro">
+      <div class="mm-card-head"><div class="mm-card-ico">⚠️</div><div><div class="mm-card-title">MCP &amp; Hooks Pitfalls</div><div class="mm-card-subtitle">What goes wrong when MCP is misconfigured or hooks are abused</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Too many MCP servers</b> — each server adds latency at startup; 10+ registered servers can noticeably slow Claude Code's first response</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Broad tool permissions</b> — giving an MCP server write access to production databases is like giving a junior dev the root password. Scope tightly.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Heavy hooks</b> — PreToolUse hooks that do expensive work (API calls, DB queries) block every tool call. Keep hooks fast or run async.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>No error handling in hooks</b> — a crashing hook can kill the entire agent session. Always wrap hook scripts in try/except or set -e safety nets.</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-ro">🚫 Overpermission</span>
+        <span class="mm-tag mm-tag-ro">🚫 Heavy Hooks</span>
+        <span class="mm-tag mm-tag-am">💡 Scope Tightly</span>
+      </div>
+    </div>
+
+    <!-- Course complete -->
+    <div class="mm-card c-gr">
+      <div class="mm-card-head"><div class="mm-card-ico">🎓</div><div><div class="mm-card-title">Course Complete — What You Can Build Now</div><div class="mm-card-subtitle">The full stack of Claude Code capabilities you now have</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">✅</div><span><b>Chapter 1–2:</b> Claude models + Claude Code installed, authenticated, running in terminal and IDE</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✅</div><span><b>Chapter 3:</b> Understand the agentic loop, 7 built-in tools, LangGraph internals</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✅</div><span><b>Chapter 4:</b> CLAUDE.md project config, reusable skills, Skills 2.0 token economy</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✅</div><span><b>Chapter 5:</b> Sub-agents with isolated contexts, agent teams with shared task boards</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✅</div><span><b>Chapter 6:</b> Onboard any project, /btw /voice commands, loop scheduling, plugins</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✅</div><span><b>Chapter 7:</b> Custom MCP servers (stdio + HTTP), hook events, full observability stack</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-gr">🎓 7 Hours</span>
+        <span class="mm-tag mm-tag-gr">✅ Production Ready</span>
+        <span class="mm-tag mm-tag-am">🚀 Build Now</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="shared/mindmap.js"></script>
+<script>
+MindMap.init(
+  ['MCP','stdio','HTTP','hook','→','🪝','JSON','tool()','event','🔌'],
+  [22, 165, 270, 210, 38]
+);
+</script>
+</body>
+</html>

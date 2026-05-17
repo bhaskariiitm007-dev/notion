@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Are AI Agents? — Chai aur Code · AI Series</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+/* ── AURORA THEME: Warm Chai Orange + Amber + Teal ── */
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#E8620A,transparent 70%);top:-80px;left:-100px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#C07B00,transparent 70%);top:35%;right:-130px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#0A7A6A,transparent 70%);bottom:-80px;left:40%}
+
+/* ── BADGE, DOT, H1 ── */
+.mm-badge{background:linear-gradient(135deg,var(--or-bg),#FFFAF5);border-color:var(--or-b);color:var(--or)}
+.mm-dot{background:var(--or)}.mm-dot::after{border-color:var(--or)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--or) 0%,var(--am) 28%,var(--te) 60%,var(--gr) 100%)}
+
+/* ── KPI ACCENTS ── */
+.mm-kpi:nth-child(1){--kpi-accent:var(--or)}
+.mm-kpi:nth-child(2){--kpi-accent:var(--am)}
+.mm-kpi:nth-child(3){--kpi-accent:var(--vi)}
+.mm-kpi:nth-child(4){--kpi-accent:var(--gr)}
+
+/* ── CHIP COLOURS ── */
+.mc-1{--chip-bg:var(--or-bg);--chip-border:var(--or-b)}.mc-1:hover{box-shadow:0 10px 26px rgba(232,98,10,.18);border-color:var(--or)!important}
+.mc-2{--chip-bg:var(--te-bg);--chip-border:var(--te-b)}.mc-2:hover{box-shadow:0 10px 26px rgba(10,122,106,.18);border-color:var(--te)!important}
+.mc-3{--chip-bg:var(--am-bg);--chip-border:var(--am-b)}.mc-3:hover{box-shadow:0 10px 26px rgba(192,123,0,.18);border-color:var(--am)!important}
+.mc-1 .chip-label{color:var(--or)}.mc-2 .chip-label{color:var(--te)}.mc-3 .chip-label{color:var(--am)}
+
+/* ── CARD COLOUR CLASSES ── */
+.c-or{--c-accent:var(--or);--c-bg:var(--or-bg);--c-border:var(--or-b);--c-shadow:rgba(232,98,10,.18)}
+.c-am{--c-accent:var(--am);--c-bg:var(--am-bg);--c-border:var(--am-b);--c-shadow:rgba(192,123,0,.18)}
+.c-te{--c-accent:var(--te);--c-bg:var(--te-bg);--c-border:var(--te-b);--c-shadow:rgba(10,122,106,.18)}
+.c-bl{--c-accent:var(--bl);--c-bg:var(--bl-bg);--c-border:var(--bl-b);--c-shadow:rgba(26,82,200,.18)}
+.c-vi{--c-accent:var(--vi);--c-bg:var(--vi-bg);--c-border:var(--vi-b);--c-shadow:rgba(107,63,212,.18)}
+.c-ro{--c-accent:var(--ro);--c-bg:var(--ro-bg);--c-border:var(--ro-b);--c-shadow:rgba(184,24,54,.18)}
+.c-gr{--c-accent:var(--gr);--c-bg:var(--gr-bg);--c-border:var(--gr-b);--c-shadow:rgba(24,122,58,.18)}
+.c-sk{--c-accent:var(--sk);--c-bg:var(--sk-bg);--c-border:var(--sk-b);--c-shadow:rgba(10,110,170,.18)}
+
+/* ── FLOW THEME: ORANGE ── */
+.mm-flow-or{--flow-color:var(--or);--flow-color2:var(--am);--flow-border:var(--or-b);--flow-shadow:rgba(232,98,10,.15);--flow-num-bg:var(--or-bg);--flow-num-border:var(--or-b)}
+.mm-flow-or .mm-dash{stroke:var(--or)}.mm-flow-or .mm-arrowhead{fill:var(--or)}.mm-flow-or .mm-traveldot{fill:var(--or)}.mm-flow-or .mm-step-num{color:var(--or)}
+
+/* ══════════════════════════════════
+   BEFORE / AFTER — Traditional vs AI
+══════════════════════════════════ */
+.ba-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:start;margin-top:12px}
+@media(max-width:560px){.ba-grid{grid-template-columns:1fr}}
+.ba-panel{border-radius:13px;padding:16px}
+.ba-before{background:var(--ro-bg);border:2px solid var(--ro-b)}
+.ba-after{background:var(--gr-bg);border:2px solid var(--gr-b)}
+.ba-arrow-wrap{display:flex;align-items:center;justify-content:center;padding-top:12px;font-size:28px;color:var(--muted)}
+.ba-title{font-size:12px;font-weight:800;margin-bottom:9px;display:flex;align-items:center;gap:6px}
+.ba-before .ba-title{color:var(--ro)}.ba-after .ba-title{color:var(--gr)}
+.ba-item{font-size:11.5px;color:var(--muted);margin-bottom:5px;display:flex;align-items:flex-start;gap:7px;line-height:1.5}
+.ba-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.ba-before .ba-dot{background:var(--ro)}.ba-after .ba-dot{background:var(--gr)}
+
+/* ══════════════════════════════════
+   3-FACTOR ANATOMY
+══════════════════════════════════ */
+.factor-grid{display:grid;grid-template-columns:1fr;gap:9px;margin-top:10px}
+.factor-card{border-radius:11px;padding:13px;transition:transform .3s,box-shadow .3s}
+.factor-card:hover{transform:translateX(5px)}
+.fc-1{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.fc-1:hover{box-shadow:4px 0 18px rgba(107,63,212,.16)}
+.fc-2{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.fc-2:hover{box-shadow:4px 0 18px rgba(26,82,200,.16)}
+.fc-3{background:var(--te-bg);border:1.5px solid var(--te-b)}.fc-3:hover{box-shadow:4px 0 18px rgba(10,122,106,.16)}
+.factor-head{font-size:11.5px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:7px}
+.fc-1 .factor-head{color:var(--vi)}.fc-2 .factor-head{color:var(--bl)}.fc-3 .factor-head{color:var(--te)}
+.factor-body{font-size:11px;color:var(--muted);line-height:1.5}
+
+/* ══════════════════════════════════
+   AGENT FORMULA — Building blocks
+══════════════════════════════════ */
+.formula-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:12px;justify-content:center}
+.formula-block{border-radius:10px;padding:10px 13px;text-align:center;transition:transform .3s,box-shadow .3s;flex-shrink:0}
+.formula-block:hover{transform:translateY(-4px)}
+.fb-llm{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.fb-llm:hover{box-shadow:0 8px 20px rgba(107,63,212,.2)}
+.fb-tools{background:var(--or-bg);border:1.5px solid var(--or-b)}.fb-tools:hover{box-shadow:0 8px 20px rgba(232,98,10,.2)}
+.fb-mem{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.fb-mem:hover{box-shadow:0 8px 20px rgba(26,82,200,.2)}
+.fb-plan{background:var(--am-bg);border:1.5px solid var(--am-b)}.fb-plan:hover{box-shadow:0 8px 20px rgba(192,123,0,.2)}
+.fb-result{background:var(--gr-bg);border:2px solid var(--gr-b)}.fb-result:hover{box-shadow:0 8px 20px rgba(24,122,58,.22)}
+.fb-icon{font-size:20px;display:block;margin-bottom:4px;transition:transform .3s}.formula-block:hover .fb-icon{transform:scale(1.18) rotate(-8deg)}
+.fb-name{font-size:11px;font-weight:800;margin-bottom:2px}
+.fb-llm .fb-name{color:var(--vi)}.fb-tools .fb-name{color:var(--or)}.fb-mem .fb-name{color:var(--bl)}.fb-plan .fb-name{color:var(--am)}.fb-result .fb-name{color:var(--gr)}
+.fb-sub{font-size:9.5px;color:var(--muted)}
+.formula-op{font-size:18px;font-weight:900;color:var(--muted);flex-shrink:0}
+.formula-eq{font-size:22px;font-weight:900;color:var(--gr);flex-shrink:0}
+
+/* ══════════════════════════════════
+   PRE-TRAINING REVOLUTION — old vs new
+══════════════════════════════════ */
+.rev-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+@media(max-width:520px){.rev-grid{grid-template-columns:1fr}}
+.rev-panel{border-radius:12px;padding:14px}
+.rev-old{background:var(--s2);border:1.5px solid var(--border)}
+.rev-new{background:var(--gr-bg);border:1.5px solid var(--gr-b)}
+.rev-head{font-size:11.5px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.rev-old .rev-head{color:var(--muted)}.rev-new .rev-head{color:var(--gr)}
+.rev-step{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--muted);margin-bottom:5px}
+.rev-arrow-small{font-size:10px;color:var(--muted)}
+.rev-pill{padding:2px 8px;border-radius:10px;font-size:9.5px;font-weight:700;font-family:var(--fm);display:inline-block;margin-top:2px}
+.rev-old .rev-pill{background:var(--s2);color:var(--muted);border:1px solid var(--border)}
+.rev-new .rev-pill{background:var(--gr);color:#fff}
+
+/* ══════════════════════════════════
+   VS DUEL — IRCTC Fixed Script vs Agent
+══════════════════════════════════ */
+.vs-duel{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:start;margin-top:10px}
+@media(max-width:500px){.vs-duel{grid-template-columns:1fr}}
+.vs-badge-circle{width:38px;height:38px;background:#1E1C18;color:#F7F6F2;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;align-self:center;animation:vsGlow 2s ease-in-out infinite alternate}
+@keyframes vsGlow{0%{box-shadow:0 4px 14px rgba(0,0,0,.25)}100%{box-shadow:0 4px 28px rgba(0,0,0,.4)}}
+.vs-panel{border-radius:12px;padding:13px}
+.vs-script{background:var(--ro-bg);border:1.5px solid var(--ro-b)}
+.vs-agent{background:var(--gr-bg);border:1.5px solid var(--gr-b)}
+.vs-panel-title{font-size:11.5px;font-weight:800;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.vs-script .vs-panel-title{color:var(--ro)}.vs-agent .vs-panel-title{color:var(--gr)}
+.vs-item{font-size:11px;color:var(--muted);margin-bottom:4px;display:flex;align-items:flex-start;gap:6px;line-height:1.5}
+.vdot-s{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px;background:var(--ro)}
+.vdot-a{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px;background:var(--gr)}
+
+/* ══════════════════════════════════
+   7 AGENT TYPES — grid
+══════════════════════════════════ */
+.agents-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+@media(max-width:480px){.agents-grid{grid-template-columns:1fr 1fr}}
+.agent-card{border-radius:11px;padding:11px;text-align:center;transition:transform .3s,box-shadow .3s;cursor:default;position:relative;overflow:hidden}
+.agent-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px}
+.agent-card:hover{transform:translateY(-4px)}
+.ag-1{background:var(--te-bg);border:1.5px solid var(--te-b)}.ag-1::before{background:var(--te)}.ag-1:hover{box-shadow:0 8px 22px rgba(10,122,106,.2)}
+.ag-2{background:var(--or-bg);border:1.5px solid var(--or-b)}.ag-2::before{background:var(--or)}.ag-2:hover{box-shadow:0 8px 22px rgba(232,98,10,.2)}
+.ag-3{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.ag-3::before{background:var(--bl)}.ag-3:hover{box-shadow:0 8px 22px rgba(26,82,200,.2)}
+.ag-4{background:var(--am-bg);border:1.5px solid var(--am-b)}.ag-4::before{background:var(--am)}.ag-4:hover{box-shadow:0 8px 22px rgba(192,123,0,.2)}
+.ag-5{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.ag-5::before{background:var(--vi)}.ag-5:hover{box-shadow:0 8px 22px rgba(107,63,212,.2)}
+.ag-6{background:var(--gr-bg);border:1.5px solid var(--gr-b)}.ag-6::before{background:var(--gr)}.ag-6:hover{box-shadow:0 8px 22px rgba(24,122,58,.2)}
+.agent-icon{font-size:20px;display:block;margin-bottom:5px;transition:transform .3s}.agent-card:hover .agent-icon{transform:scale(1.2) rotate(-8deg)}
+.agent-name{font-size:10.5px;font-weight:800;margin-bottom:3px}
+.ag-1 .agent-name{color:var(--te)}.ag-2 .agent-name{color:var(--or)}.ag-3 .agent-name{color:var(--bl)}
+.ag-4 .agent-name{color:var(--am)}.ag-5 .agent-name{color:var(--vi)}.ag-6 .agent-name{color:var(--gr)}
+.agent-desc{font-size:9.5px;color:var(--muted);line-height:1.4}
+
+/* ══════════════════════════════════
+   COMPLEXITY SPECTRUM BAR
+══════════════════════════════════ */
+.spectrum-wrap{margin-top:12px}
+.spec-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:var(--fm);margin-bottom:5px}
+.spec-bar{height:8px;border-radius:4px;background:linear-gradient(90deg,var(--te) 0%,var(--am) 40%,var(--or) 70%,var(--vi) 100%);margin-bottom:14px}
+.spec-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+@media(max-width:520px){.spec-cards{grid-template-columns:1fr 1fr}}
+.spec-card{border-radius:11px;padding:12px;text-align:center;transition:transform .3s,box-shadow .3s;cursor:default}
+.spec-card:hover{transform:translateY(-4px)}
+.sc-1{background:var(--te-bg);border:1.5px solid var(--te-b)}.sc-1:hover{box-shadow:0 8px 22px rgba(10,122,106,.2)}
+.sc-2{background:var(--am-bg);border:1.5px solid var(--am-b)}.sc-2:hover{box-shadow:0 8px 22px rgba(192,123,0,.2)}
+.sc-3{background:var(--or-bg);border:1.5px solid var(--or-b)}.sc-3:hover{box-shadow:0 8px 22px rgba(232,98,10,.2)}
+.sc-4{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.sc-4:hover{box-shadow:0 8px 22px rgba(107,63,212,.2)}
+.sc-icon{font-size:20px;display:block;margin-bottom:5px;transition:transform .3s}.spec-card:hover .sc-icon{transform:scale(1.15) rotate(-8deg)}
+.sc-name{font-size:10.5px;font-weight:800;margin-bottom:3px}
+.sc-1 .sc-name{color:var(--te)}.sc-2 .sc-name{color:var(--am)}.sc-3 .sc-name{color:var(--or)}.sc-4 .sc-name{color:var(--vi)}
+.sc-desc{font-size:9.5px;color:var(--muted);line-height:1.4}
+
+/* ══════════════════════════════════
+   SYNC VS ASYNC — Waiter
+══════════════════════════════════ */
+.waiter-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+@media(max-width:500px){.waiter-grid{grid-template-columns:1fr}}
+.waiter-card{border-radius:12px;padding:13px;transition:transform .3s}
+.waiter-card:hover{transform:translateY(-3px)}
+.wc-sync{background:var(--ro-bg);border:1.5px solid var(--ro-b)}.wc-sync:hover{box-shadow:0 7px 18px rgba(184,24,54,.16)}
+.wc-async{background:var(--gr-bg);border:1.5px solid var(--gr-b)}.wc-async:hover{box-shadow:0 7px 18px rgba(24,122,58,.16)}
+.waiter-title{font-size:11.5px;font-weight:800;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.wc-sync .waiter-title{color:var(--ro)}.wc-async .waiter-title{color:var(--gr)}
+.waiter-item{font-size:11px;color:var(--muted);margin-bottom:4px;display:flex;align-items:flex-start;gap:6px;line-height:1.45}
+.wdot-s{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px;background:var(--ro)}
+.wdot-a{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px;background:var(--gr)}
+
+/* ══════════════════════════════════
+   MODEL SELECTION — Commercial vs Open Source
+══════════════════════════════════ */
+.model-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+@media(max-width:500px){.model-compare{grid-template-columns:1fr}}
+.model-panel{border-radius:12px;padding:13px;transition:transform .3s}
+.model-panel:hover{transform:translateY(-3px)}
+.mp-comm{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.mp-comm:hover{box-shadow:0 7px 18px rgba(26,82,200,.16)}
+.mp-os{background:var(--gr-bg);border:1.5px solid var(--gr-b)}.mp-os:hover{box-shadow:0 7px 18px rgba(24,122,58,.16)}
+.mp-title{font-size:11.5px;font-weight:800;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.mp-comm .mp-title{color:var(--bl)}.mp-os .mp-title{color:var(--gr)}
+.mp-item{font-size:11px;color:var(--muted);margin-bottom:4px;line-height:1.45}
+.mp-tag{display:inline-block;padding:2px 8px;border-radius:8px;font-size:9.5px;font-weight:700;font-family:var(--fm);margin-top:6px}
+.mp-comm .mp-tag{background:var(--bl);color:#fff}.mp-os .mp-tag{background:var(--gr);color:#fff}
+
+/* ══════════════════════════════════
+   AGENTIC FRAMEWORKS
+══════════════════════════════════ */
+.fw-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-top:12px}
+@media(max-width:640px){.fw-grid{grid-template-columns:1fr 1fr}}
+.fw-card{border-radius:12px;padding:13px;text-align:center;transition:transform .3s,box-shadow .3s;position:relative;overflow:hidden;cursor:default}
+.fw-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.fw-card:hover{transform:translateY(-5px)}
+.fw-1{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.fw-1::before{background:var(--bl)}.fw-1:hover{box-shadow:0 10px 26px rgba(26,82,200,.22)}
+.fw-2{background:var(--te-bg);border:1.5px solid var(--te-b)}.fw-2::before{background:var(--te)}.fw-2:hover{box-shadow:0 10px 26px rgba(10,122,106,.22)}
+.fw-3{background:var(--or-bg);border:1.5px solid var(--or-b)}.fw-3::before{background:var(--or)}.fw-3:hover{box-shadow:0 10px 26px rgba(232,98,10,.22)}
+.fw-4{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.fw-4::before{background:var(--vi)}.fw-4:hover{box-shadow:0 10px 26px rgba(107,63,212,.22)}
+.fw-5{background:var(--am-bg);border:1.5px solid var(--am-b)}.fw-5::before{background:var(--am)}.fw-5:hover{box-shadow:0 10px 26px rgba(192,123,0,.22)}
+.fw-icon{font-size:22px;display:block;margin-bottom:5px;transition:transform .3s}.fw-card:hover .fw-icon{transform:scale(1.2) rotate(-8deg)}
+.fw-name{font-size:11px;font-weight:800;margin-bottom:3px}
+.fw-1 .fw-name{color:var(--bl)}.fw-2 .fw-name{color:var(--te)}.fw-3 .fw-name{color:var(--or)}.fw-4 .fw-name{color:var(--vi)}.fw-5 .fw-name{color:var(--am)}
+.fw-tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:9px;font-weight:700;margin-bottom:5px}
+.fw-1 .fw-tag{background:var(--bl);color:#fff}.fw-2 .fw-tag{background:var(--te);color:#fff}.fw-3 .fw-tag{background:var(--or);color:#fff}
+.fw-4 .fw-tag{background:var(--vi);color:#fff}.fw-5 .fw-tag{background:var(--am);color:#fff}
+.fw-desc{font-size:9.5px;color:var(--muted);line-height:1.4}
+
+/* ══════════════════════════════════
+   5 FOUNDATION PRINCIPLES — skill grid
+══════════════════════════════════ */
+.principles-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+@media(max-width:500px){.principles-grid{grid-template-columns:1fr}}
+.principle-card{border-radius:11px;padding:13px;transition:transform .3s,box-shadow .3s;border-left:4px solid transparent}
+.principle-card:hover{transform:translateX(5px)}
+.pr-1{background:var(--or-bg);border-left-color:var(--or)}.pr-1:hover{box-shadow:5px 0 18px rgba(232,98,10,.16)}
+.pr-2{background:var(--bl-bg);border-left-color:var(--bl)}.pr-2:hover{box-shadow:5px 0 18px rgba(26,82,200,.16)}
+.pr-3{background:var(--te-bg);border-left-color:var(--te)}.pr-3:hover{box-shadow:5px 0 18px rgba(10,122,106,.16)}
+.pr-4{background:var(--vi-bg);border-left-color:var(--vi)}.pr-4:hover{box-shadow:5px 0 18px rgba(107,63,212,.16)}
+.pr-5{background:var(--am-bg);border-left-color:var(--am);grid-column:1/-1}.pr-5:hover{box-shadow:5px 0 18px rgba(192,123,0,.16)}
+.pr-head{font-size:12px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:7px}
+.pr-1 .pr-head{color:var(--or)}.pr-2 .pr-head{color:var(--bl)}.pr-3 .pr-head{color:var(--te)}
+.pr-4 .pr-head{color:var(--vi)}.pr-5 .pr-head{color:var(--am)}
+.pr-body{font-size:11px;color:var(--muted);line-height:1.5}
+</style>
+</head>
+<body>
+
+<div class="aurora">
+  <div class="aurora-blob"></div>
+  <div class="aurora-blob"></div>
+  <div class="aurora-blob"></div>
+</div>
+<div class="noise"></div>
+<canvas id="mm-canvas"></canvas>
+
+<div class="mm-page">
+
+  <!-- ── HEADER ── -->
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Chai aur Code · AI Series · Episode 1</div>
+    <h1>What Are<br>AI Agents?</h1>
+    <p>Goal-Oriented Intelligence · Pre-Training Revolution · 7 Types of Agents · Agentic Frameworks</p>
+  </div>
+
+  <!-- ── KPIs ── -->
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="3">0</div><div class="mm-kpi-label">Factors that define<br>a true AI Agent</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="7">0</div><div class="mm-kpi-label">Types of agents<br>in the ecosystem</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="5">0</div><div class="mm-kpi-label">Foundation principles<br>for building agents</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">LLM+3</div><div class="mm-kpi-label">Agent = LLM + Tools<br>+ Memory + Planning</div></div>
+  </div>
+
+  <!-- ── PILLAR CHIPS ── -->
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">🍵</span><div class="chip-label">Not Just a Chatbot</div><div class="chip-desc">AI Agents think, make decisions, and take actions autonomously — they don't just respond.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">🎯</span><div class="chip-label">Goal-Oriented Intelligence</div><div class="chip-desc">You state what you want. The agent finds its own path — adapting to situations along the way.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">🔄</span><div class="chip-label">Recipe → Experienced Cook</div><div class="chip-desc">Old software followed exact steps. Agents adapt like a smart cook who decides what to make based on what's available.</div></div>
+  </div>
+
+  <div class="mm-grid">
+
+    <!-- ══ CARD 1: Before/After — Full Width ══ -->
+    <div class="mm-card c-or mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">Traditional Software vs AI Agents — The Mindset Shift</div><div class="mm-card-subtitle">Recipe-following machines vs. intelligent, adaptive problem-solvers</div></div></div>
+      <div class="ba-grid">
+        <div class="ba-panel ba-before">
+          <div class="ba-title">❌ Traditional Software (Recipe)</div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Follows exact, predefined steps only</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>If ginger not written in recipe → it will <b>never</b> be added</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Cannot deviate, adapt, or make judgment calls</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>IRCTC: date → find train → book → pay. Nothing more.</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Needed ML engineers, GPUs, weeks of training per use-case</span></div>
+        </div>
+        <div class="ba-arrow-wrap">→</div>
+        <div class="ba-panel ba-after">
+          <div class="ba-title">✅ AI Agent (Experienced Cook)</div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Understands the <b>goal</b>, finds its own path to it</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>"It's cold today, so ginger tea is the right call" — decides independently</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Adapts to new situations, context, and constraints</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>IRCTC Agent: suggests alt trains, monitors waitlists, re-routes if congested</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>One API call unlocks the world's knowledge — no per-task training needed</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ CARD 2: 3 Factors — Half ══ -->
+    <div class="mm-card c-vi">
+      <div class="mm-card-head"><div class="mm-card-ico">🔍</div><div><div class="mm-card-title">3 Factors That Define a True Agent</div><div class="mm-card-subtitle">How to tell if something is really an agent</div></div></div>
+      <div class="factor-grid">
+        <div class="factor-card fc-1">
+          <div class="factor-head">⚡ Real Decision Making</div>
+          <div class="factor-body">Doesn't just suggest — actually makes decisions and puts them into action. Like completing a UPI payment without being asked to.</div>
+        </div>
+        <div class="factor-card fc-2">
+          <div class="factor-head">🗺️ Context Awareness</div>
+          <div class="factor-body">Remembers your situation, goal, history, and environment. If you suggested Postgres once, it won't suddenly write MongoDB commands.</div>
+        </div>
+        <div class="factor-card fc-3">
+          <div class="factor-head">🌱 Adaptive Behavior</div>
+          <div class="factor-body">Learns and adapts to new situations. Behavior is modified based on the situation — not hardcoded scripts.</div>
+        </div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-vi">⚡ Decision</span>
+        <span class="mm-tag mm-tag-bl">🗺️ Context</span>
+        <span class="mm-tag mm-tag-te">🌱 Adaptive</span>
+      </div>
+    </div>
+
+    <!-- ══ CARD 3: Agent Formula — Half ══ -->
+    <div class="mm-card c-gr">
+      <div class="mm-card-head"><div class="mm-card-ico">🧩</div><div><div class="mm-card-title">The Agent Formula</div><div class="mm-card-subtitle">LLMs alone aren't agents — these 4 pieces make one</div></div></div>
+      <div class="formula-row">
+        <div class="formula-block fb-llm">
+          <span class="fb-icon">🧠</span>
+          <div class="fb-name">LLM</div>
+          <div class="fb-sub">The Brain</div>
+        </div>
+        <div class="formula-op">+</div>
+        <div class="formula-block fb-tools">
+          <span class="fb-icon">🔧</span>
+          <div class="fb-name">Tools</div>
+          <div class="fb-sub">APIs & Actions</div>
+        </div>
+        <div class="formula-op">+</div>
+        <div class="formula-block fb-mem">
+          <span class="fb-icon">💾</span>
+          <div class="fb-name">Memory</div>
+          <div class="fb-sub">Context Store</div>
+        </div>
+        <div class="formula-op">+</div>
+        <div class="formula-block fb-plan">
+          <span class="fb-icon">📋</span>
+          <div class="fb-name">Planning</div>
+          <div class="fb-sub">Think Depth</div>
+        </div>
+        <div class="formula-eq">=</div>
+        <div class="formula-block fb-result">
+          <span class="fb-icon">🤖</span>
+          <div class="fb-name">Agent</div>
+          <div class="fb-sub">Powerful!</div>
+        </div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">⚠️</div>
+        <div><div class="mm-rule-title">LLMs alone are NOT agents</div><div class="mm-rule-body">LLMs only provide the brain. You must wire up <strong>Tools</strong> (booking, payment, cancel), <strong>Memory</strong> (context databases), and <strong>Planning</strong> (how much to think) to build a real agent.</div></div>
+      </div>
+    </div>
+
+    <!-- ══ CARD 4: Pre-Training Revolution — Full Width ══ -->
+    <div class="mm-card c-am mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🚀</div><div><div class="mm-card-title">The Pre-Training Revolution — How We Got Here</div><div class="mm-card-subtitle">From weeks-long custom ML pipelines to one API call unlocking the world's knowledge</div></div></div>
+      <div class="rev-grid">
+        <div class="rev-panel rev-old">
+          <div class="rev-head">🏪 Old Era — Grocery Store Analogy</div>
+          <div class="rev-step"><span>1.</span><span>Collect thousands of labeled training examples</span></div>
+          <div class="rev-step"><span>2.</span><span>Clean & label data (cat vs dog, fraud vs legitimate)</span></div>
+          <div class="rev-step"><span>3.</span><span>Hire ML Engineer (expensive) to pick the right algorithm</span></div>
+          <div class="rev-step"><span>4.</span><span>Train on GPUs — days to months depending on data size</span></div>
+          <div class="rev-step"><span>5.</span><span>DevOps deploys, team maintains — per-application, every time</span></div>
+          <div class="rev-step"><span>6.</span><span>Start over for any new type of problem</span></div>
+          <div class="rev-pill">Find location · License · Stock · Staff · Repeat</div>
+        </div>
+        <div class="rev-panel rev-new">
+          <div class="rev-head">⚡ LLM Era — Blinkit Analogy</div>
+          <div class="rev-step"><span>1.</span><span>"Attention is All You Need" — Transformer architecture unlocks scale</span></div>
+          <div class="rev-step"><span>2.</span><span>Big companies scrape billions of web pages, books, code</span></div>
+          <div class="rev-step"><span>3.</span><span>Train one massive model on all of it using GPU clusters</span></div>
+          <div class="rev-step"><span>4.</span><span>Wrap it in an API — GPT, Claude, Gemini, Llama, DeepSeek</span></div>
+          <div class="rev-step"><span>5.</span><span>Make one API call → instant access to world's knowledge</span></div>
+          <div class="rev-step"><span>6.</span><span>Specialize with training data (coding, medical, legal) → domain models</span></div>
+          <div class="rev-pill">Open app · Order · It arrives · Zero setup</div>
+        </div>
+      </div>
+      <div class="mm-tags" style="margin-top:11px">
+        <span class="mm-tag mm-tag-am">📄 "Attention Is All You Need"</span>
+        <span class="mm-tag mm-tag-am">🌐 GPT · Claude · Gemini · Llama</span>
+        <span class="mm-tag mm-tag-te">⚡ One API call</span>
+        <span class="mm-tag mm-tag-or">🏪 Grocery Store → Blinkit</span>
+      </div>
+    </div>
+
+    <!-- ══ CARD 5: IRCTC VS Duel — Half ══ -->
+    <div class="mm-card c-ro">
+      <div class="mm-card-head"><div class="mm-card-ico">🚂</div><div><div class="mm-card-title">Fixed Script vs. AI Agent</div><div class="mm-card-subtitle">Same problem, totally different approach — IRCTC booking</div></div></div>
+      <div class="vs-duel">
+        <div class="vs-panel vs-script">
+          <div class="vs-panel-title">📋 Fixed Script</div>
+          <div class="vs-item"><div class="vdot-s"></div><span>Date → Find Train → Book → Pay. Done.</span></div>
+          <div class="vs-item"><div class="vdot-s"></div><span>Cannot change date if congested</span></div>
+          <div class="vs-item"><div class="vdot-s"></div><span>Cannot suggest alternate train or flight</span></div>
+          <div class="vs-item"><div class="vdot-s"></div><span>Cannot monitor or alert on waitlist</span></div>
+          <div class="vs-item"><div class="vdot-s"></div><span>Cannot re-route if station has no seats</span></div>
+        </div>
+        <div class="vs-badge-circle">VS</div>
+        <div class="vs-panel vs-agent">
+          <div class="vs-panel-title">🤖 AI Agent</div>
+          <div class="vs-item"><div class="vdot-a"></div><span>Detects congestion → books from adjacent station</span></div>
+          <div class="vs-item"><div class="vdot-a"></div><span>Suggests alternate date if traffic better</span></div>
+          <div class="vs-item"><div class="vdot-a"></div><span>Recommends same-cost flight alternative</span></div>
+          <div class="vs-item"><div class="vdot-a"></div><span>Monitors waitlist → alerts on confirmation</span></div>
+          <div class="vs-item"><div class="vdot-a"></div><span>Goal: <b>you reach your destination</b> — not just "book a ticket"</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ CARD 6: 7 Types of Agents — Half ══ -->
+    <div class="mm-card c-bl">
+      <div class="mm-card-head"><div class="mm-card-ico">🏥</div><div><div class="mm-card-title">7 Types of AI Agents</div><div class="mm-card-subtitle">Like a hospital with specialized doctors — right agent for right job</div></div></div>
+      <div class="agents-grid">
+        <div class="agent-card ag-1"><span class="agent-icon">💬</span><div class="agent-name">Conversational</div><div class="agent-desc">Chat support, customer service bots — highest market demand</div></div>
+        <div class="agent-card ag-2"><span class="agent-icon">⚙️</span><div class="agent-name">Business Automation</div><div class="agent-desc">UI/workflow automation, tools like Open Interpreter</div></div>
+        <div class="agent-card ag-3"><span class="agent-icon">🔬</span><div class="agent-name">Research</div><div class="agent-desc">Perplexity-style — synthesizes articles, books, publications</div></div>
+        <div class="agent-card ag-4"><span class="agent-icon">📊</span><div class="agent-name">Analytics</div><div class="agent-desc">Data analysis, Excel patterns, Power BI-style insights</div></div>
+        <div class="agent-card ag-5"><span class="agent-icon">💻</span><div class="agent-name">Developer</div><div class="agent-desc">Cursor, GitHub Copilot — trained on Stack Overflow &amp; code</div></div>
+        <div class="agent-card ag-6"><span class="agent-icon">🎯</span><div class="agent-name">Domain-Specific</div><div class="agent-desc">Legal, medical, finance, HR — specialized &amp; high-value</div></div>
+      </div>
+      <div class="mm-rule" style="margin-top:11px">
+        <div class="mm-rule-icon">💡</div>
+        <div><div class="mm-rule-title">Specialize with a System Prompt</div><div class="mm-rule-body">You can make any LLM specialize: <strong>"You are specialized in NEET exam prep"</strong>. The model already has all the data — you just focus it.</div></div>
+      </div>
+    </div>
+
+    <!-- ══ CARD 7: Complexity Spectrum — Full Width ══ -->
+    <div class="mm-card c-vi mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">📈</div><div><div class="mm-card-title">The Complexity Spectrum — When to Use What</div><div class="mm-card-subtitle">Don't use agents for everything — match the tool to the complexity</div></div></div>
+      <div class="spectrum-wrap">
+        <div class="spec-labels"><span>⚡ Simple &amp; Predictable</span><span>Complex &amp; Dynamic ⚡</span></div>
+        <div class="spec-bar"></div>
+        <div class="spec-cards">
+          <div class="spec-card sc-1">
+            <span class="sc-icon">📜</span>
+            <div class="sc-name">Simple Code</div>
+            <div class="sc-desc">Cron job, one-time script, exact predefined steps. No AI needed — just run it.</div>
+          </div>
+          <div class="spec-card sc-2">
+            <span class="sc-icon">🔀</span>
+            <div class="sc-name">Deterministic Workflow</div>
+            <div class="sc-desc">CSV → LLM → If positive, do X. If negative, do Y. If no response, retry. Orchestrate with tools like Langchain or Inngest.</div>
+          </div>
+          <div class="spec-card sc-3">
+            <span class="sc-icon">📚</span>
+            <div class="sc-name">RAG</div>
+            <div class="sc-desc">Add external knowledge to LLM — company docs, recent events. New databases (vector stores) made this explode in popularity.</div>
+          </div>
+          <div class="spec-card sc-4">
+            <span class="sc-icon">🤖</span>
+            <div class="sc-name">AI Agents</div>
+            <div class="sc-desc">Dynamic decisions, tool use, sub-agents, memory, adaptive behavior. Use only when complexity truly demands it.</div>
+          </div>
+        </div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">⚠️</div>
+        <div><div class="mm-rule-title">Don't Over-Engineer!</div><div class="mm-rule-body">Many people attach agents where a simple cron job or workflow would do the job. Agents consume more tokens, add latency, and introduce security risks. <strong>Match complexity to the problem.</strong></div></div>
+      </div>
+    </div>
+
+    <!-- ══ CARD 8: Sync vs Async — Half ══ -->
+    <div class="mm-card c-gr">
+      <div class="mm-card-head"><div class="mm-card-ico">⚡</div><div><div class="mm-card-title">Sync vs Async — The Waiter Analogy</div><div class="mm-card-subtitle">Why async agents are faster and more efficient</div></div></div>
+      <div class="waiter-grid">
+        <div class="waiter-card wc-sync">
+          <div class="waiter-title">🐢 Synchronous (Blocking)</div>
+          <div class="waiter-item"><div class="wdot-s"></div><span>Waiter takes order at Table 1</span></div>
+          <div class="waiter-item"><div class="wdot-s"></div><span>Goes to kitchen — <b>stands and waits</b></span></div>
+          <div class="waiter-item"><div class="wdot-s"></div><span>Food ready → brings to Table 1</span></div>
+          <div class="waiter-item"><div class="wdot-s"></div><span>Only THEN goes to Table 2</span></div>
+          <div class="waiter-item" style="font-weight:700;color:var(--ro)">CPU cycles wasted waiting</div>
+        </div>
+        <div class="waiter-card wc-async">
+          <div class="waiter-title">🚀 Asynchronous (Smart)</div>
+          <div class="waiter-item"><div class="wdot-a"></div><span>Orders placed at Table 1 → kitchen starts</span></div>
+          <div class="waiter-item"><div class="wdot-a"></div><span>Immediately goes to Table 2 (just water → done)</span></div>
+          <div class="waiter-item"><div class="wdot-a"></div><span>Table 1's food ready in background → delivers</span></div>
+          <div class="waiter-item"><div class="wdot-a"></div><span>Sub-agents spun up for parallel tasks</span></div>
+          <div class="waiter-item" style="font-weight:700;color:var(--gr)">Maximum throughput, zero idle time</div>
+        </div>
+      </div>
+      <div class="mm-tags" style="margin-top:10px">
+        <span class="mm-tag mm-tag-gr">⚡ Prefilled email replies</span>
+        <span class="mm-tag mm-tag-gr">📋 Auto-fill invoices</span>
+        <span class="mm-tag mm-tag-te">🔀 Sub-agents in parallel</span>
+      </div>
+    </div>
+
+    <!-- ══ CARD 9: Model Selection — Half ══ -->
+    <div class="mm-card c-am">
+      <div class="mm-card-head"><div class="mm-card-ico">🚗</div><div><div class="mm-card-title">Model Selection — The Car Analogy</div><div class="mm-card-subtitle">Commercial vs Open Source — like Alto vs BMW vs Electric</div></div></div>
+      <div class="model-compare">
+        <div class="model-panel mp-comm">
+          <div class="mp-title">💼 Commercial (OpenAI / Anthropic)</div>
+          <div class="mp-item">✦ No idea what's inside — black box</div>
+          <div class="mp-item">✦ Accessed via paid API</div>
+          <div class="mp-item">✦ Pricing can change anytime (limits reduced)</div>
+          <div class="mp-item">✦ Very reliable, consistently great output</div>
+          <div class="mp-item">✦ Best for complex tasks: coding, deep analysis</div>
+          <div class="mp-tag">Reliability ↑ · Control ↓</div>
+        </div>
+        <div class="model-panel mp-os">
+          <div class="mp-title">🔓 Open Source (Meta Llama / Mistral)</div>
+          <div class="mp-item">✦ Full access to weights and architecture</div>
+          <div class="mp-item">✦ Free code — but YOU pay infra/GPU costs</div>
+          <div class="mp-item">✦ Host it yourself on your servers</div>
+          <div class="mp-item">✦ Variable quality — depends on fine-tuning</div>
+          <div class="mp-item">✦ Best for simple, high-volume tasks (Gemma, etc.)</div>
+          <div class="mp-tag">Control ↑ · Reliability varies</div>
+        </div>
+      </div>
+      <div class="mm-rule" style="margin-top:10px">
+        <div class="mm-rule-icon">🎯</div>
+        <div><div class="mm-rule-title">Smart Routing: Query Classifier</div><div class="mm-rule-body">Build a <strong>query classifier agent</strong> to route tasks: coding query → Anthropic, image generation → OpenAI, simple FAQ → cheap Gemma. One switch to change models anytime.</div></div>
+      </div>
+    </div>
+
+    <!-- ══ CARD 10: Agentic Frameworks — Full Width ══ -->
+    <div class="mm-card c-bl mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🏗️</div><div><div class="mm-card-title">Agentic Frameworks — Pick Your Tool</div><div class="mm-card-subtitle">Like Laravel or Rails for web dev — these give you the scaffolding for agents</div></div></div>
+      <div class="fw-grid">
+        <div class="fw-card fw-1">
+          <span class="fw-icon">🕸️</span>
+          <div class="fw-name">LangGraph</div>
+          <div class="fw-tag">Graph-based</div>
+          <div class="fw-desc">First major framework. Graph/node/edge architecture. Robust, still widely used in production.</div>
+        </div>
+        <div class="fw-card fw-2">
+          <span class="fw-icon">🤝</span>
+          <div class="fw-name">AutoGen</div>
+          <div class="fw-tag">Multi-agent</div>
+          <div class="fw-desc">Best for agent-to-agent conversations. Each agent has its own tools and memory. Great for simple use cases.</div>
+        </div>
+        <div class="fw-card fw-3">
+          <span class="fw-icon">👥</span>
+          <div class="fw-name">CrewAI</div>
+          <div class="fw-tag">Task-based</div>
+          <div class="fw-desc">Fastest to prototype. Task abstraction makes setup feel effortless. Great for POCs.</div>
+        </div>
+        <div class="fw-card fw-4">
+          <span class="fw-icon">🔮</span>
+          <div class="fw-name">OpenAI Agent SDK</div>
+          <div class="fw-tag">Official</div>
+          <div class="fw-desc">OpenAI's own framework with best practices baked in — tool calling, tracing, streaming included.</div>
+        </div>
+        <div class="fw-card fw-5">
+          <span class="fw-icon">▲</span>
+          <div class="fw-name">Vercel AI SDK</div>
+          <div class="fw-tag">Modern</div>
+          <div class="fw-desc">Newest player — same tool calling + observability + streaming, integrated for modern apps.</div>
+        </div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">🏆</div>
+        <div><div class="mm-rule-title">Framework ≠ Better AI</div><div class="mm-rule-body">Your AI quality doesn't improve because of the framework — just like React vs Vue doesn't decide whether your app is useful. <strong>Understand the problem. Choose what fits your timeline and team.</strong> Keep models swappable with one config line.</div></div>
+      </div>
+    </div>
+
+    <!-- ══ CARD 11: Agent Flow Diagram — Full Width ══ -->
+    <div class="mm-card c-or mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">How an AI Agent Processes a Request — Full Flow</div><div class="mm-card-subtitle">From user input to adaptive intelligent action</div></div></div>
+      <div class="mm-flow mm-flow-or">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">📥</div><div class="mm-step-lbl">Receive Goal</div><div class="mm-step-sub">User states desired outcome</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#ag1"/></animateMotion></circle><path id="ag1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">🧠</div><div class="mm-step-lbl">Parse Context</div><div class="mm-step-sub">History, env, constraints</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#ag2"/></animateMotion></circle><path id="ag2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">📋</div><div class="mm-step-lbl">Plan Sub-tasks</div><div class="mm-step-sub">Break goal into steps</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#ag3"/></animateMotion></circle><path id="ag3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">🔧</div><div class="mm-step-lbl">Call Tools</div><div class="mm-step-sub">APIs, search, DB, email</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#ag4"/></animateMotion></circle><path id="ag4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">⚡</div><div class="mm-step-lbl">Async Parallel</div><div class="mm-step-sub">Sub-agents run in parallel</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#ag5"/></animateMotion></circle><path id="ag5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">🎯</div><div class="mm-step-lbl">Decide &amp; Act</div><div class="mm-step-sub">Execute best path found</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.7s"><mpath href="#ag6"/></animateMotion></circle><path id="ag6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">🔁</div><div class="mm-step-lbl">Learn &amp; Refine</div><div class="mm-step-sub">Feedback loop adapts</div></div>
+      </div>
+    </div>
+
+    <!-- ══ CARD 12: 5 Foundation Principles — Full Width ══ -->
+    <div class="mm-card c-te mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🏛️</div><div><div class="mm-card-title">5 Foundation Principles for Building Agents</div><div class="mm-card-subtitle">These hold true regardless of framework, language, or LLM provider</div></div></div>
+      <div class="principles-grid">
+        <div class="principle-card pr-1">
+          <div class="pr-head">📈 Scalable from Day 1</div>
+          <div class="pr-body">Not "1M users from Day 1" — but know your token cost at scale. One mistake can turn a ₹1,000 bill into ₹1,00,000. AI costs ≠ free database calls.</div>
+        </div>
+        <div class="principle-card pr-2">
+          <div class="pr-head">🧩 Modular by Design</div>
+          <div class="pr-body">Each tool in a separate file with separate access. If one tool gets an update, only that tool changes — not the whole agent system.</div>
+        </div>
+        <div class="principle-card pr-3">
+          <div class="pr-head">🔁 Continuous Learning Loop</div>
+          <div class="pr-body">Hardest to implement. Design feedback mechanisms so the agent learns from mistakes. What went right? What went wrong? Why? Build the analysis loop.</div>
+        </div>
+        <div class="principle-card pr-4">
+          <div class="pr-head">🛡️ Resilient by Default</div>
+          <div class="pr-body">APIs fail. Networks drop. LLMs time out. Every major framework provides retry logic, fallback handlers, and observability — use all of it.</div>
+        </div>
+        <div class="principle-card pr-5">
+          <div class="pr-head">🔮 Future-Proof Architecture</div>
+          <div class="pr-body">Something changes every weekend in AI. Abstract your code so the LLM is swappable with one config line. Don't hardcode "use GPT-4 always" — use a router. The winner this week might not be the winner next month.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ CARD 13: Common Mistakes — Half ══ -->
+    <div class="mm-card c-ro">
+      <div class="mm-card-head"><div class="mm-card-ico">⚠️</div><div><div class="mm-card-title">Common Mistakes to Avoid</div><div class="mm-card-subtitle">These will burn tokens, budget, and your production database</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Over-agenting:</b> using an agent where a cron job would do — adds latency, cost, and security risk for zero benefit</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Hardcoding the model:</b> writing "always use GPT-4" in your code makes swapping models a 2-week refactor job</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Token cost blindness:</b> 10k API calls × high-end model = shocking AWS bill. Build a query classifier to route cheap tasks to cheap models</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>No least-privilege access:</b> agents can delete production databases. They have done exactly that. Give only the permissions needed</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>No feedback loop:</b> an agent that can't learn from mistakes is just an expensive bug factory</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-ro">🚫 Over-engineer</span>
+        <span class="mm-tag mm-tag-ro">💸 Token blindness</span>
+        <span class="mm-tag mm-tag-am">🔑 Least privilege</span>
+      </div>
+    </div>
+
+    <!-- ══ CARD 14: Team Evolution — Half ══ -->
+    <div class="mm-card c-sk">
+      <div class="mm-card-head"><div class="mm-card-ico">👥</div><div><div class="mm-card-title">Team Roles — Upgraded, Not Replaced</div><div class="mm-card-subtitle">AI is a junior joining every role — jobs evolve, they don't vanish</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">📋</div><span><b>Product Owner:</b> still needed — AI can't tell a client "yes, this is what you asked for"</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">🔬</div><span><b>ML/AI Engineer:</b> now focuses on RAG strategy, chunking, fine-tuning, cost optimization — higher-level than before</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">💻</div><span><b>Backend Engineer:</b> still owns API design, data pipelines, security — agent does 60% of the code, you approve and take responsibility</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">🧪</div><span><b>QA Testers:</b> busiest they've ever been — AI writes imperfect code daily, every output needs testing before production</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">🚀</div><span><b>DevOps:</b> GPU costs, chip availability, infra scaling — even harder at AI scale with 1M+ daily users</span></div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">⬆️</div>
+        <div><div class="mm-rule-title">You Are Now a Task Manager</div><div class="mm-rule-body">You used to execute tasks. Now you assign, review, and approve. <strong>Focus is still on the user — never on the code or the tool.</strong> That was always true.</div></div>
+      </div>
+    </div>
+
+  </div><!-- /mm-grid -->
+</div><!-- /mm-page -->
+
+<script src="shared/mindmap.js"></script>
+<script>
+  MindMap.init(
+    ['LLM', 'agent', 'fn()', '→', 'ctx', 'RAG', 'tools', '[]', 'async', 'plan', 'memory', 'goal'],
+    [22, 38, 165, 210, 270]
+  );
+</script>
+</body>
+</html>

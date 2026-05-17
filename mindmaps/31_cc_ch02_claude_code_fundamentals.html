@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 2 — Claude Code Fundamentals</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#187A3A,transparent 70%);top:-80px;left:-90px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#0A7A6A,transparent 70%);top:42%;right:-120px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#5A7A00,transparent 70%);bottom:-70px;left:38%}
+
+.mm-badge{background:linear-gradient(135deg,var(--gr-bg),#F0F7DC);border-color:var(--gr-b);color:var(--gr)}
+.mm-dot{background:var(--gr)}.mm-dot::after{border-color:var(--gr)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--gr) 0%,var(--te) 35%,var(--li) 65%,var(--gr) 100%)}
+
+.mm-kpi:nth-child(1){--kpi-accent:var(--gr)}
+.mm-kpi:nth-child(2){--kpi-accent:var(--te)}
+.mm-kpi:nth-child(3){--kpi-accent:var(--li)}
+.mm-kpi:nth-child(4){--kpi-accent:var(--am)}
+
+.mc-1{--chip-bg:var(--gr-bg);--chip-border:var(--gr-b);--chip-color:var(--gr)}.mc-1:hover{box-shadow:0 10px 26px rgba(24,122,58,.18);border-color:var(--gr)!important}.mc-1 .chip-label{color:var(--gr)}
+.mc-2{--chip-bg:var(--te-bg);--chip-border:var(--te-b);--chip-color:var(--te)}.mc-2:hover{box-shadow:0 10px 26px rgba(10,122,106,.18);border-color:var(--te)!important}.mc-2 .chip-label{color:var(--te)}
+.mc-3{--chip-bg:var(--am-bg);--chip-border:var(--am-b);--chip-color:var(--am)}.mc-3:hover{box-shadow:0 10px 26px rgba(192,123,0,.18);border-color:var(--am)!important}.mc-3 .chip-label{color:var(--am)}
+
+.c-gr{--c-accent:var(--gr);--c-bg:var(--gr-bg);--c-border:var(--gr-b);--c-shadow:rgba(24,122,58,.18)}
+.c-te{--c-accent:var(--te);--c-bg:var(--te-bg);--c-border:var(--te-b);--c-shadow:rgba(10,122,106,.18)}
+.c-li{--c-accent:var(--li);--c-bg:var(--li-bg);--c-border:var(--li-b);--c-shadow:rgba(90,122,0,.18)}
+.c-am{--c-accent:var(--am);--c-bg:var(--am-bg);--c-border:var(--am-b);--c-shadow:rgba(192,123,0,.18)}
+.c-ro{--c-accent:var(--ro);--c-bg:var(--ro-bg);--c-border:var(--ro-b);--c-shadow:rgba(184,24,54,.18)}
+.c-bl{--c-accent:var(--bl);--c-bg:var(--bl-bg);--c-border:var(--bl-b);--c-shadow:rgba(26,82,200,.18)}
+.c-vi{--c-accent:var(--vi);--c-bg:var(--vi-bg);--c-border:var(--vi-b);--c-shadow:rgba(107,63,212,.18)}
+
+.mm-flow-gr{--flow-color:var(--gr);--flow-color2:var(--te);--flow-border:var(--gr-b);--flow-shadow:rgba(24,122,58,.15);--flow-num-bg:var(--gr-bg);--flow-num-border:var(--gr-b)}
+.mm-flow-gr .mm-dash{stroke:var(--gr)}.mm-flow-gr .mm-arrowhead{fill:var(--gr)}.mm-flow-gr .mm-traveldot{fill:var(--gr)}.mm-flow-gr .mm-step-num{color:var(--gr)}
+
+/* Agentic loop diagram */
+.agent-loop{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:12px}
+@media(max-width:540px){.agent-loop{grid-template-columns:1fr 1fr}}
+.al-node{border-radius:12px;padding:13px;text-align:center;transition:transform .3s,box-shadow .3s;cursor:default;position:relative}
+.al-node:hover{transform:translateY(-4px)}
+.al-node::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0}
+.aln-1{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.aln-1::before{background:var(--bl)}.aln-1:hover{box-shadow:0 8px 22px rgba(26,82,200,.2)}
+.aln-2{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.aln-2::before{background:var(--vi)}.aln-2:hover{box-shadow:0 8px 22px rgba(107,63,212,.2)}
+.aln-3{background:var(--or-bg);border:1.5px solid var(--or-b)}.aln-3::before{background:var(--or)}.aln-3:hover{box-shadow:0 8px 22px rgba(232,98,10,.2)}
+.aln-4{background:var(--gr-bg);border:1.5px solid var(--gr-b)}.aln-4::before{background:var(--gr)}.aln-4:hover{box-shadow:0 8px 22px rgba(24,122,58,.2)}
+.aln-ico{font-size:22px;display:block;margin-bottom:5px;transition:transform .3s}.al-node:hover .aln-ico{transform:scale(1.18) rotate(-8deg)}
+.aln-name{font-size:11px;font-weight:800;margin-bottom:3px}
+.aln-1 .aln-name{color:var(--bl)}.aln-2 .aln-name{color:var(--vi)}.aln-3 .aln-name{color:var(--or)}.aln-4 .aln-name{color:var(--gr)}
+.aln-desc{font-size:10px;color:var(--muted);line-height:1.4}
+
+/* LLM vs Claude Code duel */
+.duel-wrap{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:start;margin-top:12px}
+@media(max-width:500px){.duel-wrap{grid-template-columns:1fr}}
+.duel-panel{border-radius:13px;padding:14px;transition:transform .3s,box-shadow .3s}
+.duel-panel:hover{transform:translateY(-4px)}
+.dp-llm{background:var(--am-bg);border:2px solid var(--am-b)}.dp-llm:hover{box-shadow:0 8px 22px rgba(192,123,0,.2)}
+.dp-cc{background:var(--gr-bg);border:2px solid var(--gr-b)}.dp-cc:hover{box-shadow:0 8px 22px rgba(24,122,58,.2)}
+.dp-head{font-size:12px;font-weight:800;margin-bottom:9px;display:flex;align-items:center;gap:7px}
+.dp-llm .dp-head{color:var(--am)}.dp-cc .dp-head{color:var(--gr)}
+.dp-item{font-size:11px;color:var(--muted);margin-bottom:4px;display:flex;align-items:flex-start;gap:6px;line-height:1.45}
+.dp-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.dp-llm .dp-dot{background:var(--am)}.dp-cc .dp-dot{background:var(--gr)}
+.vs-mid{display:flex;align-items:center;justify-content:center}
+.vs-badge{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--gr),var(--te));color:#fff;font-size:11px;font-weight:900;font-family:var(--fm);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(24,122,58,.35);animation:vsGlow 2s ease-in-out infinite alternate}
+@keyframes vsGlow{0%{box-shadow:0 4px 14px rgba(24,122,58,.25)}100%{box-shadow:0 4px 24px rgba(24,122,58,.5)}}
+
+/* Platform install grid */
+.platform-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:10px}
+@media(max-width:480px){.platform-grid{grid-template-columns:1fr}}
+.plat-card{border-radius:11px;padding:13px;text-align:center;transition:transform .3s,box-shadow .3s}
+.plat-card:hover{transform:translateY(-4px)}
+.pc-win{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.pc-win:hover{box-shadow:0 7px 18px rgba(26,82,200,.16)}
+.pc-mac{background:var(--gr-bg);border:1.5px solid var(--gr-b)}.pc-mac:hover{box-shadow:0 7px 18px rgba(24,122,58,.16)}
+.pc-lin{background:var(--or-bg);border:1.5px solid var(--or-b)}.pc-lin:hover{box-shadow:0 7px 18px rgba(232,98,10,.16)}
+.plat-ico{font-size:24px;display:block;margin-bottom:5px;transition:transform .3s}.plat-card:hover .plat-ico{transform:scale(1.18) rotate(-5deg)}
+.plat-name{font-size:11px;font-weight:800;margin-bottom:4px}
+.pc-win .plat-name{color:var(--bl)}.pc-mac .plat-name{color:var(--gr)}.pc-lin .plat-name{color:var(--or)}
+.plat-cmd{font-family:var(--fm);font-size:10px;background:var(--s2);padding:5px 8px;border-radius:6px;color:var(--text);margin-top:4px;word-break:break-all;text-align:left}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+<div class="noise"></div>
+<canvas id="mm-canvas"></canvas>
+<div class="mm-page">
+
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude Code Masterclass · Part 2 of 7</div>
+    <h1>Claude Code<br>Fundamentals</h1>
+    <p>What Claude Code is · Agentic loop · Setup on all platforms · IDE vs Terminal</p>
+  </div>
+
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="3">0</div><div class="mm-kpi-label">Platforms:<br>Win · Mac · Linux</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">claude</div><div class="mm-kpi-label">Command to launch<br>Claude Code in terminal</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">npm -g</div><div class="mm-kpi-label">Install method:<br>global npm package</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">Agentic</div><div class="mm-kpi-label">Loop: plan → call<br>→ execute → repeat</div></div>
+  </div>
+
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">🤖</span><div class="chip-label">Not a Chatbot — an Agent</div><div class="chip-desc">Claude Code doesn't just generate text. It has a loop: plan, call tools, read results, plan again — until the task is done.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">🔧</span><div class="chip-label">Tool Calls are the Power</div><div class="chip-desc">Claude Code can read files, write code, run bash, search the web — all autonomously as part of one conversation.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">💻</span><div class="chip-label">Terminal + IDE = Full Stack</div><div class="chip-desc">Use it from the CLI for maximum power or inside VS Code / JetBrains for IDE-native AI pair programming.</div></div>
+  </div>
+
+  <div class="mm-grid">
+
+    <!-- Agentic loop -->
+    <div class="mm-card c-gr mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">The Claude Code Agentic Loop</div><div class="mm-card-subtitle">How Claude Code thinks and acts — not one reply but a continuous plan-act-reflect cycle</div></div></div>
+      <div class="agent-loop">
+        <div class="al-node aln-1">
+          <span class="aln-ico">💬</span>
+          <div class="aln-name">User Request</div>
+          <div class="aln-desc">You describe the goal in natural language in the terminal or IDE</div>
+        </div>
+        <div class="al-node aln-2">
+          <span class="aln-ico">🧠</span>
+          <div class="aln-name">LLM Plans</div>
+          <div class="aln-desc">Claude decides which tools to call and in what order to accomplish the task</div>
+        </div>
+        <div class="al-node aln-3">
+          <span class="aln-ico">🔧</span>
+          <div class="aln-name">Tool Execution</div>
+          <div class="aln-desc">Tools run: read files, write code, bash commands, web search, edit functions</div>
+        </div>
+        <div class="al-node aln-4">
+          <span class="aln-ico">✅</span>
+          <div class="aln-name">Result + Loop</div>
+          <div class="aln-desc">Claude reads results, re-plans if needed, and loops until the task is complete</div>
+        </div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">⚡</div>
+        <div><div class="mm-rule-title">⭐ THE KEY DIFFERENCE FROM CHAT</div><div class="mm-rule-body">A regular LLM <strong>responds once</strong>. Claude Code <strong>loops</strong> — it calls tools, reads the output, updates its plan, and continues until the task is actually done. This is what "agentic" means.</div></div>
+      </div>
+    </div>
+
+    <!-- LLM vs Claude Code -->
+    <div class="mm-card c-am mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">⚖️</div><div><div class="mm-card-title">Claude (LLM Chat) vs Claude Code</div><div class="mm-card-subtitle">Same brain, completely different execution model</div></div></div>
+      <div class="duel-wrap">
+        <div class="duel-panel dp-llm">
+          <div class="dp-head">💬 Claude (Chat / LLM)</div>
+          <div class="dp-item"><div class="dp-dot"></div><span>You send a message, Claude replies once</span></div>
+          <div class="dp-item"><div class="dp-dot"></div><span>No access to your file system</span></div>
+          <div class="dp-item"><div class="dp-dot"></div><span>Cannot run code or bash commands</span></div>
+          <div class="dp-item"><div class="dp-dot"></div><span>Text in → text out; pure generation</span></div>
+          <div class="dp-item"><div class="dp-dot"></div><span>Like asking a smart person for advice</span></div>
+        </div>
+        <div class="vs-mid"><div class="vs-badge">VS</div></div>
+        <div class="duel-panel dp-cc">
+          <div class="dp-head">⚡ Claude Code (Agentic)</div>
+          <div class="dp-item"><div class="dp-dot"></div><span>Loops: plan → tool call → result → re-plan</span></div>
+          <div class="dp-item"><div class="dp-dot"></div><span>Full read/write access to your project files</span></div>
+          <div class="dp-item"><div class="dp-dot"></div><span>Runs bash, installs packages, tests code</span></div>
+          <div class="dp-item"><div class="dp-dot"></div><span>Executes until the task is actually complete</span></div>
+          <div class="dp-item"><div class="dp-dot"></div><span>Like a smart developer who also does the work</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Platform Setup -->
+    <div class="mm-card c-te">
+      <div class="mm-card-head"><div class="mm-card-ico">⚙️</div><div><div class="mm-card-title">Platform Installation</div><div class="mm-card-subtitle">One command on any OS — Node.js 18+ required</div></div></div>
+      <div class="platform-grid">
+        <div class="plat-card pc-win">
+          <span class="plat-ico">🪟</span>
+          <div class="plat-name">Windows</div>
+          <div class="plat-cmd">npm install -g @anthropic-ai/claude-code</div>
+        </div>
+        <div class="plat-card pc-mac">
+          <span class="plat-ico">🍎</span>
+          <div class="plat-name">macOS</div>
+          <div class="plat-cmd">npm install -g @anthropic-ai/claude-code</div>
+        </div>
+        <div class="plat-card pc-lin">
+          <span class="plat-ico">🐧</span>
+          <div class="plat-name">Linux</div>
+          <div class="plat-cmd">npm install -g @anthropic-ai/claude-code</div>
+        </div>
+      </div>
+      <div class="mm-items" style="margin-top:12px">
+        <div class="mm-item"><div class="mm-dot-badge">1</div><span><b>Prerequisite:</b> Node.js v18+ installed — check with <span class="mm-pill">node --version</span></span></div>
+        <div class="mm-item"><div class="mm-dot-badge">2</div><span><b>Install:</b> run the npm command above in any terminal with global permissions</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">3</div><span><b>Authenticate:</b> run <span class="mm-pill">claude</span> — you'll be prompted to login with your Anthropic account</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">4</div><span><b>Init a project:</b> navigate to your project folder, run <span class="mm-pill">claude</span> — it reads your codebase automatically</span></div>
+      </div>
+    </div>
+
+    <!-- IDE Integration -->
+    <div class="mm-card c-bl">
+      <div class="mm-card-head"><div class="mm-card-ico">🖊️</div><div><div class="mm-card-title">IDE Integration</div><div class="mm-card-subtitle">VS Code, JetBrains, Cursor — Claude Code meets your editor</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">★</div><span><b>VS Code extension</b> — install "Claude Code" from the marketplace; gives a side-panel chat with full file context</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>JetBrains plugin</b> — works in IntelliJ, PyCharm, DataGrip; same capability, different panel location</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Inline editing</b> — select code, press the shortcut, ask Claude to rewrite, explain, or test it in place</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Context-aware</b> — the IDE plugin passes your open files and errors automatically — no manual copy-paste</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">→</div><span><b>Terminal vs IDE:</b> terminal gives more power and control; IDE gives comfort and visual feedback. Use both.</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-bl">🖊️ VS Code</span>
+        <span class="mm-tag mm-tag-bl">☕ JetBrains</span>
+        <span class="mm-tag mm-tag-te">⌨️ Terminal</span>
+      </div>
+    </div>
+
+    <!-- Key commands -->
+    <div class="mm-card c-li">
+      <div class="mm-card-head"><div class="mm-card-ico">⌨️</div><div><div class="mm-card-title">Essential Claude Code Commands</div><div class="mm-card-subtitle">The commands you'll use every single day</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">$</div><span><span class="mm-pill">claude</span> — launch interactive session in current directory; reads project files automatically</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">$</div><span><span class="mm-pill">claude "task"</span> — non-interactive one-shot: pass a task string and get the result without entering the REPL</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">$</div><span><span class="mm-pill">/help</span> — inside session: lists all slash commands available (skills, config, memory, etc.)</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">$</div><span><span class="mm-pill">/init</span> — creates a CLAUDE.md project config file in the current directory (covered in Chapter 4)</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">$</div><span><span class="mm-pill">Ctrl+C</span> — interrupt the current task if Claude is going in the wrong direction; always available</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-li">⌨️ CLI</span>
+        <span class="mm-tag mm-tag-li">/help</span>
+        <span class="mm-tag mm-tag-te">🛑 Ctrl+C</span>
+      </div>
+    </div>
+
+    <!-- Setup Flow -->
+    <div class="mm-card c-gr mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🚀</div><div><div class="mm-card-title">End-to-End Setup Workflow</div><div class="mm-card-subtitle">From a fresh machine to running your first agentic task in 10 minutes</div></div></div>
+      <div class="mm-flow mm-flow-gr">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">📦</div><div class="mm-step-lbl">Install Node</div><div class="mm-step-sub">v18+ required</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#cc1"/></animateMotion></circle><path id="cc1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">⬇️</div><div class="mm-step-lbl">npm Install</div><div class="mm-step-sub">Global package</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#cc2"/></animateMotion></circle><path id="cc2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">🔑</div><div class="mm-step-lbl">Auth Login</div><div class="mm-step-sub">Anthropic account</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#cc3"/></animateMotion></circle><path id="cc3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">📁</div><div class="mm-step-lbl">cd Project</div><div class="mm-step-sub">Your codebase</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#cc4"/></animateMotion></circle><path id="cc4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">⌨️</div><div class="mm-step-lbl">Run claude</div><div class="mm-step-sub">Interactive REPL</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#cc5"/></animateMotion></circle><path id="cc5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">💬</div><div class="mm-step-lbl">First Task</div><div class="mm-step-sub">Natural language</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.70s"><mpath href="#cc6"/></animateMotion></circle><path id="cc6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">🤖</div><div class="mm-step-lbl">Agent Loop</div><div class="mm-step-sub">Plan → Act → Done</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="shared/mindmap.js"></script>
+<script>
+MindMap.init(
+  ['claude','npm','→','agentic','fn()','loop','tools','bash','IDE','[]'],
+  [130, 165, 210, 38, 270]
+);
+</script>
+</body>
+</html>

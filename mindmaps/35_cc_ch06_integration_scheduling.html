@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 6 — Integration, Scheduling &amp; Plugins</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#B81836,transparent 70%);top:-80px;left:-100px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#E8620A,transparent 70%);top:40%;right:-130px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#1A52C8,transparent 70%);bottom:-70px;left:36%}
+
+.mm-badge{background:linear-gradient(135deg,var(--ro-bg),#FEF0E3);border-color:var(--ro-b);color:var(--ro)}
+.mm-dot{background:var(--ro)}.mm-dot::after{border-color:var(--ro)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--ro) 0%,var(--or) 40%,var(--bl) 75%,var(--ro) 100%)}
+
+.mm-kpi:nth-child(1){--kpi-accent:var(--ro)}
+.mm-kpi:nth-child(2){--kpi-accent:var(--or)}
+.mm-kpi:nth-child(3){--kpi-accent:var(--bl)}
+.mm-kpi:nth-child(4){--kpi-accent:var(--gr)}
+
+.mc-1{--chip-bg:var(--ro-bg);--chip-border:var(--ro-b);--chip-color:var(--ro)}.mc-1:hover{box-shadow:0 10px 26px rgba(184,24,54,.18);border-color:var(--ro)!important}.mc-1 .chip-label{color:var(--ro)}
+.mc-2{--chip-bg:var(--or-bg);--chip-border:var(--or-b);--chip-color:var(--or)}.mc-2:hover{box-shadow:0 10px 26px rgba(232,98,10,.18);border-color:var(--or)!important}.mc-2 .chip-label{color:var(--or)}
+.mc-3{--chip-bg:var(--bl-bg);--chip-border:var(--bl-b);--chip-color:var(--bl)}.mc-3:hover{box-shadow:0 10px 26px rgba(26,82,200,.18);border-color:var(--bl)!important}.mc-3 .chip-label{color:var(--bl)}
+
+.c-ro{--c-accent:var(--ro);--c-bg:var(--ro-bg);--c-border:var(--ro-b);--c-shadow:rgba(184,24,54,.18)}
+.c-or{--c-accent:var(--or);--c-bg:var(--or-bg);--c-border:var(--or-b);--c-shadow:rgba(232,98,10,.18)}
+.c-bl{--c-accent:var(--bl);--c-bg:var(--bl-bg);--c-border:var(--bl-b);--c-shadow:rgba(26,82,200,.18)}
+.c-am{--c-accent:var(--am);--c-bg:var(--am-bg);--c-border:var(--am-b);--c-shadow:rgba(192,123,0,.18)}
+.c-gr{--c-accent:var(--gr);--c-bg:var(--gr-bg);--c-border:var(--gr-b);--c-shadow:rgba(24,122,58,.18)}
+.c-te{--c-accent:var(--te);--c-bg:var(--te-bg);--c-border:var(--te-b);--c-shadow:rgba(10,122,106,.18)}
+.c-vi{--c-accent:var(--vi);--c-bg:var(--vi-bg);--c-border:var(--vi-b);--c-shadow:rgba(107,63,212,.18)}
+
+.mm-flow-ro{--flow-color:var(--ro);--flow-color2:var(--or);--flow-border:var(--ro-b);--flow-shadow:rgba(184,24,54,.15);--flow-num-bg:var(--ro-bg);--flow-num-border:var(--ro-b)}
+.mm-flow-ro .mm-dash{stroke:var(--ro)}.mm-flow-ro .mm-arrowhead{fill:var(--ro)}.mm-flow-ro .mm-traveldot{fill:var(--ro)}.mm-flow-ro .mm-step-num{color:var(--ro)}
+
+/* Onboarding steps */
+.onboard-steps{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.ob-step{display:grid;grid-template-columns:36px 1fr;gap:12px;align-items:start;padding:12px;border-radius:11px;transition:transform .3s,box-shadow .3s}
+.ob-step:hover{transform:translateX(6px)}
+.obs-1{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.obs-1:hover{box-shadow:0 5px 14px rgba(26,82,200,.12)}
+.obs-2{background:var(--te-bg);border:1.5px solid var(--te-b)}.obs-2:hover{box-shadow:0 5px 14px rgba(10,122,106,.12)}
+.obs-3{background:var(--am-bg);border:1.5px solid var(--am-b)}.obs-3:hover{box-shadow:0 5px 14px rgba(192,123,0,.12)}
+.obs-4{background:var(--gr-bg);border:1.5px solid var(--gr-b)}.obs-4:hover{box-shadow:0 5px 14px rgba(24,122,58,.12)}
+.obs-5{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.obs-5:hover{box-shadow:0 5px 14px rgba(107,63,212,.12)}
+.ob-num{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;font-family:var(--fm);flex-shrink:0}
+.obs-1 .ob-num{background:var(--bl);color:#fff}.obs-2 .ob-num{background:var(--te);color:#fff}.obs-3 .ob-num{background:var(--am);color:#fff}.obs-4 .ob-num{background:var(--gr);color:#fff}.obs-5 .ob-num{background:var(--vi);color:#fff}
+.ob-body{}
+.ob-title{font-size:11.5px;font-weight:800;margin-bottom:2px}
+.obs-1 .ob-title{color:var(--bl)}.obs-2 .ob-title{color:var(--te)}.obs-3 .ob-title{color:var(--am)}.obs-4 .ob-title{color:var(--gr)}.obs-5 .ob-title{color:var(--vi)}
+.ob-desc{font-size:10.5px;color:var(--muted);line-height:1.4}
+
+/* Slash command cards */
+.cmd-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+@media(max-width:480px){.cmd-grid{grid-template-columns:1fr}}
+.cmd-card{border-radius:11px;padding:13px;transition:transform .3s,box-shadow .3s}
+.cmd-card:hover{transform:translateY(-3px)}
+.cc-1{background:var(--or-bg);border:1.5px solid var(--or-b)}.cc-1:hover{box-shadow:0 7px 18px rgba(232,98,10,.16)}
+.cc-2{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.cc-2:hover{box-shadow:0 7px 18px rgba(26,82,200,.16)}
+.cc-3{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.cc-3:hover{box-shadow:0 7px 18px rgba(107,63,212,.16)}
+.cc-4{background:var(--gr-bg);border:1.5px solid var(--gr-b)}.cc-4:hover{box-shadow:0 7px 18px rgba(24,122,58,.16)}
+.cmd-name{font-family:var(--fm);font-size:13px;font-weight:800;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.cc-1 .cmd-name{color:var(--or)}.cc-2 .cmd-name{color:var(--bl)}.cc-3 .cmd-name{color:var(--vi)}.cc-4 .cmd-name{color:var(--gr)}
+.cmd-desc{font-size:10.5px;color:var(--muted);line-height:1.4}
+
+/* Schedule / cron visualiser */
+.cron-viz{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.cron-row{display:grid;grid-template-columns:140px 1fr;gap:10px;align-items:center}
+.cron-time{font-family:var(--fm);font-size:11px;font-weight:700;color:var(--or);text-align:right}
+.cron-bar{border-radius:8px;padding:10px 14px;font-size:11px;color:var(--muted);line-height:1.4;transition:transform .2s}
+.cron-bar:hover{transform:translateX(4px)}
+.cb-1{background:var(--or-bg);border:1.5px solid var(--or-b)}
+.cb-2{background:var(--am-bg);border:1.5px solid var(--am-b)}
+.cb-3{background:var(--bl-bg);border:1.5px solid var(--bl-b)}
+.cb-4{background:var(--gr-bg);border:1.5px solid var(--gr-b)}
+.cron-bar b{color:var(--text)}
+
+/* Plugin cards */
+.plugin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}
+@media(max-width:520px){.plugin-grid{grid-template-columns:1fr 1fr}}
+.plugin-card{border-radius:11px;padding:12px;text-align:center;transition:transform .3s,box-shadow .3s;cursor:default;background:var(--s2);border:1.5px solid var(--border)}
+.plugin-card:hover{transform:translateY(-4px);border-color:var(--ro-b);box-shadow:0 7px 18px rgba(184,24,54,.12)}
+.plugin-ico{font-size:22px;display:block;margin-bottom:5px;transition:transform .3s}.plugin-card:hover .plugin-ico{transform:scale(1.18) rotate(-8deg)}
+.plugin-name{font-size:10.5px;font-weight:800;color:var(--ro);margin-bottom:3px}
+.plugin-desc{font-size:9.5px;color:var(--muted);line-height:1.35}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+<div class="noise"></div>
+<canvas id="mm-canvas"></canvas>
+<div class="mm-page">
+
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude Code Masterclass · Part 6 of 7</div>
+    <h1>Integration, Scheduling<br>&amp; Plugins</h1>
+    <p>Project onboarding · /btw &amp; /voice · Loop automation · Plugin marketplace</p>
+  </div>
+
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">/btw</div><div class="mm-kpi-label">Side-channel questions<br>without breaking flow</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">/voice</div><div class="mm-kpi-label">Talk to Claude Code<br>with your microphone</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">Loop</div><div class="mm-kpi-label">Cron-style scheduling<br>inside Claude Code</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">Plugins</div><div class="mm-kpi-label">Marketplace extensions<br>for Claude Code</div></div>
+  </div>
+
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">🏗️</span><div class="chip-label">Onboarding in Minutes</div><div class="chip-desc">Drop Claude Code into any existing project — Apache Airflow, dbt, FastAPI. It reads the codebase and generates CLAUDE.md automatically.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">🗣️</span><div class="chip-label">Work the Way You Think</div><div class="chip-desc">/btw lets you ask side questions mid-task. /voice lets you speak rather than type. Natural work patterns, not forced workflows.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">⏰</span><div class="chip-label">Schedule, Don't Babysit</div><div class="chip-desc">Loop mode runs Claude Code on a schedule — like a cron job but intelligent. Check S3 every 10 minutes, process new files, alert on anomalies.</div></div>
+  </div>
+
+  <div class="mm-grid">
+
+    <!-- Project onboarding -->
+    <div class="mm-card c-ro mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🏗️</div><div><div class="mm-card-title">Onboarding Claude Code to an Existing Project</div><div class="mm-card-subtitle">Using Apache Airflow as the real-world example — works with any codebase</div></div></div>
+      <div class="onboard-steps">
+        <div class="ob-step obs-1">
+          <div class="ob-num">01</div>
+          <div class="ob-body">
+            <div class="ob-title">Clone the Repository</div>
+            <div class="ob-desc">git clone the project. Navigate into the directory. Don't read anything yet — let Claude Code discover the structure autonomously.</div>
+          </div>
+        </div>
+        <div class="ob-step obs-2">
+          <div class="ob-num">02</div>
+          <div class="ob-body">
+            <div class="ob-title">Run <span class="mm-pill">claude /init</span></div>
+            <div class="ob-desc">Claude reads every file: DAGs, operators, plugins, requirements.txt, configs. Builds a mental model of the entire project in seconds.</div>
+          </div>
+        </div>
+        <div class="ob-step obs-3">
+          <div class="ob-num">03</div>
+          <div class="ob-body">
+            <div class="ob-title">CLAUDE.md Auto-Generated</div>
+            <div class="ob-desc">Claude creates a project-specific CLAUDE.md: Airflow version, DAG patterns in use, existing operators, coding conventions it detected.</div>
+          </div>
+        </div>
+        <div class="ob-step obs-4">
+          <div class="ob-num">04</div>
+          <div class="ob-body">
+            <div class="ob-title">Review and Customise</div>
+            <div class="ob-desc">Add prohibitions, preferred patterns, team standards not visible in the code. CLAUDE.md becomes the source of truth for all future agents.</div>
+          </div>
+        </div>
+        <div class="ob-step obs-5">
+          <div class="ob-num">05</div>
+          <div class="ob-body">
+            <div class="ob-title">Ask Your First Task</div>
+            <div class="ob-desc">"Create a new DAG that reads from S3, transforms with Polars, and writes to Delta Lake — following our existing patterns." Done in minutes.</div>
+          </div>
+        </div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">💡</div>
+        <div><div class="mm-rule-title">Works With Any Stack</div><div class="mm-rule-body">Apache Airflow, dbt, FastAPI, Django, PySpark, React. Claude Code reads the existing codebase and <strong>adapts to your patterns</strong> — not the other way around.</div></div>
+      </div>
+    </div>
+
+    <!-- Slash commands -->
+    <div class="mm-card c-or mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">⌨️</div><div><div class="mm-card-title">Power Slash Commands</div><div class="mm-card-subtitle">In-session commands that change how you interact with Claude Code</div></div></div>
+      <div class="cmd-grid">
+        <div class="cmd-card cc-1">
+          <div class="cmd-name">💬 /btw</div>
+          <div class="cmd-desc">Ask a side question without interrupting the current task. "btw, what's the difference between Polars and Pandas lazy mode?" — Claude answers then continues the task.</div>
+        </div>
+        <div class="cmd-card cc-2">
+          <div class="cmd-name">🎙️ /voice</div>
+          <div class="cmd-desc">Switch to microphone input. Speak your task naturally. Great for long instructions you don't want to type. Claude Code transcribes and acts.</div>
+        </div>
+        <div class="cmd-card cc-3">
+          <div class="cmd-name">📋 /memory</div>
+          <div class="cmd-desc">View, add, or clear items in Claude's persistent memory. What it knows about you and your project that carries across sessions.</div>
+        </div>
+        <div class="cmd-card cc-4">
+          <div class="cmd-name">⏸️ /pause</div>
+          <div class="cmd-desc">Pause a long-running task to review what Claude has done so far. Inspect, redirect, or approve before it continues to the next phase.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loop scheduling -->
+    <div class="mm-card c-am">
+      <div class="mm-card-head"><div class="mm-card-ico">⏰</div><div><div class="mm-card-title">Loop / Scheduling Mode</div><div class="mm-card-subtitle">Cron-like automation inside Claude Code — intelligent, not just repeated</div></div></div>
+      <div class="cron-viz">
+        <div class="cron-row">
+          <div class="cron-time">Every 10 min</div>
+          <div class="cron-bar cb-1"><b>S3 Monitor</b> — check for new files in landing bucket; if found, trigger ingestion pipeline</div>
+        </div>
+        <div class="cron-row">
+          <div class="cron-time">Every hour</div>
+          <div class="cron-bar cb-2"><b>Data Quality</b> — run Great Expectations suite on yesterday's data; alert on anomalies via Slack</div>
+        </div>
+        <div class="cron-row">
+          <div class="cron-time">Daily 6am</div>
+          <div class="cron-bar cb-3"><b>DAG Health Check</b> — scan Airflow for failed DAGs; auto-retry with context; report to team</div>
+        </div>
+        <div class="cron-row">
+          <div class="cron-time">On demand</div>
+          <div class="cron-bar cb-4"><b>Ad-hoc Agent</b> — trigger any skill or sub-agent on a schedule as part of the loop configuration</div>
+        </div>
+      </div>
+      <div class="mm-tags" style="margin-top:12px">
+        <span class="mm-tag mm-tag-am">⏰ Scheduled</span>
+        <span class="mm-tag mm-tag-or">🔁 Persistent</span>
+        <span class="mm-tag mm-tag-gr">🧠 Intelligent</span>
+      </div>
+    </div>
+
+    <!-- Plugins -->
+    <div class="mm-card c-bl">
+      <div class="mm-card-head"><div class="mm-card-ico">🔌</div><div><div class="mm-card-title">Plugins &amp; Marketplace</div><div class="mm-card-subtitle">Extend Claude Code with pre-built capabilities from the community</div></div></div>
+      <div class="plugin-grid">
+        <div class="plugin-card">
+          <span class="plugin-ico">📊</span>
+          <div class="plugin-name">dbt Plugin</div>
+          <div class="plugin-desc">Generate, test and document dbt models from schema definitions</div>
+        </div>
+        <div class="plugin-card">
+          <span class="plugin-ico">🌊</span>
+          <div class="plugin-name">Airflow Plugin</div>
+          <div class="plugin-desc">Create DAGs, operators, sensors following Airflow best practices</div>
+        </div>
+        <div class="plugin-card">
+          <span class="plugin-ico">⚡</span>
+          <div class="plugin-name">Spark Plugin</div>
+          <div class="plugin-desc">Optimise Spark jobs, partition tuning, memory configuration</div>
+        </div>
+        <div class="plugin-card">
+          <span class="plugin-ico">🧪</span>
+          <div class="plugin-name">Testing Plugin</div>
+          <div class="plugin-desc">Auto-generate pytest fixtures, mocks, and edge-case test suites</div>
+        </div>
+        <div class="plugin-card">
+          <span class="plugin-ico">📈</span>
+          <div class="plugin-name">Skill Creator</div>
+          <div class="plugin-desc">Observe Claude doing a task, auto-generate a reusable skill.md from it</div>
+        </div>
+        <div class="plugin-card">
+          <span class="plugin-ico">🛒</span>
+          <div class="plugin-name">Marketplace</div>
+          <div class="plugin-desc">Browse and install community-contributed plugins and skills</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Integration flow -->
+    <div class="mm-card c-ro mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">From Clone to Production-Ready in One Session</div><div class="mm-card-subtitle">The end-to-end integration workflow with a real data engineering project</div></div></div>
+      <div class="mm-flow mm-flow-ro">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">📂</div><div class="mm-step-lbl">Clone Repo</div><div class="mm-step-sub">Any existing project</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#in1"/></animateMotion></circle><path id="in1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">🔍</div><div class="mm-step-lbl">/init Scan</div><div class="mm-step-sub">Claude reads all</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#in2"/></animateMotion></circle><path id="in2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">📋</div><div class="mm-step-lbl">CLAUDE.md</div><div class="mm-step-sub">Auto-generated</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#in3"/></animateMotion></circle><path id="in3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">🔌</div><div class="mm-step-lbl">Add Plugins</div><div class="mm-step-sub">From marketplace</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#in4"/></animateMotion></circle><path id="in4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">⏰</div><div class="mm-step-lbl">Set Loop</div><div class="mm-step-sub">Schedule tasks</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#in5"/></animateMotion></circle><path id="in5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">🏃</div><div class="mm-step-lbl">First Feature</div><div class="mm-step-sub">Built &amp; reviewed</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.70s"><mpath href="#in6"/></animateMotion></circle><path id="in6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">🚀</div><div class="mm-step-lbl">Production</div><div class="mm-step-sub">Ship confidently</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="shared/mindmap.js"></script>
+<script>
+MindMap.init(
+  ['/btw','/voice','loop','cron','→','plugin','DAG','⏰','🔌','schedule'],
+  [22, 38, 165, 210, 130]
+);
+</script>
+</body>
+</html>

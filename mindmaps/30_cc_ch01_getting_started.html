@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 1 — Getting Started with Claude</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#0A7A6A,transparent 70%);top:-80px;left:-100px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#1A52C8,transparent 70%);top:40%;right:-130px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#6B3FD4,transparent 70%);bottom:-70px;left:36%}
+
+.mm-badge{background:linear-gradient(135deg,var(--te-bg),#E8EFFE);border-color:var(--te-b);color:var(--te)}
+.mm-dot{background:var(--te)}.mm-dot::after{border-color:var(--te)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--te) 0%,var(--bl) 40%,var(--vi) 80%,var(--te) 100%)}
+
+.mm-kpi:nth-child(1){--kpi-accent:var(--te)}
+.mm-kpi:nth-child(2){--kpi-accent:var(--bl)}
+.mm-kpi:nth-child(3){--kpi-accent:var(--vi)}
+.mm-kpi:nth-child(4){--kpi-accent:var(--am)}
+
+.mc-1{--chip-bg:var(--te-bg);--chip-border:var(--te-b);--chip-color:var(--te)}.mc-1:hover{box-shadow:0 10px 26px rgba(10,122,106,.18);border-color:var(--te)!important}.mc-1 .chip-label{color:var(--te)}
+.mc-2{--chip-bg:var(--bl-bg);--chip-border:var(--bl-b);--chip-color:var(--bl)}.mc-2:hover{box-shadow:0 10px 26px rgba(26,82,200,.18);border-color:var(--bl)!important}.mc-2 .chip-label{color:var(--bl)}
+.mc-3{--chip-bg:var(--vi-bg);--chip-border:var(--vi-b);--chip-color:var(--vi)}.mc-3:hover{box-shadow:0 10px 26px rgba(107,63,212,.18);border-color:var(--vi)!important}.mc-3 .chip-label{color:var(--vi)}
+
+.c-te{--c-accent:var(--te);--c-bg:var(--te-bg);--c-border:var(--te-b);--c-shadow:rgba(10,122,106,.18)}
+.c-bl{--c-accent:var(--bl);--c-bg:var(--bl-bg);--c-border:var(--bl-b);--c-shadow:rgba(26,82,200,.18)}
+.c-vi{--c-accent:var(--vi);--c-bg:var(--vi-bg);--c-border:var(--vi-b);--c-shadow:rgba(107,63,212,.18)}
+.c-am{--c-accent:var(--am);--c-bg:var(--am-bg);--c-border:var(--am-b);--c-shadow:rgba(192,123,0,.18)}
+.c-ro{--c-accent:var(--ro);--c-bg:var(--ro-bg);--c-border:var(--ro-b);--c-shadow:rgba(184,24,54,.18)}
+.c-gr{--c-accent:var(--gr);--c-bg:var(--gr-bg);--c-border:var(--gr-b);--c-shadow:rgba(24,122,58,.18)}
+
+.mm-flow-te{--flow-color:var(--te);--flow-color2:var(--bl);--flow-border:var(--te-b);--flow-shadow:rgba(10,122,106,.15);--flow-num-bg:var(--te-bg);--flow-num-border:var(--te-b)}
+.mm-flow-te .mm-dash{stroke:var(--te)}.mm-flow-te .mm-arrowhead{fill:var(--te)}.mm-flow-te .mm-traveldot{fill:var(--te)}.mm-flow-te .mm-step-num{color:var(--te)}
+
+/* Model tier spectrum */
+.tier-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+@media(max-width:520px){.tier-grid{grid-template-columns:1fr}}
+.tier-card{border-radius:13px;padding:16px 12px;text-align:center;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s;cursor:default}
+.tier-card:hover{transform:translateY(-5px)}
+.tier-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.t-haiku{background:var(--te-bg);border:2px solid var(--te-b)}.t-haiku::before{background:var(--te)}.t-haiku:hover{box-shadow:0 10px 26px rgba(10,122,106,.22)}
+.t-sonnet{background:var(--bl-bg);border:2px solid var(--bl-b)}.t-sonnet::before{background:var(--bl)}.t-sonnet:hover{box-shadow:0 10px 26px rgba(26,82,200,.22)}
+.t-opus{background:var(--vi-bg);border:2px solid var(--vi-b)}.t-opus::before{background:var(--vi)}.t-opus:hover{box-shadow:0 10px 26px rgba(107,63,212,.22)}
+.tier-ico{font-size:26px;display:block;margin-bottom:6px;transition:transform .3s}.tier-card:hover .tier-ico{transform:scale(1.2) rotate(-8deg)}
+.tier-name{font-size:13px;font-weight:900;margin-bottom:4px}
+.t-haiku .tier-name{color:var(--te)}.t-sonnet .tier-name{color:var(--bl)}.t-opus .tier-name{color:var(--vi)}
+.tier-badge{display:inline-block;padding:2px 9px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:6px}
+.t-haiku .tier-badge{background:var(--te);color:#fff}.t-sonnet .tier-badge{background:var(--bl);color:#fff}.t-opus .tier-badge{background:var(--vi);color:#fff}
+.tier-desc{font-size:10.5px;color:var(--muted);line-height:1.45;margin-bottom:6px}
+.tier-use{font-size:9.5px;padding:4px 8px;border-radius:6px;background:var(--s2);color:var(--muted)}
+.t-badge-row{font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px}
+.t-haiku .t-badge-row{color:var(--te)}.t-sonnet .t-badge-row{color:var(--bl)}.t-opus .t-badge-row{color:var(--vi)}
+
+/* Access methods grid */
+.access-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.acc-card{border-radius:11px;padding:13px;transition:transform .3s,box-shadow .3s;cursor:default}
+.acc-card:hover{transform:translateY(-3px)}
+.ac-1{background:var(--te-bg);border:1.5px solid var(--te-b)}.ac-1:hover{box-shadow:0 7px 18px rgba(10,122,106,.16)}
+.ac-2{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.ac-2:hover{box-shadow:0 7px 18px rgba(26,82,200,.16)}
+.ac-3{background:var(--am-bg);border:1.5px solid var(--am-b)}.ac-3:hover{box-shadow:0 7px 18px rgba(192,123,0,.16)}
+.ac-4{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.ac-4:hover{box-shadow:0 7px 18px rgba(107,63,212,.16)}
+.acc-ico{font-size:20px;margin-bottom:5px;display:block;transition:transform .3s}.acc-card:hover .acc-ico{transform:rotate(-8deg) scale(1.18)}
+.acc-name{font-size:11px;font-weight:800;margin-bottom:3px}
+.ac-1 .acc-name{color:var(--te)}.ac-2 .acc-name{color:var(--bl)}.ac-3 .acc-name{color:var(--am)}.ac-4 .acc-name{color:var(--vi)}
+.acc-desc{font-size:10px;color:var(--muted);line-height:1.4}
+
+/* Before/After */
+.ba-wrap{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin-top:10px}
+@media(max-width:500px){.ba-wrap{grid-template-columns:1fr}}
+.ba-panel{border-radius:13px;padding:14px;transition:transform .3s,box-shadow .3s}
+.ba-panel:hover{transform:translateY(-4px)}
+.ba-before{background:var(--ro-bg);border:2px solid var(--ro-b)}.ba-before:hover{box-shadow:0 8px 24px rgba(184,24,54,.2)}
+.ba-after{background:var(--gr-bg);border:2px solid var(--gr-b)}.ba-after:hover{box-shadow:0 8px 24px rgba(24,122,58,.2)}
+.ba-lbl{font-size:11px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.ba-before .ba-lbl{color:var(--ro)}.ba-after .ba-lbl{color:var(--gr)}
+.ba-item{font-size:11px;color:var(--muted);margin-bottom:4px;display:flex;align-items:flex-start;gap:6px;line-height:1.45}
+.ba-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.ba-before .ba-dot{background:var(--ro)}.ba-after .ba-dot{background:var(--gr)}
+.ba-mid{display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+<div class="noise"></div>
+<canvas id="mm-canvas"></canvas>
+<div class="mm-page">
+
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude Code Masterclass · Part 1 of 7</div>
+    <h1>Getting Started<br>with Claude</h1>
+    <p>What Claude is · Three model tiers · Claude Desktop setup · Web vs Desktop access</p>
+  </div>
+
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="3">0</div><div class="mm-kpi-label">Model tiers:<br>Haiku · Sonnet · Opus</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="7">0</div><div class="mm-kpi-label">Hours in full<br>Claude Code course</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">Free</div><div class="mm-kpi-label">Plan to start with<br>— upgrade when needed</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="2026">0</div><div class="mm-kpi-label">Year Claude Code<br>became essential</div></div>
+  </div>
+
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">🧠</span><div class="chip-label">Not Just a Chatbot</div><div class="chip-desc">Claude is an AI assistant that connects to tools, understands your code, and acts on your behalf — not just text generation.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">⚡</span><div class="chip-label">3 Tiers, One Brain</div><div class="chip-desc">Haiku for speed, Sonnet for daily work, Opus for deep reasoning. Same intelligence, different compute budgets.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">🖥️</span><div class="chip-label">Desktop Unlocks More</div><div class="chip-desc">The Claude Desktop app connects directly to your local machine — files, tools, MCP servers and Claude Code all in one place.</div></div>
+  </div>
+
+  <div class="mm-grid">
+
+    <!-- Model Tiers -->
+    <div class="mm-card c-bl mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🏆</div><div><div class="mm-card-title">The Three Claude Model Tiers</div><div class="mm-card-subtitle">Match the model to the task — don't use a sledgehammer on a screw</div></div></div>
+      <div class="tier-grid">
+        <div class="tier-card t-haiku">
+          <div class="t-badge-row">Tier 1 — Fast</div>
+          <span class="tier-ico">⚡</span>
+          <div class="tier-name">Claude Haiku</div>
+          <div class="tier-badge">Speed First</div>
+          <div class="tier-desc">Fastest and cheapest. Great for repetitive tasks, quick summaries, high-frequency calls where speed beats depth.</div>
+          <div class="tier-use">Best for: Q&A, drafts, quick lookups</div>
+        </div>
+        <div class="tier-card t-sonnet">
+          <div class="t-badge-row">Tier 2 — Balanced</div>
+          <span class="tier-ico">⚖️</span>
+          <div class="tier-name">Claude Sonnet</div>
+          <div class="tier-badge">Daily Driver</div>
+          <div class="tier-desc">The everyday workhorse. Balances capability and cost — perfect for documents, analysis, and most coding tasks.</div>
+          <div class="tier-use">Best for: Code, data analysis, writing</div>
+        </div>
+        <div class="tier-card t-opus">
+          <div class="t-badge-row">Tier 3 — Maximum</div>
+          <span class="tier-ico">👑</span>
+          <div class="tier-name">Claude Opus</div>
+          <div class="tier-badge">Deep Reasoning</div>
+          <div class="tier-desc">Most powerful. Extended thinking, multi-step plans, complex architecture. Use when depth genuinely matters.</div>
+          <div class="tier-use">Best for: Architecture, plans, ambiguous tasks</div>
+        </div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">💡</div>
+        <div><div class="mm-rule-title">⭐ The Prerequisite Mindset</div><div class="mm-rule-body">You don't need to be an expert. <strong>Basic Python + understanding of what you want to build</strong> is enough to start. The course takes you from zero to production-ready agentic workflows.</div></div>
+      </div>
+    </div>
+
+    <!-- Before/After -->
+    <div class="mm-card c-ro mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">Before vs After Claude Code</div><div class="mm-card-subtitle">Why every developer and data professional needs this in their toolkit</div></div></div>
+      <div class="ba-wrap">
+        <div class="ba-panel ba-before">
+          <div class="ba-lbl">❌ Before Claude Code</div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Hours searching for the right approach manually</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Copy-pasting between ChatGPT and your IDE</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>No structured course — fragmented YouTube tutorials</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>No skills, agents or automation understanding</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Running AI as a glorified search engine</span></div>
+        </div>
+        <div class="ba-mid">→</div>
+        <div class="ba-panel ba-after">
+          <div class="ba-lbl">✅ After This Course</div>
+          <div class="ba-item"><div class="ba-dot"></div><span>7-hour structured masterclass from scratch</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Claude Code live in your terminal and IDE</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Custom skills, sub-agents and agent teams</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>MCP servers and event-driven hook automation</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Real projects — Apache Airflow, scheduling, plugins</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Access Methods -->
+    <div class="mm-card c-te">
+      <div class="mm-card-head"><div class="mm-card-ico">🚪</div><div><div class="mm-card-title">Four Ways to Access Claude</div><div class="mm-card-subtitle">Web, Desktop, Code CLI, and API</div></div></div>
+      <div class="access-grid">
+        <div class="acc-card ac-1">
+          <span class="acc-ico">🌐</span>
+          <div class="acc-name">claude.ai (Web)</div>
+          <div class="acc-desc">Start here. Full chat interface, file uploads, artifacts. Works in any browser, free tier available.</div>
+        </div>
+        <div class="acc-card ac-2">
+          <span class="acc-ico">🖥️</span>
+          <div class="acc-name">Claude Desktop</div>
+          <div class="acc-desc">Downloads as an app. Connects to local MCP servers, local files, tools. Gateway to Claude Code integration.</div>
+        </div>
+        <div class="acc-card ac-3">
+          <span class="acc-ico">⌨️</span>
+          <div class="acc-name">Claude Code CLI</div>
+          <div class="acc-desc">Terminal-first. Runs in your project directory. The star of this masterclass — agentic coding from the command line.</div>
+        </div>
+        <div class="acc-card ac-4">
+          <span class="acc-ico">🔌</span>
+          <div class="acc-name">Anthropic API</div>
+          <div class="acc-desc">For developers building products. Full programmatic access to all Claude models with billing per token.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- What is Claude -->
+    <div class="mm-card c-vi">
+      <div class="mm-card-head"><div class="mm-card-ico">🧠</div><div><div class="mm-card-title">What Exactly is Claude?</div><div class="mm-card-subtitle">The Anthropic model family — capabilities and design</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">★</div><span><b>Made by Anthropic</b> — a safety-focused AI research company, founded by former OpenAI researchers</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Large Language Model</b> — trained on vast text data, understands and generates human-like language and code</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Context window</b> — holds a large amount of conversation history, documents, and code in a single session</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Tool-use capable</b> — can call external tools (files, web, bash, APIs) and act on the results autonomously</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Multi-modal</b> — understands text, code, images and structured data all at once</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-vi">🔬 Anthropic</span>
+        <span class="mm-tag mm-tag-bl">🧠 LLM</span>
+        <span class="mm-tag mm-tag-te">🔧 Tool-Use</span>
+      </div>
+    </div>
+
+    <!-- Claude Desktop -->
+    <div class="mm-card c-am mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🖥️</div><div><div class="mm-card-title">Claude Desktop — Setup &amp; Why It Matters</div><div class="mm-card-subtitle">The bridge between Claude's intelligence and your local environment</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">1</div><span><b>Download</b> — go to claude.ai/download and install the desktop app for Mac, Windows or Linux</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">2</div><span><b>Sign in</b> — use your existing claude.ai account or create one; free tier works for getting started</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">3</div><span><b>MCP support</b> — the desktop app can connect to local MCP servers; the web app cannot do this natively</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">4</div><span><b>Claude Code bridge</b> — once Claude Code is installed in your terminal, the desktop app can run it as an operator directly</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">5</div><span><b>Conversation history</b> — your chats persist across sessions, searchable, with project-based memory support</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-am">📦 Desktop App</span>
+        <span class="mm-tag mm-tag-am">🔌 MCP Support</span>
+        <span class="mm-tag mm-tag-te">🔗 Claude Code Bridge</span>
+      </div>
+    </div>
+
+    <!-- Getting Started Flow -->
+    <div class="mm-card c-te mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🚀</div><div><div class="mm-card-title">Your First 30 Minutes with Claude</div><div class="mm-card-subtitle">From zero to your first AI-augmented workflow</div></div></div>
+      <div class="mm-flow mm-flow-te">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">📱</div><div class="mm-step-lbl">Sign Up</div><div class="mm-step-sub">claude.ai free tier</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#g1"/></animateMotion></circle><path id="g1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">🖥️</div><div class="mm-step-lbl">Install Desktop</div><div class="mm-step-sub">Mac / Win / Linux</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#g2"/></animateMotion></circle><path id="g2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">🎯</div><div class="mm-step-lbl">Pick a Model</div><div class="mm-step-sub">Sonnet to start</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#g3"/></animateMotion></circle><path id="g3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">💬</div><div class="mm-step-lbl">First Prompt</div><div class="mm-step-sub">Ask a real task</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#g4"/></animateMotion></circle><path id="g4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">🔁</div><div class="mm-step-lbl">Iterate</div><div class="mm-step-sub">Refine the output</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#g5"/></animateMotion></circle><path id="g5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">⌨️</div><div class="mm-step-lbl">Install CLI</div><div class="mm-step-sub">npm i -g @anthropic/cc</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.70s"><mpath href="#g6"/></animateMotion></circle><path id="g6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">🚀</div><div class="mm-step-lbl">Ready to Build</div><div class="mm-step-sub">Agentic dev begins</div></div>
+      </div>
+    </div>
+
+    <!-- Pitfalls -->
+    <div class="mm-card c-ro">
+      <div class="mm-card-head"><div class="mm-card-ico">⚠️</div><div><div class="mm-card-title">Common Beginner Mistakes</div><div class="mm-card-subtitle">Avoid these to get value from day one</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Using Opus for everything</b> — 90% of tasks work perfectly on Sonnet; Opus burns credits fast</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Treating Claude like Google</b> — give it tasks, not questions; "write", "build", "analyse" — not "what is"</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Stopping at the first response</b> — iterate always; the first output is a draft, not a deliverable</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Skipping the Desktop app</b> — web-only limits you; Desktop unlocks MCP and Claude Code integration</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-ro">🚫 Wrong Model</span>
+        <span class="mm-tag mm-tag-ro">🚫 No Iteration</span>
+        <span class="mm-tag mm-tag-am">💡 Task, Not Query</span>
+      </div>
+    </div>
+
+    <!-- Free vs Paid -->
+    <div class="mm-card c-gr">
+      <div class="mm-card-head"><div class="mm-card-ico">💳</div><div><div class="mm-card-title">Free vs Paid Plans</div><div class="mm-card-subtitle">When to start free and when upgrading makes sense</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">🆓</div><span><b>Free plan</b> — access to Sonnet, limited daily messages; enough to learn and experiment</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">💳</div><span><b>Pro plan</b> — 5× usage, Opus model access, priority during peak hours, longer context</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">⌨️</div><span><b>Claude Code billing</b> — separate API usage-based billing per token; different from the chat plan</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Advice</b> — start free, use Sonnet, upgrade only when you're hitting limits on real daily work</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-gr">🆓 Start Free</span>
+        <span class="mm-tag mm-tag-am">💳 Upgrade Smartly</span>
+        <span class="mm-tag mm-tag-bl">📊 Monitor Usage</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="shared/mindmap.js"></script>
+<script>
+MindMap.init(
+  ['Claude','Haiku','Sonnet','Opus','→','LLM','chat','CLI','🧠','free'],
+  [165, 210, 270, 38, 22]
+);
+</script>
+</body>
+</html>

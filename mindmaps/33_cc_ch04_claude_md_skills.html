@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 4 — CLAUDE.md & The Skills System</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#C07B00,transparent 70%);top:-80px;left:-100px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#E8620A,transparent 70%);top:40%;right:-130px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#187A3A,transparent 70%);bottom:-70px;left:36%}
+
+.mm-badge{background:linear-gradient(135deg,var(--am-bg),#FEF0E3);border-color:var(--am-b);color:var(--am)}
+.mm-dot{background:var(--am)}.mm-dot::after{border-color:var(--am)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--am) 0%,var(--or) 35%,var(--gr) 65%,var(--am) 100%)}
+
+.mm-kpi:nth-child(1){--kpi-accent:var(--am)}
+.mm-kpi:nth-child(2){--kpi-accent:var(--or)}
+.mm-kpi:nth-child(3){--kpi-accent:var(--gr)}
+.mm-kpi:nth-child(4){--kpi-accent:var(--vi)}
+
+.mc-1{--chip-bg:var(--am-bg);--chip-border:var(--am-b);--chip-color:var(--am)}.mc-1:hover{box-shadow:0 10px 26px rgba(192,123,0,.18);border-color:var(--am)!important}.mc-1 .chip-label{color:var(--am)}
+.mc-2{--chip-bg:var(--or-bg);--chip-border:var(--or-b);--chip-color:var(--or)}.mc-2:hover{box-shadow:0 10px 26px rgba(232,98,10,.18);border-color:var(--or)!important}.mc-2 .chip-label{color:var(--or)}
+.mc-3{--chip-bg:var(--gr-bg);--chip-border:var(--gr-b);--chip-color:var(--gr)}.mc-3:hover{box-shadow:0 10px 26px rgba(24,122,58,.18);border-color:var(--gr)!important}.mc-3 .chip-label{color:var(--gr)}
+
+.c-am{--c-accent:var(--am);--c-bg:var(--am-bg);--c-border:var(--am-b);--c-shadow:rgba(192,123,0,.18)}
+.c-or{--c-accent:var(--or);--c-bg:var(--or-bg);--c-border:var(--or-b);--c-shadow:rgba(232,98,10,.18)}
+.c-gr{--c-accent:var(--gr);--c-bg:var(--gr-bg);--c-border:var(--gr-b);--c-shadow:rgba(24,122,58,.18)}
+.c-vi{--c-accent:var(--vi);--c-bg:var(--vi-bg);--c-border:var(--vi-b);--c-shadow:rgba(107,63,212,.18)}
+.c-bl{--c-accent:var(--bl);--c-bg:var(--bl-bg);--c-border:var(--bl-b);--c-shadow:rgba(26,82,200,.18)}
+.c-te{--c-accent:var(--te);--c-bg:var(--te-bg);--c-border:var(--te-b);--c-shadow:rgba(10,122,106,.18)}
+.c-ro{--c-accent:var(--ro);--c-bg:var(--ro-bg);--c-border:var(--ro-b);--c-shadow:rgba(184,24,54,.18)}
+
+.mm-flow-am{--flow-color:var(--am);--flow-color2:var(--or);--flow-border:var(--am-b);--flow-shadow:rgba(192,123,0,.15);--flow-num-bg:var(--am-bg);--flow-num-border:var(--am-b)}
+.mm-flow-am .mm-dash{stroke:var(--am)}.mm-flow-am .mm-arrowhead{fill:var(--am)}.mm-flow-am .mm-traveldot{fill:var(--am)}.mm-flow-am .mm-step-num{color:var(--am)}
+
+/* CLAUDE.md anatomy */
+.md-anatomy{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.md-section{border-radius:11px;padding:13px 15px;transition:transform .3s,box-shadow .3s;display:flex;align-items:flex-start;gap:12px}
+.md-section:hover{transform:translateX(5px)}
+.mds-1{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.mds-1:hover{box-shadow:0 5px 14px rgba(26,82,200,.14)}
+.mds-2{background:var(--gr-bg);border:1.5px solid var(--gr-b)}.mds-2:hover{box-shadow:0 5px 14px rgba(24,122,58,.14)}
+.mds-3{background:var(--or-bg);border:1.5px solid var(--or-b)}.mds-3:hover{box-shadow:0 5px 14px rgba(232,98,10,.14)}
+.mds-4{background:var(--ro-bg);border:1.5px solid var(--ro-b)}.mds-4:hover{box-shadow:0 5px 14px rgba(184,24,54,.14)}
+.mds-5{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.mds-5:hover{box-shadow:0 5px 14px rgba(107,63,212,.14)}
+.md-ico{font-size:22px;flex-shrink:0;margin-top:2px;transition:transform .3s}.md-section:hover .md-ico{transform:scale(1.2) rotate(-8deg)}
+.md-content{}
+.md-label{font-size:11px;font-weight:800;margin-bottom:3px}
+.mds-1 .md-label{color:var(--bl)}.mds-2 .md-label{color:var(--gr)}.mds-3 .md-label{color:var(--or)}.mds-4 .md-label{color:var(--ro)}.mds-5 .md-label{color:var(--vi)}
+.md-text{font-size:11px;color:var(--muted);line-height:1.5}
+
+/* Skill file anatomy */
+.skill-anatomy{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+@media(max-width:480px){.skill-anatomy{grid-template-columns:1fr}}
+.sa-card{border-radius:11px;padding:13px;transition:transform .3s,box-shadow .3s}
+.sa-card:hover{transform:translateY(-3px)}
+.sa-1{background:var(--am-bg);border:1.5px solid var(--am-b)}.sa-1:hover{box-shadow:0 7px 18px rgba(192,123,0,.16)}
+.sa-2{background:var(--gr-bg);border:1.5px solid var(--gr-b)}.sa-2:hover{box-shadow:0 7px 18px rgba(24,122,58,.16)}
+.sa-3{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.sa-3:hover{box-shadow:0 7px 18px rgba(26,82,200,.16)}
+.sa-4{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.sa-4:hover{box-shadow:0 7px 18px rgba(107,63,212,.16)}
+.sa-head{font-size:11px;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.sa-1 .sa-head{color:var(--am)}.sa-2 .sa-head{color:var(--gr)}.sa-3 .sa-head{color:var(--bl)}.sa-4 .sa-head{color:var(--vi)}
+.sa-item{font-size:10.5px;color:var(--muted);line-height:1.4;margin-bottom:3px}
+.sa-code{font-family:var(--fm);font-size:9.5px;background:var(--s2);padding:4px 8px;border-radius:5px;margin-top:6px;color:var(--text)}
+
+/* Skills 2.0 vs 1.0 */
+.ver-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.ver-card{border-radius:11px;padding:13px;transition:transform .3s,box-shadow .3s}
+.ver-card:hover{transform:translateY(-3px)}
+.v1{background:var(--s2);border:1.5px solid var(--border)}.v1:hover{box-shadow:0 7px 18px rgba(0,0,0,.08)}
+.v2{background:var(--or-bg);border:1.5px solid var(--or-b)}.v2:hover{box-shadow:0 7px 18px rgba(232,98,10,.18)}
+.ver-head{font-size:11.5px;font-weight:800;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.v1 .ver-head{color:var(--muted)}.v2 .ver-head{color:var(--or)}
+.ver-item{font-size:11px;color:var(--muted);margin-bottom:4px;line-height:1.4;display:flex;gap:6px}
+.ver-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.v1 .ver-dot{background:var(--muted)}.v2 .ver-dot{background:var(--or)}
+
+/* Token economy viz */
+.token-bar{margin-top:14px}
+.tok-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.tok-label{font-size:10px;font-weight:700;font-family:var(--fm);color:var(--muted);width:80px;text-align:right;flex-shrink:0}
+.tok-track{flex:1;height:18px;border-radius:9px;background:var(--s2);overflow:hidden;position:relative}
+.tok-fill{height:100%;border-radius:9px;display:flex;align-items:center;padding-left:8px;font-size:9px;font-weight:700;color:#fff;transition:width 1.2s cubic-bezier(.22,1,.36,1)}
+.tok-metadata{background:linear-gradient(90deg,var(--am),var(--or));width:15%}
+.tok-body{background:linear-gradient(90deg,var(--bl),var(--vi));width:85%}
+.tok-smart{background:linear-gradient(90deg,var(--gr),var(--te));width:25%}
+.tok-note{font-size:10px;color:var(--muted);margin-top:4px;text-align:right}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+<div class="noise"></div>
+<canvas id="mm-canvas"></canvas>
+<div class="mm-page">
+
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude Code Masterclass · Part 4 of 7</div>
+    <h1>CLAUDE.md &<br>The Skills System</h1>
+    <p>Project configuration · Custom skills · Extend &amp; share · Skills 2.0 · Token economy</p>
+  </div>
+
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">CLAUDE.md</div><div class="mm-kpi-label">One file that governs<br>all agent behaviour</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">skill.md</div><div class="mm-kpi-label">User manual for<br>every repeatable task</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">∞</div><div class="mm-kpi-label">Custom skills you<br>can write and share</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">2.0</div><div class="mm-kpi-label">Skills 2.0 — creator<br>plugin + auto-eval</div></div>
+  </div>
+
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">📋</span><div class="chip-label">CLAUDE.md = Team Standards</div><div class="chip-desc">One markdown file that every agent reads first. Coding conventions, banned patterns, preferred tools — set once for the whole team.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">📚</span><div class="chip-label">Skills = User Manuals for Tasks</div><div class="chip-desc">A skill.md file is a reusable playbook. Teach Claude Code how to do a specific task once — it follows the same steps every time.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">🔢</span><div class="chip-label">Token Efficiency is Everything</div><div class="chip-desc">Skills 2.0 loads only the skill header into context until needed — saving tokens on every request that doesn't use that skill.</div></div>
+  </div>
+
+  <div class="mm-grid">
+
+    <!-- CLAUDE.md anatomy -->
+    <div class="mm-card c-am mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">📋</div><div><div class="mm-card-title">Anatomy of a CLAUDE.md File</div><div class="mm-card-subtitle">The five sections every good project configuration file should have</div></div></div>
+      <div class="md-anatomy">
+        <div class="md-section mds-1">
+          <div class="md-ico">🏢</div>
+          <div class="md-content">
+            <div class="md-label">Project Overview</div>
+            <div class="md-text">What the project does, tech stack, primary language, team context. Claude reads this first to understand the domain before touching any code.</div>
+          </div>
+        </div>
+        <div class="md-section mds-2">
+          <div class="md-ico">✅</div>
+          <div class="md-content">
+            <div class="md-label">Coding Standards &amp; Conventions</div>
+            <div class="md-text">Python type hints required, PEP 8, docstrings for all public functions, max line length 100. These are applied to every file Claude writes or edits.</div>
+          </div>
+        </div>
+        <div class="md-section mds-3">
+          <div class="md-ico">🔧</div>
+          <div class="md-content">
+            <div class="md-label">Preferred Tools &amp; Frameworks</div>
+            <div class="md-text">Use Polars not Pandas, pytest not unittest, Pydantic for validation. Claude will choose these automatically without you specifying them each time.</div>
+          </div>
+        </div>
+        <div class="md-section mds-4">
+          <div class="md-ico">🚫</div>
+          <div class="md-content">
+            <div class="md-label">Prohibitions / Never-Do</div>
+            <div class="md-text">Never use print() for logging, never hard-code credentials, never commit to main directly. Guardrails that protect your production systems.</div>
+          </div>
+        </div>
+        <div class="md-section mds-5">
+          <div class="md-ico">🔗</div>
+          <div class="md-content">
+            <div class="md-label">Skills References</div>
+            <div class="md-text">Pointers to skill.md files the agent should load. <span class="mm-pill">@skills/migrate_db.md</span> — Claude loads these playbooks when matching tasks arise.</div>
+          </div>
+        </div>
+      </div>
+      <div class="mm-rule">
+        <div class="mm-rule-icon">💡</div>
+        <div><div class="mm-rule-title">⭐ The Team Multiplier Effect</div><div class="mm-rule-body">Two developers (Rahul and Rohan) using Claude Code without CLAUDE.md get two different coding styles. With one shared CLAUDE.md, <strong>every AI-generated line follows the same standards</strong> — code reviews become trivial.</div></div>
+      </div>
+    </div>
+
+    <!-- Skill anatomy -->
+    <div class="mm-card c-or mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">📚</div><div><div class="mm-card-title">Anatomy of a skill.md File</div><div class="mm-card-subtitle">Four components that make a skill reusable, testable and shareable</div></div></div>
+      <div class="skill-anatomy">
+        <div class="sa-card sa-1">
+          <div class="sa-head">📝 Metadata Header</div>
+          <div class="sa-item">Name, description, when to trigger. This is the only part always in context (Skills 2.0).</div>
+          <div class="sa-code">---<br>name: fetch_api_data<br>trigger: "fetch" OR "API call"<br>---</div>
+        </div>
+        <div class="sa-card sa-2">
+          <div class="sa-head">📖 Step-by-Step Instructions</div>
+          <div class="sa-item">Numbered steps Claude must follow exactly. Think of it as a recipe — not guidelines, actual steps.</div>
+          <div class="sa-code">1. Validate endpoint URL<br>2. Use requests with retry<br>3. Log errors to Datadog</div>
+        </div>
+        <div class="sa-card sa-3">
+          <div class="sa-head">📌 References &amp; Sub-Skills</div>
+          <div class="sa-item">Pointers to other skills, helper files, or external docs this skill depends on. Builds composable skill trees.</div>
+          <div class="sa-code">@skills/auth_headers.md<br>@utils/retry_logic.py</div>
+        </div>
+        <div class="sa-card sa-4">
+          <div class="sa-head">✅ Validation / Tests</div>
+          <div class="sa-item">Expected outputs or assertions Claude should verify after completing the skill. Quality control baked in.</div>
+          <div class="sa-code">assert response.status == 200<br>assert len(data) &gt; 0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skills 2.0 -->
+    <div class="mm-card c-vi">
+      <div class="mm-card-head"><div class="mm-card-ico">🆕</div><div><div class="mm-card-title">Skills 2.0 — What Changed</div><div class="mm-card-subtitle">Smarter context loading, auto-generation &amp; evaluation</div></div></div>
+      <div class="ver-grid">
+        <div class="ver-card v1">
+          <div class="ver-head">📁 Skills 1.0</div>
+          <div class="ver-item"><div class="ver-dot"></div><span>Full skill body always in context</span></div>
+          <div class="ver-item"><div class="ver-dot"></div><span>Manually written skill.md files</span></div>
+          <div class="ver-item"><div class="ver-dot"></div><span>No quality evaluation built-in</span></div>
+          <div class="ver-item"><div class="ver-dot"></div><span>Costs tokens even when unused</span></div>
+        </div>
+        <div class="ver-card v2">
+          <div class="ver-head">🆕 Skills 2.0</div>
+          <div class="ver-item"><div class="ver-dot"></div><span>Only metadata in context; body lazy-loaded</span></div>
+          <div class="ver-item"><div class="ver-dot"></div><span>Skill Creator plugin auto-writes skills</span></div>
+          <div class="ver-item"><div class="ver-dot"></div><span>Built-in eval: runs skill, grades output</span></div>
+          <div class="ver-item"><div class="ver-dot"></div><span>Token cost only when skill is triggered</span></div>
+        </div>
+      </div>
+      <div class="mm-tags" style="margin-top:12px">
+        <span class="mm-tag mm-tag-vi">🆕 Lazy Load</span>
+        <span class="mm-tag mm-tag-am">🤖 Auto-Create</span>
+        <span class="mm-tag mm-tag-gr">✅ Auto-Eval</span>
+      </div>
+    </div>
+
+    <!-- External skills -->
+    <div class="mm-card c-gr">
+      <div class="mm-card-head"><div class="mm-card-ico">🌍</div><div><div class="mm-card-title">Extend &amp; Use External Skills</div><div class="mm-card-subtitle">Share skills across projects and teams; pull from the marketplace</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">📤</div><span><b>Extending a skill</b> — reference another skill.md inside yours with <span class="mm-pill">@path/to/skill.md</span> to build layered, composable playbooks</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">🔗</div><span><b>Cross-project skills</b> — store shared skills in a central repo and reference them from any project's CLAUDE.md</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">🛒</div><span><b>Marketplace skills</b> — download pre-built skills for common data tasks: dbt migration, Airflow DAG creation, Spark optimisation</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Skill versioning</b> — pin skills to a git tag or hash; team-wide rollout when you update the shared repo</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-gr">🔗 Composable</span>
+        <span class="mm-tag mm-tag-gr">🌍 Shareable</span>
+        <span class="mm-tag mm-tag-am">🛒 Marketplace</span>
+      </div>
+    </div>
+
+    <!-- Token economy -->
+    <div class="mm-card c-bl mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">💰</div><div><div class="mm-card-title">Token Economy — Why Metadata Matters</div><div class="mm-card-subtitle">Every token in context costs money and slows response. Skills 2.0 optimises this.</div></div></div>
+      <div class="token-bar">
+        <div class="tok-row">
+          <div class="tok-label">Full body</div>
+          <div class="tok-track"><div class="tok-fill tok-body" style="width:85%">~2400 tokens per skill</div></div>
+        </div>
+        <div class="tok-row">
+          <div class="tok-label">Metadata</div>
+          <div class="tok-track"><div class="tok-fill tok-metadata" style="width:15%">~120 tok</div></div>
+        </div>
+        <div class="tok-row">
+          <div class="tok-label">Smart load</div>
+          <div class="tok-track"><div class="tok-fill tok-smart" style="width:25%">Body on-demand only</div></div>
+        </div>
+        <div class="tok-note">10 skills × 2400 tokens = 24,000 wasted tokens per request if all loaded. Metadata-first saves ~90%.</div>
+      </div>
+      <div class="mm-items" style="margin-top:12px">
+        <div class="mm-item"><div class="mm-dot-badge">💡</div><span><b>Metadata in context</b> — just the skill name, trigger keywords, and one-line description; tiny token footprint</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">💡</div><span><b>Body lazy-loaded</b> — full instructions loaded only when the trigger keyword appears in your request</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">💡</div><span><b>Compound savings</b> — the more skills you define, the more pronounced the savings vs always-in-context approach</span></div>
+      </div>
+    </div>
+
+    <!-- Skills creation flow -->
+    <div class="mm-card c-am mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">From Repeated Task to Permanent Skill</div><div class="mm-card-subtitle">The workflow for turning a one-off task into a reusable, team-wide skill</div></div></div>
+      <div class="mm-flow mm-flow-am">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">🔁</div><div class="mm-step-lbl">Spot Pattern</div><div class="mm-step-sub">Task done 3× same way</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#sk1"/></animateMotion></circle><path id="sk1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">✍️</div><div class="mm-step-lbl">Write Skill</div><div class="mm-step-sub">Or auto-create 2.0</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#sk2"/></animateMotion></circle><path id="sk2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">📋</div><div class="mm-step-lbl">Add to CLAUDE.md</div><div class="mm-step-sub">Register the skill</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#sk3"/></animateMotion></circle><path id="sk3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">🧪</div><div class="mm-step-lbl">Eval &amp; Test</div><div class="mm-step-sub">Auto-eval in 2.0</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#sk4"/></animateMotion></circle><path id="sk4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">🔗</div><div class="mm-step-lbl">Compose</div><div class="mm-step-sub">Reference sub-skills</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#sk5"/></animateMotion></circle><path id="sk5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">🌍</div><div class="mm-step-lbl">Share</div><div class="mm-step-sub">Push to team repo</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.70s"><mpath href="#sk6"/></animateMotion></circle><path id="sk6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">♾️</div><div class="mm-step-lbl">Permanent</div><div class="mm-step-sub">Team capability</div></div>
+      </div>
+    </div>
+
+    <!-- Pitfalls -->
+    <div class="mm-card c-ro">
+      <div class="mm-card-head"><div class="mm-card-ico">⚠️</div><div><div class="mm-card-title">Skills System Pitfalls</div><div class="mm-card-subtitle">What goes wrong when CLAUDE.md and skills are misused</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>No CLAUDE.md</b> — two developers get two different code styles; review time doubles because nothing is consistent</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Vague skill steps</b> — "handle errors gracefully" is not a step; "wrap in try/except and log to Datadog with error code" is</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Too many skills always in context</b> — 20 full skill bodies × 2000 tokens = 40K wasted tokens per request before you even start</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">!</div><span><b>Skipping eval</b> — a skill that runs but produces subtly wrong output is worse than no skill; always test the happy path</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-ro">🚫 Vague Steps</span>
+        <span class="mm-tag mm-tag-ro">🚫 Token Waste</span>
+        <span class="mm-tag mm-tag-am">💡 Always Eval</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="shared/mindmap.js"></script>
+<script>
+MindMap.init(
+  ['CLAUDE.md','skill.md','@ref','trigger','tokens','eval','→','📋','2.0','team'],
+  [38, 22, 210, 165, 130]
+);
+</script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 5 — Sub-Agents &amp; Agent Teams</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+.aurora-blob:nth-child(1){background:radial-gradient(circle,#0A6EAA,transparent 70%);top:-80px;left:-100px}
+.aurora-blob:nth-child(2){background:radial-gradient(circle,#6B3FD4,transparent 70%);top:40%;right:-130px}
+.aurora-blob:nth-child(3){background:radial-gradient(circle,#1A52C8,transparent 70%);bottom:-70px;left:36%}
+
+.mm-badge{background:linear-gradient(135deg,var(--sk-bg),#EDEAFC);border-color:var(--sk-b);color:var(--sk)}
+.mm-dot{background:var(--sk)}.mm-dot::after{border-color:var(--sk)}
+.mm-header h1{background-image:linear-gradient(135deg,var(--sk) 0%,var(--vi) 40%,var(--bl) 75%,var(--sk) 100%)}
+
+.mm-kpi:nth-child(1){--kpi-accent:var(--sk)}
+.mm-kpi:nth-child(2){--kpi-accent:var(--vi)}
+.mm-kpi:nth-child(3){--kpi-accent:var(--bl)}
+.mm-kpi:nth-child(4){--kpi-accent:var(--gr)}
+
+.mc-1{--chip-bg:var(--sk-bg);--chip-border:var(--sk-b);--chip-color:var(--sk)}.mc-1:hover{box-shadow:0 10px 26px rgba(10,110,170,.18);border-color:var(--sk)!important}.mc-1 .chip-label{color:var(--sk)}
+.mc-2{--chip-bg:var(--vi-bg);--chip-border:var(--vi-b);--chip-color:var(--vi)}.mc-2:hover{box-shadow:0 10px 26px rgba(107,63,212,.18);border-color:var(--vi)!important}.mc-2 .chip-label{color:var(--vi)}
+.mc-3{--chip-bg:var(--bl-bg);--chip-border:var(--bl-b);--chip-color:var(--bl)}.mc-3:hover{box-shadow:0 10px 26px rgba(26,82,200,.18);border-color:var(--bl)!important}.mc-3 .chip-label{color:var(--bl)}
+
+.c-sk{--c-accent:var(--sk);--c-bg:var(--sk-bg);--c-border:var(--sk-b);--c-shadow:rgba(10,110,170,.18)}
+.c-vi{--c-accent:var(--vi);--c-bg:var(--vi-bg);--c-border:var(--vi-b);--c-shadow:rgba(107,63,212,.18)}
+.c-bl{--c-accent:var(--bl);--c-bg:var(--bl-bg);--c-border:var(--bl-b);--c-shadow:rgba(26,82,200,.18)}
+.c-am{--c-accent:var(--am);--c-bg:var(--am-bg);--c-border:var(--am-b);--c-shadow:rgba(192,123,0,.18)}
+.c-gr{--c-accent:var(--gr);--c-bg:var(--gr-bg);--c-border:var(--gr-b);--c-shadow:rgba(24,122,58,.18)}
+.c-ro{--c-accent:var(--ro);--c-bg:var(--ro-bg);--c-border:var(--ro-b);--c-shadow:rgba(184,24,54,.18)}
+.c-te{--c-accent:var(--te);--c-bg:var(--te-bg);--c-border:var(--te-b);--c-shadow:rgba(10,122,106,.18)}
+.c-or{--c-accent:var(--or);--c-bg:var(--or-bg);--c-border:var(--or-b);--c-shadow:rgba(232,98,10,.18)}
+
+.mm-flow-sk{--flow-color:var(--sk);--flow-color2:var(--vi);--flow-border:var(--sk-b);--flow-shadow:rgba(10,110,170,.15);--flow-num-bg:var(--sk-bg);--flow-num-border:var(--sk-b)}
+.mm-flow-sk .mm-dash{stroke:var(--sk)}.mm-flow-sk .mm-arrowhead{fill:var(--sk)}.mm-flow-sk .mm-traveldot{fill:var(--sk)}.mm-flow-sk .mm-step-num{color:var(--sk)}
+
+/* Agent hierarchy diagram */
+.agent-tree{display:flex;flex-direction:column;align-items:center;gap:0;margin-top:14px;position:relative}
+.tree-parent{background:linear-gradient(135deg,var(--sk-bg),#E8EFFE);border:2px solid var(--sk-b);border-radius:14px;padding:14px 22px;text-align:center;width:220px;position:relative;z-index:2;transition:transform .3s,box-shadow .3s}
+.tree-parent:hover{transform:translateY(-4px);box-shadow:0 10px 28px rgba(10,110,170,.2)}
+.tree-parent-label{font-size:12px;font-weight:800;color:var(--sk);margin-bottom:2px}
+.tree-parent-sub{font-size:10px;color:var(--muted)}
+.tree-line{width:2px;height:28px;background:linear-gradient(to bottom,var(--sk-b),var(--vi-b));margin:0 auto}
+.tree-branches{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
+.tree-child{border-radius:12px;padding:12px;text-align:center;transition:transform .3s,box-shadow .3s;cursor:default}
+.tree-child:hover{transform:translateY(-4px)}
+.tc-1{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.tc-1:hover{box-shadow:0 8px 20px rgba(107,63,212,.18)}
+.tc-2{background:var(--bl-bg);border:1.5px solid var(--bl-b)}.tc-2:hover{box-shadow:0 8px 20px rgba(26,82,200,.18)}
+.tc-3{background:var(--gr-bg);border:1.5px solid var(--gr-b)}.tc-3:hover{box-shadow:0 8px 20px rgba(24,122,58,.18)}
+.tree-child-ico{font-size:20px;display:block;margin-bottom:5px;transition:transform .3s}.tree-child:hover .tree-child-ico{transform:scale(1.18) rotate(-8deg)}
+.tree-child-name{font-size:10.5px;font-weight:800;margin-bottom:3px}
+.tc-1 .tree-child-name{color:var(--vi)}.tc-2 .tree-child-name{color:var(--bl)}.tc-3 .tree-child-name{color:var(--gr)}
+.tree-child-desc{font-size:9.5px;color:var(--muted);line-height:1.35}
+@media(max-width:500px){.tree-branches{grid-template-columns:1fr}.tree-parent{width:100%}}
+
+/* Sub-agent config grid */
+.config-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+@media(max-width:480px){.config-grid{grid-template-columns:1fr}}
+.cfg-card{border-radius:11px;padding:12px;transition:transform .3s,box-shadow .3s}
+.cfg-card:hover{transform:translateY(-3px)}
+.cfg-1{background:var(--sk-bg);border:1.5px solid var(--sk-b)}.cfg-1:hover{box-shadow:0 7px 18px rgba(10,110,170,.16)}
+.cfg-2{background:var(--vi-bg);border:1.5px solid var(--vi-b)}.cfg-2:hover{box-shadow:0 7px 18px rgba(107,63,212,.16)}
+.cfg-3{background:var(--or-bg);border:1.5px solid var(--or-b)}.cfg-3:hover{box-shadow:0 7px 18px rgba(232,98,10,.16)}
+.cfg-4{background:var(--gr-bg);border:1.5px solid var(--gr-b)}.cfg-4:hover{box-shadow:0 7px 18px rgba(24,122,58,.16)}
+.cfg-head{font-size:11px;font-weight:800;margin-bottom:5px;display:flex;align-items:center;gap:5px}
+.cfg-1 .cfg-head{color:var(--sk)}.cfg-2 .cfg-head{color:var(--vi)}.cfg-3 .cfg-head{color:var(--or)}.cfg-4 .cfg-head{color:var(--gr)}
+.cfg-text{font-size:10.5px;color:var(--muted);line-height:1.4}
+
+/* Team task board */
+.task-board{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+@media(max-width:520px){.task-board{grid-template-columns:1fr}}
+.tb-col{border-radius:11px;padding:11px;background:var(--s2);border:1.5px solid var(--border)}
+.tb-head{font-size:10px;font-weight:800;margin-bottom:8px;text-align:center;padding:4px 8px;border-radius:7px;color:#fff}
+.tbh-todo{background:var(--am)}.tbh-doing{background:var(--sk)}.tbh-done{background:var(--gr)}
+.tb-card{background:var(--surface);border-radius:8px;padding:9px;margin-bottom:6px;font-size:10px;line-height:1.4;color:var(--muted);border:1px solid var(--border);transition:transform .2s}
+.tb-card:hover{transform:translateX(3px)}
+.tb-tag{font-size:8px;font-weight:800;padding:2px 6px;border-radius:5px;display:inline-block;margin-bottom:4px}
+.tbt-vi{background:var(--vi-bg);color:var(--vi)}.tbt-bl{background:var(--bl-bg);color:var(--bl)}.tbt-sk{background:var(--sk-bg);color:var(--sk)}.tbt-gr{background:var(--gr-bg);color:var(--gr)}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+<div class="noise"></div>
+<canvas id="mm-canvas"></canvas>
+<div class="mm-page">
+
+  <div class="mm-header">
+    <div class="mm-badge"><span class="mm-dot"></span>Claude Code Masterclass · Part 5 of 7</div>
+    <h1>Sub-Agents &<br>Agent Teams</h1>
+    <p>Parent/child agents · Isolated context · Parallel specialisation · Team coordination</p>
+  </div>
+
+  <div class="mm-kpi-row">
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">∞</div><div class="mm-kpi-label">Sub-agents a parent<br>can spawn in parallel</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">Isolated</div><div class="mm-kpi-label">Each sub-agent gets<br>its own context window</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">Shared</div><div class="mm-kpi-label">Agent teams share<br>a task board &amp; state</div></div>
+    <div class="mm-kpi"><div class="mm-kpi-val" data-count="skip">Direct</div><div class="mm-kpi-label">Agents communicate<br>directly with each other</div></div>
+  </div>
+
+  <div class="mm-chips">
+    <div class="mm-chip mc-1"><span class="chip-icon">👨‍👧‍👦</span><div class="chip-label">Parent Spawns Children</div><div class="chip-desc">Claude Code (parent) creates sub-agents with specific tools, skills and model restrictions. Each child is isolated — no context bleed.</div></div>
+    <div class="mm-chip mc-2"><span class="chip-icon">🏥</span><div class="chip-label">Hospital Analogy</div><div class="chip-desc">Like a hospital: one receptionist (orchestrator) routes patients to specialist doctors (sub-agents). Each specialist knows only their domain.</div></div>
+    <div class="mm-chip mc-3"><span class="chip-icon">⚡</span><div class="chip-label">Parallel = Fast</div><div class="chip-desc">Multiple sub-agents work simultaneously on different parts of a task. What takes 1 hour sequentially takes minutes in parallel.</div></div>
+  </div>
+
+  <div class="mm-grid">
+
+    <!-- Agent hierarchy -->
+    <div class="mm-card c-sk mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🌳</div><div><div class="mm-card-title">Parent–Child Agent Hierarchy</div><div class="mm-card-subtitle">One orchestrator coordinates multiple isolated specialist sub-agents running in parallel</div></div></div>
+      <div class="agent-tree">
+        <div class="tree-parent">
+          <div class="tree-parent-label">🤖 Parent Agent (Claude Code)</div>
+          <div class="tree-parent-sub">Orchestrator — receives task, plans, delegates</div>
+        </div>
+        <div class="tree-line"></div>
+        <div class="tree-branches">
+          <div class="tree-child tc-1">
+            <span class="tree-child-ico">🔬</span>
+            <div class="tree-child-name">Data Analyst Agent</div>
+            <div class="tree-child-desc">Tools: read_file, bash. Skills: stats, pandas. Model: Sonnet.</div>
+          </div>
+          <div class="tree-child tc-2">
+            <span class="tree-child-ico">✍️</span>
+            <div class="tree-child-name">Code Writer Agent</div>
+            <div class="tree-child-desc">Tools: write_file, edit_file. Skills: pep8, dbt. Model: Sonnet.</div>
+          </div>
+          <div class="tree-child tc-3">
+            <span class="tree-child-ico">🧪</span>
+            <div class="tree-child-name">Code Reviewer Agent</div>
+            <div class="tree-child-desc">Tools: read_file, grep. Skills: review_checklist. Model: Haiku.</div>
+          </div>
+        </div>
+      </div>
+      <div class="mm-rule" style="margin-top:16px">
+        <div class="mm-rule-icon">💡</div>
+        <div><div class="mm-rule-title">⭐ Why Isolation Matters</div><div class="mm-rule-body">Each sub-agent has its own context window. The Data Analyst doesn't see the Code Writer's file history. This prevents context pollution and keeps each agent sharp at its specific role — <strong>quality through focus</strong>.</div></div>
+      </div>
+    </div>
+
+    <!-- Sub-agent config -->
+    <div class="mm-card c-vi mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">⚙️</div><div><div class="mm-card-title">Configuring a Sub-Agent</div><div class="mm-card-subtitle">Four dimensions you control when spawning a child agent</div></div></div>
+      <div class="config-grid">
+        <div class="cfg-card cfg-1">
+          <div class="cfg-head">🔧 Tool Restriction</div>
+          <div class="cfg-text">Grant only the tools the sub-agent needs. A reviewer gets read_file and grep — never write_file. Principle of least privilege applied to agents.</div>
+        </div>
+        <div class="cfg-card cfg-2">
+          <div class="cfg-head">💾 Memory Scope</div>
+          <div class="cfg-text">Decide what the sub-agent knows about: just the current file, the whole repo, or a summary injected by the parent. Isolated by default.</div>
+        </div>
+        <div class="cfg-card cfg-3">
+          <div class="cfg-head">📚 Skills Allocation</div>
+          <div class="cfg-text">Each sub-agent gets only the skills relevant to its role. The data analyst gets stats skills; the code writer gets formatting skills.</div>
+        </div>
+        <div class="cfg-card cfg-4">
+          <div class="cfg-head">🤖 Model Choice</div>
+          <div class="cfg-text">Heavy reasoning agents get Sonnet or Opus. Lightweight reviewers and formatters can run on Haiku — massive cost savings in large teams.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agent teams task board -->
+    <div class="mm-card c-bl mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">📋</div><div><div class="mm-card-title">Agent Teams — Shared Task Board</div><div class="mm-card-subtitle">Teams of agents collaborate via a shared state: one task board, direct communication</div></div></div>
+      <div class="task-board">
+        <div class="tb-col">
+          <div class="tb-head tbh-todo">📥 TO DO</div>
+          <div class="tb-card"><div class="tb-tag tbt-bl">Code Writer</div>Implement S3 reader function with retry logic</div>
+          <div class="tb-card"><div class="tb-tag tbt-vi">Analyst</div>Profile DataFrame memory usage after load</div>
+        </div>
+        <div class="tb-col">
+          <div class="tb-head tbh-doing">⚙️ IN PROGRESS</div>
+          <div class="tb-card"><div class="tb-tag tbt-sk">Reviewer</div>Reviewing PR #47 — checking error handling patterns</div>
+          <div class="tb-card"><div class="tb-tag tbt-vi">Analyst</div>Running benchmark on 10M row dataset</div>
+        </div>
+        <div class="tb-col">
+          <div class="tb-head tbh-done">✅ DONE</div>
+          <div class="tb-card"><div class="tb-tag tbt-gr">Writer</div>Created Delta Lake writer with schema validation ✓</div>
+          <div class="tb-card"><div class="tb-tag tbt-gr">Reviewer</div>Approved auth module — 0 security issues ✓</div>
+        </div>
+      </div>
+      <div class="mm-items" style="margin-top:14px">
+        <div class="mm-item"><div class="mm-dot-badge">★</div><span><b>Direct communication</b> — agents don't just share a board; they send messages to each other: Reviewer tells Writer "fix line 42"</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">✓</div><span><b>Orchestrator decides</b> — the parent agent assigns tasks, monitors progress, and re-routes if an agent gets stuck or fails</span></div>
+      </div>
+    </div>
+
+    <!-- Sub-agent vs skill -->
+    <div class="mm-card c-am">
+      <div class="mm-card-head"><div class="mm-card-ico">⚖️</div><div><div class="mm-card-title">Sub-Agent vs Skill — What's the Difference?</div><div class="mm-card-subtitle">Both delegate work — but in fundamentally different ways</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">📚</div><span><b>Skill</b> — a playbook (markdown file). The same parent agent follows the steps. No new context window. No new model call. Just structured instructions.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">🤖</div><span><b>Sub-agent</b> — a fully separate agent instance. Its own context, its own tools, its own model choice. Runs in parallel with the parent.</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">🔑</div><span><b>Rule of thumb</b> — use a skill when the task is within one specialisation; use a sub-agent when the task needs a different context or tool set</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-am">📚 Skill = Playbook</span>
+        <span class="mm-tag mm-tag-sk">🤖 Sub-Agent = Instance</span>
+      </div>
+    </div>
+
+    <!-- Real example -->
+    <div class="mm-card c-gr">
+      <div class="mm-card-head"><div class="mm-card-ico">🔍</div><div><div class="mm-card-title">Real Example: Code Review Agent</div><div class="mm-card-subtitle">How to spawn a specialist reviewer as a sub-agent after every code write</div></div></div>
+      <div class="mm-items">
+        <div class="mm-item"><div class="mm-dot-badge">1</div><span><b>Parent writes code</b> — using write_file tool; creates new_module.py in the project</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">2</div><span><b>Parent spawns reviewer</b> — creates sub-agent with only read_file + grep; injects review_checklist.md skill</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">3</div><span><b>Reviewer runs</b> — reads the file, checks against checklist: type hints, docstrings, error handling, test coverage</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">4</div><span><b>Reviewer reports</b> — sends structured feedback back to parent: "Line 42: missing error handling for HTTP 429"</span></div>
+        <div class="mm-item"><div class="mm-dot-badge">5</div><span><b>Parent fixes</b> — acts on feedback; loops until reviewer approves. Ship only reviewed, quality code.</span></div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag mm-tag-gr">🔍 Auto Review</span>
+        <span class="mm-tag mm-tag-gr">✅ Quality Gate</span>
+        <span class="mm-tag mm-tag-sk">🔁 Feedback Loop</span>
+      </div>
+    </div>
+
+    <!-- Orchestration flow -->
+    <div class="mm-card c-sk mm-full">
+      <div class="mm-card-head"><div class="mm-card-ico">🔄</div><div><div class="mm-card-title">Orchestration Flow — Request to Parallel Completion</div><div class="mm-card-subtitle">How a complex task gets broken up and completed across multiple agents simultaneously</div></div></div>
+      <div class="mm-flow mm-flow-sk">
+        <div class="mm-step"><div class="mm-step-num">01</div><div class="mm-step-ico">📥</div><div class="mm-step-lbl">User Request</div><div class="mm-step-sub">Complex task</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#ag1"/></animateMotion></circle><path id="ag1" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">02</div><div class="mm-step-ico">🧠</div><div class="mm-step-lbl">Orchestrator</div><div class="mm-step-sub">Plans subtasks</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.14s"><mpath href="#ag2"/></animateMotion></circle><path id="ag2" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">03</div><div class="mm-step-ico">⚡</div><div class="mm-step-lbl">Spawn Agents</div><div class="mm-step-sub">Parallel start</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.28s"><mpath href="#ag3"/></animateMotion></circle><path id="ag3" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">04</div><div class="mm-step-ico">🏃</div><div class="mm-step-lbl">Work in Parallel</div><div class="mm-step-sub">Each agent runs</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.42s"><mpath href="#ag4"/></animateMotion></circle><path id="ag4" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">05</div><div class="mm-step-ico">📬</div><div class="mm-step-lbl">Report Back</div><div class="mm-step-sub">Results to parent</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.56s"><mpath href="#ag5"/></animateMotion></circle><path id="ag5" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">06</div><div class="mm-step-ico">🔗</div><div class="mm-step-lbl">Synthesise</div><div class="mm-step-sub">Orchestrator merges</div></div>
+        <div class="mm-arrow"><svg viewBox="0 0 30 14"><line x1="0" y1="7" x2="22" y2="7" class="mm-dash"/><polygon points="20,3 30,7 20,11" class="mm-arrowhead"/><circle r="2.2" class="mm-traveldot"><animateMotion dur="1s" repeatCount="indefinite" begin="0.70s"><mpath href="#ag6"/></animateMotion></circle><path id="ag6" d="M0,7 L20,7" fill="none"/></svg></div>
+        <div class="mm-step"><div class="mm-step-num">07</div><div class="mm-step-ico">✅</div><div class="mm-step-lbl">Final Answer</div><div class="mm-step-sub">To user</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="shared/mindmap.js"></script>
+<script>
+MindMap.init(
+  ['agent','spawn','⚡','ctx','parallel','team','→','🤖','task','route'],
+  [210, 165, 38, 270, 22]
+);
+</script>
+</body>
+</html>
